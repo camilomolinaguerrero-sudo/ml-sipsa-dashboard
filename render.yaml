@@ -1,0 +1,15 @@
+# Despliegue en Render (Blueprint), como en la guía del curso (Dash Tools + Render).
+# Render lee este archivo al crear el servicio: instala requirements.txt y lanza gunicorn
+# sobre la variable "server" de src/app.py.
+services:
+  - type: web
+    name: ml-sipsa-dashboard
+    runtime: python
+    plan: free
+    repo: https://github.com/camilomolinaguerrero-sudo/ml-sipsa-dashboard
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: cd src && gunicorn app:server --workers 1 --timeout 120
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.16

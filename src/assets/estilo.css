@@ -1,0 +1,49 @@
+/* Estilo del dashboard SIPSA-A (complementa el tema FLATLY de Bootstrap) */
+:root {
+  --azul: #1c7ed6;
+  --azul-osc: #0b3d6e;
+  --rojo: #e03131;
+  --gris: #f4f6f8;
+  --borde: #e3e7eb;
+}
+
+body {
+  background: var(--gris);
+  font-family: Inter, "Segoe UI", Helvetica, Arial, sans-serif;
+  color: #212529;
+}
+
+.encabezado {
+  background: linear-gradient(120deg, var(--azul-osc) 0%, #155a9c 55%, var(--azul) 100%);
+  color: #fff;
+  padding: 22px 0 18px;
+  margin-bottom: 14px;
+}
+.encabezado .sobretitulo { font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.8; }
+.encabezado .titulo { font-size: 1.65rem; font-weight: 700; margin: 4px 0 2px; color: #fff; }
+.encabezado .autores { font-size: 0.9rem; opacity: 0.9; }
+
+.tabs-principales .nav-link { font-weight: 600; color: #495057; border: none; padding: 10px 18px; }
+.tabs-principales .nav-link.active { color: var(--azul); border-bottom: 3px solid var(--azul); background: transparent; }
+.tabs-principales { border-bottom: 1px solid var(--borde); }
+
+.subtabs .nav-link { font-size: 0.92rem; padding: 6px 14px; }
+.subtabs + .tab-content > .tab-pane > .card,
+.tab-content > .tab-pane > .card { border-top-left-radius: 0; }
+
+.card { border: 1px solid var(--borde); border-radius: 10px; box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04); }
+.card-title { font-weight: 700; color: var(--azul-osc); }
+
+.kpi .card-body { padding: 12px 14px; }
+.kpi-etiqueta { font-size: 0.78rem; color: #6c757d; text-transform: none; }
+.kpi-valor { font-size: clamp(1.15rem, 1.5vw, 1.45rem); font-weight: 700; line-height: 1.2; margin-top: 2px; white-space: nowrap; }
+
+.lectura { background: #f8fafc; border-left: 4px solid var(--azul); border-radius: 6px; font-size: 0.9rem; padding: 10px 14px; }
+.lectura p { margin-bottom: 0.3rem; }
+
+.tabla { font-size: 0.84rem; background: #fff; }
+.tabla th { background: #eef3f8; font-weight: 600; }
+
+.sim-card { background: #fbfcfe; }
+.pie { color: #6c757d; font-size: 0.82rem; padding: 18px 0 26px; border-top: 1px solid var(--borde); margin-top: 10px; }
+label { font-weight: 600; font-size: 0.86rem; }

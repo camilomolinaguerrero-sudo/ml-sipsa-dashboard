@@ -1,0 +1,10 @@
+format: jb-book
+root: intro
+parts:
+  - caption: Informe del Entregable 2
+    chapters:
+      - file: 01_contexto
+      - file: 02_eda
+      - file: 03_modelos_base
+      - file: 04_dashboard
+      - file: 05_conclusiones
