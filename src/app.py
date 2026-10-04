@@ -192,7 +192,9 @@ def tab_eda():
                 "(seno y coseno) y los festivos de t+1, que se conocen de antemano."),
         dbc.Row([dbc.Col(grafico(F.fig_acf()), lg=7), dbc.Col(grafico(F.fig_autocorr_corredor()), lg=5)]),
         lectura(f"Dentro de cada corredor la interrupción de una semana se correlaciona {num(t['autocorr_corredor'][0]['correlacion'], 2)} "
-                "con la de la semana previa y la dependencia decae en pocas semanas: justifica usar rezagos y ventanas de 8 y 26 semanas."),
+                f"con la de la semana previa; la correlación baja a {num(t['autocorr_corredor'][4]['correlacion'], 2)} a las 8 semanas y se "
+                "mantiene cerca de 0,11 hasta un año, por diferencias persistentes entre corredores. Justifica usar rezagos y ventanas "
+                "de 8 y 26 semanas."),
     ]))
     sub_variables = dbc.Card(dbc.CardBody([
         dbc.Row([
@@ -242,8 +244,9 @@ def tab_eda():
                 html.Div(className="mb-2"),
                 tarjeta_kpi(num(e["knox"]["razon"], 2) + "×", "Agrupamiento espacio-tiempo (Knox)", "clock-history", "warning", alto=False),
                 lectura(f"La tasa municipal tiene autocorrelación espacial positiva (I = {num(e['moran_k8'], 3)}, p = {num(e['moran_p'], 3)}), "
-                        f"robusta a la elección de k ({num(e['moran_k4'], 2)} con k = 4 y {num(e['moran_k12'], 2)} con k = 12). Los clusters "
-                        "Alto-Alto se concentran en el Caribe y los Bajo-Bajo en Norte de Santander, Antioquia y el Eje Cafetero.",
+                        f"robusta a la elección de k ({num(e['moran_k4'], 2)} con k = 4 y {num(e['moran_k12'], 2)} con k = 12). La mitad de los "
+                        "municipios Alto-Alto está en el Caribe (sobre todo Cesar) y los Bajo-Bajo se concentran en Norte de Santander, "
+                        "Antioquia, Santander y Caldas.",
                         "Los eventos de interrupción masiva ocurren juntos en espacio y tiempo más de lo esperado: se valida también "
                         "con bloques espaciales (departamentos no vistos)."),
             ], lg=4),
@@ -289,9 +292,9 @@ def cb_toneladas(anio):
 def cb_ejemplo(tipo):
     e = {x["tipo"]: x for x in K["ejemplos"]}
     est, irr = e["Estable"], e["Irregular"]
-    txt = (f"Los dos corredores llegan a Bazurto (Cartagena). El estable, desde {est['origen'].title()} ({est['depto'].title()}), "
+    txt = (f"Los dos corredores llegan a Bazurto (Cartagena). El estable, desde {F.nombre_propio(est['origen'])} ({F.nombre_propio(est['depto'])}), "
            f"mueve en promedio {num(est['t_dia'], 1)} t/día y solo {pct(est['tasa_interrupcion'])} de sus semanas de 2023-2024 cumplen la "
-           f"definición de interrupción. El irregular, desde {irr['origen'].title()} ({irr['depto'].title()}), mueve {num(irr['t_dia'], 1)} t/día "
+           f"definición de interrupción. El irregular, desde {F.nombre_propio(irr['origen'])} ({F.nombre_propio(irr['depto'])}), mueve {num(irr['t_dia'], 1)} t/día "
            f"y se interrumpe en {pct(irr['tasa_interrupcion'])} de las semanas: caídas bruscas seguidas de recuperación. "
            "Anticipar cuál de los dos patrones seguirá cada corredor es la tarea del modelo.")
     return F.fig_corredor_ejemplo(tipo), lectura(txt, titulo="Dos patrones de abastecimiento")

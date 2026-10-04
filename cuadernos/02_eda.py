@@ -120,10 +120,11 @@ F.fig_acf()
 F.fig_autocorr_corredor()
 
 # %% [markdown]
-# **Interpretación.** La ACF de la tasa nacional vale 0,44 en el rezago 1, cae por debajo de la banda
-# de significancia hacia la cuarta semana y reaparece en los rezagos 51-53 (0,19 a 0,26), la huella del
-# ciclo anual. La PACF solo es significativa en el rezago 1: un patrón de tipo AR(1) más un componente
-# estacional. Dentro de cada corredor, la interrupción de una semana se correlaciona 0,28 con la de la
+# **Interpretación.** La ACF de la tasa nacional vale 0,44 en el rezago 1 y cae dentro de la banda de
+# significancia hacia la cuarta semana; entre los rezagos 5 y 50 solo el 8 y el 12 la rozan (|0,12|), y la
+# ACF reaparece con fuerza en los rezagos 51-53 (0,19 a 0,26), la huella del ciclo anual. La PACF está
+# dominada por el rezago 1 (0,44); los rezagos 8 y 9 apenas superan la banda (−0,12 y 0,11). Es un patrón
+# cercano a un AR(1) más un componente estacional. Dentro de cada corredor, la interrupción de una semana se correlaciona 0,28 con la de la
 # semana previa, 0,10 con la de ocho semanas antes y se estabiliza en 0,11-0,13 a 13, 26 y 52 semanas,
 # lo que refleja diferencias persistentes entre corredores. **Decisiones:** usar el nivel de la semana
 # actual y la anterior relativos al promedio (`ratio_t`, `ratio_t_1`) y ventanas de 8 y 26 semanas, y
@@ -132,11 +133,18 @@ F.fig_autocorr_corredor()
 # %% [markdown]
 # :::{admonition} Detalle: deriva temporal
 # :class: note
-# El índice de estabilidad poblacional (PSI) entre 2019 y cada año posterior es menor que 0,01 en todas
-# las predictoras del corredor: no hay deriva de covariables. La excepción es la fracción nacional de
-# corredores en caída (`frac_caida_nacional_t`), con PSI de 0,24 a 2,80, porque es un único valor por
-# semana que cambia con cada choque; se dejó en observación y el capítulo 3 comprueba que el modelo no
-# depende de ella.
+# El índice de estabilidad poblacional (PSI) entre 2019 y cada año posterior es menor que 0,01 en las
+# predictoras que describen el nivel, la regularidad, la dinámica y la composición del corredor, y menor
+# que 0,05 en la fracción de corredores en caída de la central. Hay dos excepciones con causas conocidas:
+#
+# * `antig_sem` (semanas desde la primera aparición del corredor) deriva **por construcción**, porque
+#   crece con el calendario: su mediana pasa de 75 semanas en 2019 a 328 en 2024 (PSI de 4,6 a 6,3). En la
+#   prueba todos los corredores son más antiguos que en el entrenamiento, por lo que su coeficiente
+#   extrapola; entra al modelo en logaritmo y su peso es pequeño (−0,04 en log-odds por desviación
+#   estándar). En los próximos entregables conviene reemplazarla por una versión acotada (por ejemplo,
+#   antigüedad recortada a 52 semanas).
+# * `frac_caida_nacional_t` (PSI de 0,24 a 2,80), porque es un único valor por semana que cambia con cada
+#   choque; se dejó en observación y el Entregable 1 comprobó que el modelo no depende de ella.
 # :::
 
 # %%
@@ -244,11 +252,13 @@ F.tabla("asociacion_objetivo").query("tipo == 'predictora'").sort_values("auc_un
 # %% [markdown]
 # **Interpretación.** Las pruebas de Mann-Whitney, corregidas por comparaciones múltiples con Holm, dan
 # p ≈ 0 para casi todas las variables; por eso se ordenan por tamaño del efecto (correlación biserial de
-# rangos, |rbc|) y por información mutua, que capta relaciones no lineales. Ambas medidas coinciden en que
-# las variables de **tamaño y regularidad** (`cv8`, `n_envios8`, `activas26`, `n_alimentos8`, `activas8`,
-# `log_base8`) dominan, con |rbc| entre 0,40 y 0,51; la **dinámica reciente** (`ratio_t`, `ratio_t_1`,
-# `pend8_rel`) tiene un efecto intermedio, y el calendario y la mayoría de las participaciones por grupo
-# aportan poco por sí solos.
+# rangos, |rbc|) y por información mutua, que capta relaciones no lineales. Las variables de **tamaño y
+# regularidad** (`cv8`, `n_envios8`, `activas26`, `n_alimentos8`, `activas8`, `log_base8`) dominan con
+# |rbc| entre 0,40 y 0,51 y también encabezan la información mutua. La diferencia más notoria entre ambas
+# medidas es la **distancia** (`dist_km`): su efecto monótono es pequeño (|rbc| = 0,16), pero es la cuarta
+# variable por información mutua (0,077), señal de una relación no lineal que además cambia según la
+# región de la central. La **dinámica reciente** (`ratio_t`, `ratio_t_1`, `pend8_rel`) tiene un efecto
+# intermedio, y el calendario y la mayoría de las participaciones por grupo aportan poco por sí solos.
 
 # %% [markdown]
 # ### Correlación y multicolinealidad
@@ -297,8 +307,9 @@ F.fig_mapa_tasa("tasa")
 
 # %% [markdown]
 # **Interpretación.** El mapa muestra la tasa de interrupción de los 779 municipios con al menos 52
-# corredor-semanas. Las tasas más altas se agrupan en el Caribe (La Guajira, Cesar, Magdalena, Sucre) y
-# en zonas de la Orinoquía y el sur; las más bajas, en Norte de Santander, Antioquia y el Eje Cafetero.
+# corredor-semanas. Las tasas municipales más altas, en promedio por departamento, están en La Guajira
+# (51 %), Cesar (47 %) y Sucre (46 %), seguidas de Cauca, Córdoba, Tolima y Nariño (37 a 40 %); las más
+# bajas, en Norte de Santander, Antioquia, Santander y el Eje Cafetero.
 
 # %%
 F.fig_mapa_tasa("lisa")
@@ -315,8 +326,13 @@ pd.Series({"I de Moran (k = 8)": S["moran_k8"], "p (999 permutaciones)": S["mora
 # Moran = 0,247 (p = 0,001) con una matriz de 8 vecinos más cercanos, y el resultado se mantiene con 4
 # (0,276) y 12 vecinos (0,223). Se usan vecinos más cercanos y no contigüidad porque los municipios de
 # origen no cubren todo el territorio y su densidad es muy desigual. El LISA identifica 58 municipios
-# Alto-Alto y 88 Bajo-Bajo, y el estadístico Gi* de Getis-Ord confirma los mismos hotspots (Caribe,
-# costa nariñense) y coldspots (Norte de Santander, Antioquia, Eje Cafetero). **Consecuencia:** como los
+# Alto-Alto (la mitad en el Caribe, sobre todo en Cesar, y grupos en Cundinamarca, Santander, Cauca y
+# Nariño) y 88 Bajo-Bajo (Norte de Santander, Antioquia, Santander y Caldas). El estadístico Gi* de
+# Getis-Ord coincide: los hotspots más numerosos están en Cesar (17), Cundinamarca (13, en Gualivá y Rionegro),
+# Santander (12, en Vélez y Socorro), Nariño (9, la mayoría en la zona andina), Sucre (9), Cauca (8) y La
+# Guajira (8); los coldspots, en Norte de Santander (30), Antioquia (20), Santander (18) y Caldas (13).
+# Santander tiene a la vez hotspots y coldspots: la escala municipal revela contrastes que el promedio
+# departamental oculta. **Consecuencia:** como los
 # municipios cercanos se parecen, el capítulo 3 valida también con bloques espaciales (departamentos no
 # vistos).
 
@@ -335,8 +351,10 @@ F.fig_mapa_tasa("cv8")
 # crece hasta unos 125-350 km y luego se estabiliza en la varianza total; el efecto pepita es alto
 # (≈ 0,018 de una meseta de ≈ 0,026): buena parte de la variación es propia de cada municipio o corredor.
 # Agregado por departamento, el I de Moran cae a 0,01 (p = 0,31): la dependencia opera a escala municipal
-# y subregional (problema de la unidad de área modificable). Hay 210 municipios sin corredores regulares,
-# sobre todo en la Amazonía, el Pacífico y la Orinoquía, un sesgo de cobertura espacial.
+# y subregional (problema de la unidad de área modificable). Hay 210 municipios sin corredores regulares:
+# en número absoluto, sobre todo en la región Andina (75, muchos de ellos pequeños municipios de Boyacá y
+# Antioquia) y el Pacífico (46, la mitad en Chocó); en proporción, la Amazonía es la menos cubierta (67 %
+# de sus municipios sin corredores), seguida del Pacífico (26 %). Es un sesgo de cobertura espacial.
 # :::
 
 # %%

@@ -28,7 +28,8 @@
     "depto": "BOYACÁ",
     "pdet": 0,
     "central": "Cartagena, Bazurto",
-    "t_dia": 90.67623387218046,
+    "t_dia": 91.8715297368421,
+    "t_ref": 90.67623387218046,
     "tasa_interrupcion": 0.021052631578947368,
     "semanas": 95
    },
@@ -39,7 +40,8 @@
     "depto": "VALLE DEL CAUCA",
     "pdet": 0,
     "central": "Cartagena, Bazurto",
-    "t_dia": 7.357353266888148,
+    "t_dia": 6.26688399778516,
+    "t_ref": 7.357353266888148,
     "tasa_interrupcion": 0.3953488372093023,
     "semanas": 86
    }

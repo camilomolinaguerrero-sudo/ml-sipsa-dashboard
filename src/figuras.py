@@ -57,6 +57,13 @@ def etiqueta_variable(v):
     return ETIQUETAS.get(v, v)
 
 
+def nombre_propio(texto):
+    """'VALLE DEL CAUCA' -> 'Valle del Cauca' (minúsculas para artículos y preposiciones)."""
+    menores = {"de", "del", "la", "las", "los", "y", "el"}
+    palabras = str(texto).lower().split()
+    return " ".join(w if (i > 0 and w in menores) else w[:1].upper() + w[1:] for i, w in enumerate(palabras))
+
+
 def _fmt_pct(x):
     return f"{100 * x:.1f} %".replace(".", ",")
 
@@ -103,7 +110,7 @@ def fig_corredor_ejemplo(tipo="Irregular"):
     i = ej[ej["interrupcion_t1"] == 1]
     fig.add_scatter(x=i["semana_t1"], y=i["tasa_t1"] / 1e3, mode="markers", name="Interrupción (y = 1)",
                     marker=dict(color=ROJO, size=9, symbol="x"))
-    fig.update_layout(title=f"Corredor {tipo.lower()}: {info['origen'].title()} → {info['central']} "
+    fig.update_layout(title=f"Corredor {tipo.lower()}: {nombre_propio(info['origen'])} → {info['central']} "
                             f"({_fmt_pct(info['tasa_interrupcion'])} de semanas con interrupción)",
                       yaxis_title="toneladas por día de encuesta", height=370)
     return fig
@@ -204,7 +211,7 @@ def fig_deciles(variable):
                     marker=dict(size=8), customdata=np.c_[d["decil"], d["n"]],
                     hovertemplate="decil %{customdata[0]}<br>valor medio %{x:.3f}<br>tasa %{y:.1%}<br>n = %{customdata[1]:,}<extra></extra>",
                     name="Tasa por decil")
-    fig.add_hline(y=prev, line_dash="dot", line_color=GRIS, annotation_text=f"tasa global {_fmt_pct(prev)}")
+    fig.add_hline(y=prev, line_dash="dot", line_color=GRIS, annotation_text=f"tasa de entrenamiento {_fmt_pct(prev)}")
     fig.update_layout(title="Tasa de interrupción por deciles",
                       xaxis_title="valor medio del decil", yaxis_title="tasa de interrupción en t+1",
                       yaxis_tickformat=".0%", height=400, showlegend=False)
@@ -423,7 +430,8 @@ def fig_coeficientes(modelo="Regresión logística", top=20):
                            marker_color=np.where(c["coeficiente"] > 0, ROJO, AZUL),
                            hovertemplate="%{y}<br>coeficiente %{x:.3f}<extra></extra>"))
     fig.add_vline(x=0, line_color="black", line_width=1)
-    unidad = "log-odds por desviación estándar" if modelo.startswith("Reg") else "peso del hiperplano por desviación estándar"
+    unidad = ("log-odds" if modelo.startswith("Reg") else "peso del hiperplano") + \
+        " (numéricas: por desviación estándar; categóricas y binarias: frente a la base)"
     fig.update_layout(title=f"{modelo}: {top} coeficientes de mayor magnitud", xaxis_title=unidad,
                       height=max(380, 24 * top + 120), margin=dict(l=10))
     return fig

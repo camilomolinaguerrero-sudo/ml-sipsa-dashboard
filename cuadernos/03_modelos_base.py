@@ -40,11 +40,11 @@ MET = F.tabla("metricas_test")
 # | Paso | Variables | Decisión | Resultado del EDA que la motiva |
 # |---|---|---|---|
 # | Imputación | numéricas | mediana de entrenamiento | único faltante: `ratio_t_1` (0,03 %), semanas sin encuesta |
-# | Logaritmo | `n_envios8`, `n_alimentos8`, `dist_km`, `antig_sem` | `log1p` | asimetrías de 8,0, 4,0 y 1,7 |
+# | Logaritmo | `n_envios8`, `n_alimentos8`, `dist_km`, `antig_sem` | `log1p` | asimetrías de 8,0, 4,0 y 1,7; en `antig_sem` (casi simétrica) para que el efecto de la antigüedad sea decreciente |
 # | Winsorización | numéricas continuas | recorte en percentiles 1 y 99 de entrenamiento | colas largas con valores genuinos |
 # | Splines cúbicos | `ratio_t`, `ratio_t_1` | 5 nodos en cuantiles | relación en U con la interrupción |
 # | Escalado | numéricas | `StandardScaler` | escalas distintas; la penalización exige escalas comparables |
-# | Codificación | central, departamento, grupo dominante | one-hot; categorías < 1 % como «infrecuentes» | 6-8 categorías raras por variable |
+# | Codificación | central, departamento, grupo dominante | one-hot; categorías < 1 % como «infrecuentes» | 6 centrales y 8 departamentos con menos de 1 % de las filas (el grupo dominante no tiene categorías raras) |
 # | Composición | participaciones por grupo | se omite `sh_procesados` | suman 1 (colinealidad exacta) |
 # | Regularización | todas | L2 con C elegido por validación temporal | correlaciones altas entre tamaño y regularidad |
 # | Excluidas | `tasa_t1`, `cod_mpio`, días de encuesta de t+1 | fuera del modelo | auditoría de fuga |
@@ -82,11 +82,12 @@ cv.groupby(["modelo", "C"])[["auc_train", "auc_valid", "ap_valid"]].mean()
 
 # %% [markdown]
 # **Interpretación.** El AUC de validación apenas cambia con C: en la logística va de 0,7809 a 0,7810 y
-# en la SVM de 0,7831 a 0,7834. Con 600 mil filas y unas 90 columnas los datos dominan sobre la
-# penalización, así que la regularización casi no importa. Se eligió el C con mayor AUC medio (logística
+# en la SVM de 0,7831 a 0,7834. Con entre 92 mil y 498 mil filas por pliegue y 96 columnas tras el
+# preprocesamiento, los datos dominan sobre la penalización, así que la regularización casi no importa. Se eligió el C con mayor AUC medio (logística
 # C = 0,01; SVM C = 0,001). La brecha entre entrenamiento y validación es de unas tres milésimas en ambos
-# modelos: no hay sobreajuste. El AUC es estable entre pliegues (0,777 a 0,786), incluido el pliegue 2, cuya
-# validación contiene el confinamiento y el paro nacional.
+# modelos: no hay sobreajuste. El AUC es estable entre pliegues (0,777 a 0,786), incluidos el pliegue 1, cuya
+# validación contiene 8 de las 10 semanas del confinamiento de 2020, y el pliegue 2, que contiene el paro
+# nacional de 2021.
 
 # %% [markdown]
 # ## 3.4 Umbral de decisión y calibración de la SVM
@@ -192,7 +193,8 @@ MET[MET["metrica"] == "Brier"][["modelo", "valor"]]
 
 # %% [markdown]
 # **Interpretación.** Las probabilidades de ambos modelos están bien calibradas en el rango donde hay más
-# datos: en el decil de probabilidad 0,43 la frecuencia observada es 0,43. En el extremo alto hay una leve
+# datos: en el intervalo de probabilidad media 0,43 (de 15 intervalos por cuantiles) la frecuencia observada
+# es 0,43. En el extremo alto hay una leve
 # sobreestimación (0,69 predicho frente a 0,65 observado en la logística), coherente con la menor tasa de
 # 2025 (26,0 % frente a 28,2 % en entrenamiento). El Brier de ambos (0,154) mejora 20 % sobre la predicción
 # constante (0,193). Que las probabilidades estén calibradas permite usarlas para priorizar recursos, no
@@ -213,8 +215,12 @@ cont = cl[[c for c in cl.index if c in mu.LOG + mu.NUM + mu.BINARIAS]]
 pd.DataFrame({"coeficiente": cont, "odds ratio por d.e.": np.exp(cont)}).sort_values("coeficiente")
 
 # %% [markdown]
-# **Interpretación.** Los dos modelos coinciden en el orden de importancia, aunque la escala de sus
-# coeficientes es distinta (log-odds en la logística y pesos del hiperplano en la SVM):
+# **Interpretación.** Los dos modelos coinciden de forma aproximada en la importancia relativa de las
+# variables (correlación de Spearman de 0,88 entre los valores absolutos de sus coeficientes), aunque la
+# escala es distinta (log-odds en la logística y pesos del hiperplano en la SVM). La variable de mayor peso
+# cambia (cargas por semana en la logística; semanas activas en la SVM) y 8 de los 96 coeficientes, todos
+# pequeños, cambian de signo. Las numéricas se interpretan por desviación estándar; las categóricas y
+# binarias, como el cambio frente a la categoría base:
 #
 # * **Tamaño y regularidad dominan.** Una desviación estándar más de cargas semanales (en log) reduce a la
 #   mitad los odds de interrupción (OR 0,49); más semanas activas en el semestre (OR 0,72) y una tendencia

@@ -76,7 +76,7 @@ print(f"Tasa de interrupción: total {K['tasa_total']:.3f}; entrenamiento {K['ta
 # muchas semanas y los corredores vecinos se parecen, de modo que el tamaño efectivo de la muestra
 # está entre el número de corredores y el de filas. Por eso la validación y los intervalos de
 # confianza se construyen por bloques de semanas (capítulo 3). La interrupción ocurre en 27,9 % de
-# las corredor-semanas: es un desbalance moderado (2,5 a 1) que vuelve engañosa la exactitud y obliga a
+# las corredor-semanas: es un desbalance moderado (2,6 a 1) que vuelve engañosa la exactitud y obliga a
 # reportar AUC, AUC-PR, F1 y recall.
 #
 # De los 170 municipios PDET, 122 tienen al menos un corredor regular hacia alguna central. En el
@@ -94,9 +94,10 @@ F.fig_mapa_origenes()
 # cundiboyacense, Antioquia, el Eje Cafetero y Nariño, que forman las burbujas más grandes. Los
 # municipios PDET (naranja) son numerosos en el Caribe, el Pacífico y el sur, pero sus burbujas son
 # pequeñas: aportan muchos corredores con poco volumen. Esa diferencia anticipa uno de los resultados
-# centrales del EDA, que los corredores pequeños son los que más se interrumpen. Amplias zonas de la
-# Orinoquía, la Amazonía y el Pacífico no tienen corredores regulares: el modelo no aprende nada sobre
-# ellas, una limitación de cobertura del SIPSA-A.
+# centrales del EDA, que los corredores pequeños son los que más se interrumpen. Hay 210 municipios sin
+# corredores regulares: en proporción, dos de cada tres municipios de la Amazonía y uno de cada cuatro del
+# Pacífico (sobre todo Chocó). El modelo no aprende nada sobre ellos, una limitación de cobertura del
+# SIPSA-A.
 
 # %%
 F.fig_toneladas_mercado(2024)
@@ -124,8 +125,9 @@ pd.DataFrame(K["ejemplos"])[["tipo", "origen", "depto", "central", "t_dia", "tas
 
 # %% [markdown]
 # **Interpretación.** Los dos corredores llegan a Bazurto (Cartagena) y se eligieron con reglas
-# explícitas sobre 2023-2024: el estable es el de mayor volumen (Tunja, 91 t/día) y el irregular, el
-# de mayor tasa de interrupción entre los que mueven al menos 5 t/día (Palmira, 7,4 t/día). El primero
+# explícitas sobre 2023-2024: el estable es el de mayor nivel de referencia (Tunja, 92 t/día en promedio
+# en la serie graficada) y el irregular, el de mayor tasa de interrupción entre los que tienen un nivel de
+# referencia de al menos 5 t/día (Palmira, 6,3 t/día en promedio). El primero
 # casi nunca cae por debajo del umbral (2,1 % de las semanas); el segundo se interrumpe en 39,5 % de
 # las semanas, con caídas a cero seguidas de recuperación. La figura muestra cómo funciona la
 # definición: cada cruz roja es una semana en que la carga quedó por debajo de la línea punteada (la

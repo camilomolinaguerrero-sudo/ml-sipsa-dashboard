@@ -200,18 +200,21 @@ def artefactos_contexto(panel, proyecto):
     # volumen; el irregular, el de mayor tasa de interrupción entre los que mueven al menos 5 t/día. Son flujos
     # grandes que agregan muchas cargas, de modo que no exponen la actividad de un productor individual.
     baz = panel[(panel["mercado"] == "Cartagena, Bazurto") & (panel["semana_t1"] >= "2023-01-01") & (panel["semana_t1"] <= mu.FIN_TRAIN)]
-    g = baz.groupby("cod_mpio").agg(t_dia=("base8", lambda x: x.mean() / 1e3), tasa=(Y, "mean"), n=(Y, "size"),
-                                    origen=("mpio_origen", "first"), depto=("depto_origen", "first"), pdet=("pdet_origen", "first"))
+    # t_ref: nivel de referencia (promedio móvil de 8 semanas), usado para elegir; t_dia: media de la serie graficada
+    g = baz.groupby("cod_mpio").agg(t_ref=("base8", lambda x: x.mean() / 1e3), t_dia=("tasa_t1", lambda x: x.mean() / 1e3),
+                                    tasa=(Y, "mean"), n=(Y, "size"), origen=("mpio_origen", "first"),
+                                    depto=("depto_origen", "first"), pdet=("pdet_origen", "first"))
     g = g[g["n"] >= 60]
-    estable = g["t_dia"].idxmax()
-    irregular = g[g["t_dia"] >= 5]["tasa"].idxmax()
+    estable = g["t_ref"].idxmax()
+    irregular = g[g["t_ref"] >= 5]["tasa"].idxmax()
     partes, ejemplos = [], []
     for tipo, cod in [("Estable", estable), ("Irregular", irregular)]:
         ej = baz[baz["cod_mpio"] == cod][["semana_t1", "tasa_t1", "base8", Y]].assign(umbral=lambda d: 0.5 * d["base8"], tipo=tipo, cod_mpio=cod)
         partes.append(ej)
         f = g.loc[cod]
         ejemplos.append({"tipo": tipo, "cod_mpio": cod, "origen": f["origen"], "depto": f["depto"], "pdet": int(f["pdet"]),
-                         "central": "Cartagena, Bazurto", "t_dia": float(f["t_dia"]), "tasa_interrupcion": float(f["tasa"]), "semanas": int(f["n"])})
+                         "central": "Cartagena, Bazurto", "t_dia": float(f["t_dia"]), "t_ref": float(f["t_ref"]),
+                         "tasa_interrupcion": float(f["tasa"]), "semanas": int(f["n"])})
     pd.concat(partes).to_parquet(DATA / "corredor_ejemplo.parquet", index=False)
     kpis["ejemplos"] = ejemplos
     print(f"  contexto: {time.time() - t0:.0f} s")
@@ -401,7 +404,7 @@ def artefactos_eda(train, test, proyecto):
         return float(((pa - pb) * np.log(pa / pb)).sum())
     ref = train[train["anio"] == 2019]
     deriva = []
-    for c in ["log_base8", "ratio_t", "cv8", "activas26", "n_envios8", "dist_km", "frac_caida_nacional_t"]:
+    for c in [c for c in mu.NUMERICAS if c not in ("sem_sin", "sem_cos")]:
         for a in range(2020, 2025):
             deriva.append({"variable": c, "anio": a, "psi": psi(ref[c].dropna().values, train.loc[train["anio"] == a, c].dropna().values)})
     pd.DataFrame(deriva).to_parquet(DATA / "deriva_psi.parquet", index=False)
