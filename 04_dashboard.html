@@ -1,0 +1,712 @@
+
+<!DOCTYPE html>
+
+
+<html lang="es" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>4. Desarrollo y despliegue del dashboard &#8212; Dashboard de interrupciones en corredores de abastecimiento</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="_static/documentation_options.js?v=78d55cf8"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Haz clic para mostrar';</script>
+    <script>let toggleHintHide = 'Haz clic para ocultar';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=b8b12719"></script>
+    <script src="_static/translations.js?v=d190bf04"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '04_dashboard';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Índice" href="genindex.html" />
+    <link rel="search" title="Búsqueda" href="search.html" />
+    <link rel="next" title="5. Conclusiones y limitaciones" href="05_conclusiones.html" />
+    <link rel="prev" title="3. Modelos base" href="03_modelos_base.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="es"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Saltar al contenido principal</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Volver arriba</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Advertencia de versión"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Navegación del sitio">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="En esta página">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Dashboard de interrupciones en corredores de abastecimiento</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Dashboard de interrupciones en corredores de abastecimiento de alimentos
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Informe del Entregable 2</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_contexto.html">1. Contexto del problema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_eda.html">2. Análisis exploratorio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_modelos_base.html">3. Modelos base</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">4. Desarrollo y despliegue del dashboard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_conclusiones.html">5. Conclusiones y limitaciones</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/camilomolinaguerrero-sudo/ml-sipsa-dashboard" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Repositorio de origen"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Descarga esta pagina">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/04_dashboard.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Descargar archivo fuente"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Imprimir en PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Modo de pantalla completa"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Tema" data-bs-title="Tema"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Claro"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Oscuro"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="Sistema"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>4. Desarrollo y despliegue del dashboard</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contenido </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#arquitectura">4.1 Arquitectura</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contenido-de-las-pestanas">4.2 Contenido de las pestañas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interactividad-callbacks">4.3 Interactividad: callbacks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#despliegue-en-render">4.4 Despliegue en Render</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducibilidad">4.5 Reproducibilidad</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="desarrollo-y-despliegue-del-dashboard">
+<h1>4. Desarrollo y despliegue del dashboard<a class="headerlink" href="#desarrollo-y-despliegue-del-dashboard" title="Link to this heading">#</a></h1>
+<p>Este capítulo documenta cómo se construyó el dashboard, qué hace cada pestaña y cómo se publicó en
+Render siguiendo la guía del curso
+(<a class="reference external" href="https://lihkir.github.io/DataVizPython/dash_dataviz.html#render-y-dash-tool">Render y Dash Tools</a> y el
+<a class="reference external" href="https://www.youtube.com/watch?v=XWJBJoV5yww">tutorial de Charming Data</a>).</p>
+<section id="arquitectura">
+<h2>4.1 Arquitectura<a class="headerlink" href="#arquitectura" title="Link to this heading">#</a></h2>
+<p>El dashboard no entrena modelos ni carga el panel completo de 744 mil filas. Un script previo calcula
+todo lo que se muestra y lo guarda en archivos pequeños; el dashboard y este libro leen esos mismos
+archivos y dibujan las figuras con las mismas funciones. Esa separación tiene tres ventajas: la app
+arranca en segundos, cabe en los 512 MB de memoria del plan gratuito de Render, y cada cifra que se
+interpreta en el libro es idéntica a la que aparece en pantalla.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>proyecto_sipsa/ (Entregable 1)               entregable2_dashboard/ (este repositorio)
+└── panel_corredores.parquet  ──►  scripts/preparar_artefactos.py
+                                        │  entrena logística y SVM lineal, valida, calcula EDA
+                                        ▼
+                                   data/  (parquet, json, joblib; ~10 MB)
+                                        │
+                     ┌──────────────────┴──────────────────┐
+                     ▼                                     ▼
+             src/figuras.py  ◄── funciones de figuras ──►  cuadernos/*.py → book/*.ipynb
+                     │
+                     ▼
+             src/app.py (Dash)  ──►  Render: cd src &amp;&amp; gunicorn app:server
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Archivo</p></th>
+<th class="head"><p>Función</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">scripts/preparar_artefactos.py</span></code></p></td>
+<td><p>Lee el panel del Entregable 1, reproduce la partición cronológica, entrena y valida los modelos, y precalcula agregados, estadísticos, curvas y predicciones de prueba</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">src/modelo_utils.py</span></code></p></td>
+<td><p>Variables, partición, <code class="docutils literal notranslate"><span class="pre">Winsorizador</span></code>, <code class="docutils literal notranslate"><span class="pre">BloquesTemporales</span></code> y preprocesador; lo importan el script, la app y el libro</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">src/figuras.py</span></code></p></td>
+<td><p>Todas las figuras de Plotly; una sola definición para el dashboard y el libro</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">src/app.py</span></code></p></td>
+<td><p>Aplicación Dash: diseño, pestañas y callbacks; expone <code class="docutils literal notranslate"><span class="pre">server</span> <span class="pre">=</span> <span class="pre">app.server</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">src/assets/estilo.css</span></code></p></td>
+<td><p>Estilo visual (Dash carga automáticamente la carpeta <code class="docutils literal notranslate"><span class="pre">assets/</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">data/</span></code></p></td>
+<td><p>Artefactos que consume la app</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">render.yaml</span></code>, <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code></p></td>
+<td><p>Configuración del despliegue en Render</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="contenido-de-las-pestanas">
+<h2>4.2 Contenido de las pestañas<a class="headerlink" href="#contenido-de-las-pestanas" title="Link to this heading">#</a></h2>
+<p><strong>1. Contexto del problema.</strong> Planteamiento, relación con la tesis, definición formal de la variable
+objetivo, indicadores de tamaño de los datos, mapa interactivo de los municipios de origen
+(diferenciando los PDET), toneladas recibidas por central con selector de año y un corredor de ejemplo
+que muestra cómo se marca una interrupción.</p>
+<p><strong>2. Análisis exploratorio.</strong> Cuatro subpestañas:</p>
+<ul class="simple">
+<li><p><em>Objetivo y tiempo</em>: serie semanal de la tasa de interrupción, desagregable por central, región,
+grupo de alimentos u origen PDET (selector de dimensión y de valores); estacionalidad mensual y
+efecto de festivos; ACF, PACF y autocorrelación dentro de cada corredor.</p></li>
+<li><p><em>Variables y relaciones</em>: para cualquier predictora numérica, su distribución por clase (escala
+original o logarítmica) y la tasa de interrupción por deciles, con un resumen numérico que se
+actualiza; tasa por categoría; tamaño del efecto o información mutua; matriz de correlación.</p></li>
+<li><p><em>Espacio</em>: mapa municipal con cuatro capas (tasa, clusters LISA, hotspots Gi* y variabilidad), con
+el I de Moran y la razón de Knox.</p></li>
+<li><p><em>Fuga de datos</em>: AUC univariado de todas las variables, con las variables de control que delatan la
+fuga, y la tabla de decisiones de la auditoría.</p></li>
+</ul>
+<p><strong>3. Modelos base.</strong> Selector de modelo (regresión logística o SVM lineal) y un deslizador de umbral
+que recalcula en vivo la matriz de confusión, las métricas y el número de alertas sobre las 103.466
+predicciones de 2025. Además: curvas ROC y PR con las líneas base, tabla de métricas con intervalos
+bootstrap, comparaciones de DeLong y McNemar, calibración, coeficientes, validación temporal y
+espacial, curva de aprendizaje, AUC por subgrupo y un simulador que calcula la probabilidad de
+interrupción de un corredor hipotético con el pipeline logístico entrenado.</p>
+</section>
+<section id="interactividad-callbacks">
+<h2>4.3 Interactividad: callbacks<a class="headerlink" href="#interactividad-callbacks" title="Link to this heading">#</a></h2>
+<p>Cada elemento interactivo es un <code class="docutils literal notranslate"><span class="pre">&#64;app.callback</span></code> que recibe el valor de un control (<code class="docutils literal notranslate"><span class="pre">Input</span></code>) y devuelve
+una figura o un bloque de texto (<code class="docutils literal notranslate"><span class="pre">Output</span></code>). Los principales:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Control</p></th>
+<th class="head"><p>Salida</p></th>
+<th class="head"><p>Cálculo</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Pestaña activa</p></td>
+<td><p>contenido</p></td>
+<td><p>construye solo la pestaña visible (<code class="docutils literal notranslate"><span class="pre">suppress_callback_exceptions=True</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Año (contexto)</p></td>
+<td><p>barras por central</p></td>
+<td><p>filtra <code class="docutils literal notranslate"><span class="pre">toneladas_mercado_anio</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Dimensión y valores (EDA)</p></td>
+<td><p>serie semanal</p></td>
+<td><p>agrega <code class="docutils literal notranslate"><span class="pre">serie_semanal</span></code> y suaviza con media móvil de 13 semanas</p></td>
+</tr>
+<tr class="row-odd"><td><p>Variable y escala (EDA)</p></td>
+<td><p>histograma, deciles y resumen</p></td>
+<td><p>usa la muestra estratificada y las tablas precalculadas</p></td>
+</tr>
+<tr class="row-even"><td><p>Capa del mapa (EDA)</p></td>
+<td><p>coropleta</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">choropleth_map</span></code> con el GeoJSON municipal</p></td>
+</tr>
+<tr class="row-odd"><td><p>Modelo y umbral</p></td>
+<td><p>indicadores, matriz, lectura</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">metricas_umbral</span></code> sobre las predicciones de prueba</p></td>
+</tr>
+<tr class="row-even"><td><p>Modelo y número de coeficientes</p></td>
+<td><p>coeficientes y validación cruzada</p></td>
+<td><p>lee los coeficientes y los resultados por pliegue</p></td>
+</tr>
+<tr class="row-odd"><td><p>Subgrupo</p></td>
+<td><p>AUC por subgrupo</p></td>
+<td><p>calcula el AUC por grupo con al menos 300 filas</p></td>
+</tr>
+<tr class="row-even"><td><p>Simulador</p></td>
+<td><p>probabilidad</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">predict_proba</span></code> del pipeline logístico serializado</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="despliegue-en-render">
+<h2>4.4 Despliegue en Render<a class="headerlink" href="#despliegue-en-render" title="Link to this heading">#</a></h2>
+<p>Se siguió el procedimiento del curso. La estructura que Render espera es la que genera Dash Tools:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ml-sipsa-dashboard/
+├── render.yaml          configuración del servicio (Blueprint)
+├── requirements.txt     dependencias con versiones exactas
+├── data/                artefactos
+└── src/
+    └── app.py           app = Dash(...); server = app.server
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p><strong>Comprobar la app en local</strong>: <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">src/app.py</span></code> y abrir <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:8050</span></code>.</p></li>
+<li><p><strong>Variable <code class="docutils literal notranslate"><span class="pre">server</span></code></strong>: Render ejecuta <code class="docutils literal notranslate"><span class="pre">gunicorn</span> <span class="pre">app:server</span></code>, por lo que <code class="docutils literal notranslate"><span class="pre">app.py</span></code> define
+<code class="docutils literal notranslate"><span class="pre">server</span> <span class="pre">=</span> <span class="pre">app.server</span></code> justo después de crear la aplicación.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code></strong>: versiones exactas, incluida <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code>, que debe coincidir con la versión
+con que se serializó el pipeline (si no, <code class="docutils literal notranslate"><span class="pre">joblib</span></code> puede fallar al cargarlo), y <code class="docutils literal notranslate"><span class="pre">gunicorn</span></code>.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">render.yaml</span></code></strong>: servicio web gratuito, <code class="docutils literal notranslate"><span class="pre">buildCommand:</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span></code>,
+<code class="docutils literal notranslate"><span class="pre">startCommand:</span> <span class="pre">cd</span> <span class="pre">src</span> <span class="pre">&amp;&amp;</span> <span class="pre">gunicorn</span> <span class="pre">app:server</span> <span class="pre">--workers</span> <span class="pre">1</span> <span class="pre">--timeout</span> <span class="pre">120</span></code> y la variable
+<code class="docutils literal notranslate"><span class="pre">PYTHON_VERSION</span></code>, que Render exige con la versión completa (por ejemplo <code class="docutils literal notranslate"><span class="pre">3.11.16</span></code>). Se usa un solo
+proceso de gunicorn porque el plan gratuito tiene 512 MB de memoria.</p></li>
+<li><p><strong>GitHub</strong>: el código se sube a un repositorio público.</p></li>
+<li><p><strong>Render</strong>: <em>New → Blueprint</em>, seleccionar el repositorio y <em>Apply</em>. Render instala las dependencias,
+arranca el servicio y asigna una URL <code class="docutils literal notranslate"><span class="pre">https://&lt;nombre&gt;.onrender.com</span></code>.</p></li>
+<li><p><strong>Actualizaciones</strong>: cada <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span></code> a <code class="docutils literal notranslate"><span class="pre">main</span></code> dispara un nuevo despliegue (o se usa <em>Deploy latest
+commit</em>).</p></li>
+</ol>
+<p>En el plan gratuito el servicio se suspende tras unos 15 minutos sin visitas; la primera carga
+posterior tarda alrededor de un minuto mientras se reactiva.</p>
+</section>
+<section id="reproducibilidad">
+<h2>4.5 Reproducibilidad<a class="headerlink" href="#reproducibilidad" title="Link to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3.11<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>~/.venvs/ml-sipsa-jb
+~/.venvs/ml-sipsa-jb/bin/pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements-dev.txt
+<span class="c1"># 1) artefactos (requiere el panel del Entregable 1)</span>
+~/.venvs/ml-sipsa-jb/bin/python<span class="w"> </span>scripts/preparar_artefactos.py<span class="w"> </span>--proyecto<span class="w"> </span><span class="s2">"../proyecto_sipsa"</span>
+<span class="c1"># 2) dashboard local</span>
+~/.venvs/ml-sipsa-jb/bin/python<span class="w"> </span>src/app.py
+<span class="c1"># 3) libro</span>
+<span class="k">for</span><span class="w"> </span>n<span class="w"> </span><span class="k">in</span><span class="w"> </span>01_contexto<span class="w"> </span>02_eda<span class="w"> </span>03_modelos_base<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span>~/.venvs/ml-sipsa-jb/bin/python<span class="w"> </span>scripts/py2nb.py<span class="w"> </span>cuadernos/<span class="nv">$n</span>.py<span class="w"> </span>book/<span class="nv">$n</span>.ipynb<span class="w"> </span>--ejecutar
+<span class="k">done</span>
+~/.venvs/ml-sipsa-jb/bin/jupyter-book<span class="w"> </span>build<span class="w"> </span>book/
+</pre></div>
+</div>
+<p>Semilla aleatoria global: <code class="docutils literal notranslate"><span class="pre">42</span></code>. Versión de Python: 3.11.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="03_modelos_base.html"
+       title="página anterior">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">anterior</p>
+        <p class="prev-next-title">3. Modelos base</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="05_conclusiones.html"
+       title="siguiente página">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">siguiente</p>
+        <p class="prev-next-title">5. Conclusiones y limitaciones</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contenido
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#arquitectura">4.1 Arquitectura</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contenido-de-las-pestanas">4.2 Contenido de las pestañas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interactividad-callbacks">4.3 Interactividad: callbacks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#despliegue-en-render">4.4 Despliegue en Render</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducibilidad">4.5 Reproducibilidad</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+Por Camilo Molina Guerrero y Lina Margarita Buelvas
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,920 @@
+
+<!DOCTYPE html>
+
+
+<html lang="es" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>1. Contexto del problema &#8212; Dashboard de interrupciones en corredores de abastecimiento</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="_static/documentation_options.js?v=78d55cf8"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Haz clic para mostrar';</script>
+    <script>let toggleHintHide = 'Haz clic para ocultar';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=b8b12719"></script>
+    <script src="_static/translations.js?v=d190bf04"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '01_contexto';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Índice" href="genindex.html" />
+    <link rel="search" title="Búsqueda" href="search.html" />
+    <link rel="next" title="2. Análisis exploratorio" href="02_eda.html" />
+    <link rel="prev" title="Dashboard de interrupciones en corredores de abastecimiento de alimentos" href="intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="es"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Saltar al contenido principal</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Volver arriba</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Advertencia de versión"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Navegación del sitio">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="En esta página">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Dashboard de interrupciones en corredores de abastecimiento</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Dashboard de interrupciones en corredores de abastecimiento de alimentos
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Informe del Entregable 2</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">1. Contexto del problema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_eda.html">2. Análisis exploratorio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_modelos_base.html">3. Modelos base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_dashboard.html">4. Desarrollo y despliegue del dashboard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_conclusiones.html">5. Conclusiones y limitaciones</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/camilomolinaguerrero-sudo/ml-sipsa-dashboard" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Repositorio de origen"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Descarga esta pagina">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/01_contexto.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Descargar archivo fuente"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Imprimir en PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Modo de pantalla completa"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Tema" data-bs-title="Tema"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Claro"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Oscuro"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="Sistema"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>1. Contexto del problema</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contenido </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#el-problema-y-su-relacion-con-la-tesis">1.1 El problema y su relación con la tesis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definicion-de-la-variable-objetivo">1.2 Definición de la variable objetivo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#donde-nacen-los-corredores">1.3 Dónde nacen los corredores</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dos-corredores-de-ejemplo">1.4 Dos corredores de ejemplo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detalles-que-no-aparecen-en-el-dashboard">1.5 Detalles que no aparecen en el dashboard</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="contexto-del-problema">
+<h1>1. Contexto del problema<a class="headerlink" href="#contexto-del-problema" title="Link to this heading">#</a></h1>
+<p>Este capítulo acompaña la pestaña <strong>1. Contexto del problema</strong> del dashboard. Reproduce cada figura
+de esa pestaña con las mismas funciones (<code class="docutils literal notranslate"><span class="pre">src/figuras.py</span></code>) y las mismas cifras (<code class="docutils literal notranslate"><span class="pre">data/</span></code>), las
+interpreta y añade los detalles que no caben en pantalla.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">"../src"</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.io</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pio</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">figuras</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+
+<span class="n">pio</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="s2">"notebook_connected"</span>
+<span class="n">R</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">resumen</span><span class="p">()</span>
+<span class="n">K</span> <span class="o">=</span> <span class="n">R</span><span class="p">[</span><span class="s2">"kpis"</span><span class="p">]</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">"display.float_format"</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s2">,.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="el-problema-y-su-relacion-con-la-tesis">
+<h2>1.1 El problema y su relación con la tesis<a class="headerlink" href="#el-problema-y-su-relacion-con-la-tesis" title="Link to this heading">#</a></h2>
+<p>La propuesta doctoral <em>Arquitectura de gobernanza para la gestión de proyectos de logística
+inteligente: optimización multicriterio basada en deep learning para la resiliencia alimentaria en
+territorios PDET y ZOMAC</em> necesita un componente que anticipe riesgos de desabastecimiento. Las
+centrales mayoristas concentran el flujo de alimentos hacia las ciudades y reciben carga de cientos
+de municipios. Cuando un <strong>corredor</strong> (municipio de origen → central) se interrumpe, la oferta de la
+ciudad se resiente y el municipio pierde su principal mercado.</p>
+<p><strong>Pregunta.</strong> Con la información disponible al cierre de una semana, ¿se puede anticipar qué
+corredores sufrirán una interrupción la semana siguiente?</p>
+<p>Un modelo que ordene bien ese riesgo permitiría a una secretaría de agricultura o a una central
+priorizar apoyo logístico (acopio, transporte, rutas alternas) antes de que la caída ocurra. Este
+entregable presenta la línea base de ese modelo en un dashboard interactivo.</p>
+</section>
+<section id="definicion-de-la-variable-objetivo">
+<h2>1.2 Definición de la variable objetivo<a class="headerlink" href="#definicion-de-la-variable-objetivo" title="Link to this heading">#</a></h2>
+<p>Para cada corredor <span class="math notranslate nohighlight">\(c\)</span> y semana <span class="math notranslate nohighlight">\(t\)</span>, sea <span class="math notranslate nohighlight">\(r_{c,t}\)</span> el abastecimiento en kilogramos dividido entre
+los días en que el DANE encuestó la central esa semana. La variable objetivo es</p>
+<div class="math notranslate nohighlight">
+\[
+y_{c,t+1}=\mathbb{1}\left[\,r_{c,t+1}&lt;0{,}5\cdot\bar r_{c,\,t-7:t}\,\right],
+\]</div>
+<p>donde <span class="math notranslate nohighlight">\(\bar r_{c,\,t-7:t}\)</span> es el promedio de las ocho semanas anteriores. Normalizar por días de
+encuesta evita confundir una semana con menos días de recolección con una caída real. Solo se
+evalúan <strong>corredores regulares</strong>: los que tuvieron carga en al menos 4 de las 8 semanas previas y
+cuya central fue encuestada en <span class="math notranslate nohighlight">\(t+1\)</span>. El panel resultante es un problema de <strong>clasificación binaria
+sobre un panel espacio-temporal</strong> (corredores × semanas, con coordenadas de origen y destino).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kpis</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">({</span>
+    <span class="s2">"Cargas registradas por el DANE (2018-2025)"</span><span class="p">:</span> <span class="n">K</span><span class="p">[</span><span class="s2">"registros_crudos"</span><span class="p">],</span>
+    <span class="s2">"Corredor-semanas en el panel"</span><span class="p">:</span> <span class="n">K</span><span class="p">[</span><span class="s2">"observaciones_panel"</span><span class="p">],</span>
+    <span class="s2">"Corredores"</span><span class="p">:</span> <span class="n">K</span><span class="p">[</span><span class="s2">"corredores"</span><span class="p">],</span>
+    <span class="s2">"Municipios de origen"</span><span class="p">:</span> <span class="n">K</span><span class="p">[</span><span class="s2">"municipios_origen"</span><span class="p">],</span>
+    <span class="s2">"Centrales mayoristas"</span><span class="p">:</span> <span class="n">K</span><span class="p">[</span><span class="s2">"centrales"</span><span class="p">],</span>
+    <span class="s2">"Semanas"</span><span class="p">:</span> <span class="n">K</span><span class="p">[</span><span class="s2">"semanas"</span><span class="p">],</span>
+    <span class="s2">"Filas de entrenamiento (semanas objetivo hasta 27/10/2024)"</span><span class="p">:</span> <span class="n">K</span><span class="p">[</span><span class="s2">"filas_train"</span><span class="p">],</span>
+    <span class="s2">"Filas de prueba (2025)"</span><span class="p">:</span> <span class="n">K</span><span class="p">[</span><span class="s2">"filas_test"</span><span class="p">],</span>
+    <span class="s2">"Municipios PDET oficiales"</span><span class="p">:</span> <span class="n">K</span><span class="p">[</span><span class="s2">"pdet_oficiales"</span><span class="p">],</span>
+    <span class="s2">"Municipios PDET con corredores regulares"</span><span class="p">:</span> <span class="n">K</span><span class="p">[</span><span class="s2">"pdet_en_sipsa"</span><span class="p">],</span>
+<span class="p">})</span>
+<span class="n">kpis</span><span class="o">.</span><span class="n">to_frame</span><span class="p">(</span><span class="s2">"valor"</span><span class="p">)</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">"</span><span class="si">{:,.0f}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style type="text/css">
+</style>
+<table id="T_4c313">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_4c313_level0_col0" class="col_heading level0 col0" >valor</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_4c313_level0_row0" class="row_heading level0 row0" >Cargas registradas por el DANE (2018-2025)</th>
+      <td id="T_4c313_row0_col0" class="data row0 col0" >15,493,054</td>
+    </tr>
+    <tr>
+      <th id="T_4c313_level0_row1" class="row_heading level0 row1" >Corredor-semanas en el panel</th>
+      <td id="T_4c313_row1_col0" class="data row1 col0" >744,921</td>
+    </tr>
+    <tr>
+      <th id="T_4c313_level0_row2" class="row_heading level0 row2" >Corredores</th>
+      <td id="T_4c313_row2_col0" class="data row2 col0" >4,512</td>
+    </tr>
+    <tr>
+      <th id="T_4c313_level0_row3" class="row_heading level0 row3" >Municipios de origen</th>
+      <td id="T_4c313_row3_col0" class="data row3 col0" >925</td>
+    </tr>
+    <tr>
+      <th id="T_4c313_level0_row4" class="row_heading level0 row4" >Centrales mayoristas</th>
+      <td id="T_4c313_row4_col0" class="data row4 col0" >32</td>
+    </tr>
+    <tr>
+      <th id="T_4c313_level0_row5" class="row_heading level0 row5" >Semanas</th>
+      <td id="T_4c313_row5_col0" class="data row5 col0" >414</td>
+    </tr>
+    <tr>
+      <th id="T_4c313_level0_row6" class="row_heading level0 row6" >Filas de entrenamiento (semanas objetivo hasta 27/10/2024)</th>
+      <td id="T_4c313_row6_col0" class="data row6 col0" >622,244</td>
+    </tr>
+    <tr>
+      <th id="T_4c313_level0_row7" class="row_heading level0 row7" >Filas de prueba (2025)</th>
+      <td id="T_4c313_row7_col0" class="data row7 col0" >103,466</td>
+    </tr>
+    <tr>
+      <th id="T_4c313_level0_row8" class="row_heading level0 row8" >Municipios PDET oficiales</th>
+      <td id="T_4c313_row8_col0" class="data row8 col0" >170</td>
+    </tr>
+    <tr>
+      <th id="T_4c313_level0_row9" class="row_heading level0 row9" >Municipios PDET con corredores regulares</th>
+      <td id="T_4c313_row9_col0" class="data row9 col0" >122</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Tasa de interrupción: total </span><span class="si">{</span><span class="n">K</span><span class="p">[</span><span class="s1">'tasa_total'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">; entrenamiento </span><span class="si">{</span><span class="n">K</span><span class="p">[</span><span class="s1">'tasa_train'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">; prueba </span><span class="si">{</span><span class="n">K</span><span class="p">[</span><span class="s1">'tasa_test'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Tasa de interrupción: total 0.279; entrenamiento 0.282; prueba 0.260
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Interpretación de los indicadores.</strong> Las 15,5 millones de cargas se agregan en 744.921
+corredor-semanas de 4.512 corredores. Esas filas no son independientes: un mismo corredor aparece
+muchas semanas y los corredores vecinos se parecen, de modo que el tamaño efectivo de la muestra
+está entre el número de corredores y el de filas. Por eso la validación y los intervalos de
+confianza se construyen por bloques de semanas (capítulo 3). La interrupción ocurre en 27,9 % de
+las corredor-semanas: es un desbalance moderado (2,5 a 1) que vuelve engañosa la exactitud y obliga a
+reportar AUC, AUC-PR, F1 y recall.</p>
+<p>De los 170 municipios PDET, 122 tienen al menos un corredor regular hacia alguna central. En el
+Entregable 1 se reportó que 160 aparecen alguna vez como origen; la diferencia son los municipios
+que envían carga de forma esporádica y nunca alcanzan la regularidad que exige la población en riesgo.</p>
+</section>
+<section id="donde-nacen-los-corredores">
+<h2>1.3 Dónde nacen los corredores<a class="headerlink" href="#donde-nacen-los-corredores" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">F</span><span class="o">.</span><span class="n">fig_mapa_origenes</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">        <script>
+        window.PlotlyConfig = {MathJaxConfig: 'local'};
+        if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}
+        </script>
+        <script type="module">import "https://cdn.plot.ly/plotly-4.1.1.min"</script>
+        </div><div class="output text_html"><div style="height:540px; width:100%;">            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script><script>if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-4.1.1.min.js" integrity="sha256-O24V1F27f8pb0glCkelh3cVHLNiHAJ5gCaVtq2aNch8=" crossorigin="anonymous"></script>                <div id="28ac7ccb-ba63-41dc-89f0-96189189da04" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("28ac7ccb-ba63-41dc-89f0-96189189da04")) {                    Plotly.newPlot(                        "28ac7ccb-ba63-41dc-89f0-96189189da04",                        [{"customdata":[["ANTIOQUIA",288.5,28,6.246631,-75.581775,"Otro municipio"],["ANTIOQUIA",8.9,3,5.789315,-75.428739,"Otro municipio"],["ANTIOQUIA",0.1,1,6.632282,-76.064304,"Otro municipio"],["ANTIOQUIA",2.1,3,6.038708,-75.702188,"Otro municipio"],["ANTIOQUIA",37.4,4,5.657194,-75.878828,"Otro municipio"],["ANTIOQUIA",0.1,1,6.109719,-75.711389,"Otro municipio"],["ANTIOQUIA",3.5,2,6.885175,-75.335116,"Otro municipio"],["ANTIOQUIA",0.2,2,6.556484,-75.826648,"Otro municipio"],["ANTIOQUIA",6.0,2,6.302641,-75.854442,"Otro municipio"],["ANTIOQUIA",11.0,2,8.849317,-76.426708,"Otro municipio"],["ANTIOQUIA",0.0,1,6.155667,-75.786647,"Otro municipio"],["ANTIOQUIA",8.4,2,6.439195,-75.331627,"Otro municipio"],["ANTIOQUIA",0.2,1,6.606319,-75.667779,"Otro municipio"],["ANTIOQUIA",13.7,3,6.333587,-75.555245,"Otro municipio"],["ANTIOQUIA",0.9,2,5.74615,-75.97679,"Otro municipio"],["ANTIOQUIA",3.4,2,6.115208,-75.984452,"Otro municipio"],["ANTIOQUIA",0.7,2,5.850273,-76.021509,"Otro municipio"],["ANTIOQUIA",0.2,2,6.405607,-75.98293,"Otro municipio"],["ANTIOQUIA",2.0,2,6.091077,-75.633673,"Otro municipio"],["ANTIOQUIA",5.4,5,6.979771,-75.298091,"Otro municipio"],["ANTIOQUIA",4.1,2,6.753859,-76.028228,"Otro municipio"],["ANTIOQUIA",0.1,1,6.409829,-74.757421,"Otro municipio"],["ANTIOQUIA",1.1,2,5.54853,-75.643868,"Otro municipio"],["ANTIOQUIA",25.7,2,6.082885,-75.333901,"Otro municipio"],["ANTIOQUIA",1.7,1,6.725995,-75.283192,"Otro municipio"],["ANTIOQUIA",2.4,2,6.537829,-75.087047,"Otro municipio"],["ANTIOQUIA",2.4,2,6.058295,-75.185483,"Otro municipio"],["ANTIOQUIA",1.8,3,6.394348,-75.257587,"Otro municipio"],["ANTIOQUIA",1.5,2,6.045738,-75.908448,"Otro municipio"],["ANTIOQUIA",2.3,2,6.348557,-75.509384,"Otro municipio"],["ANTIOQUIA",1.4,5,6.485603,-75.39263,"Otro municipio"],["ANTIOQUIA",0.2,1,6.325615,-75.766413,"Otro municipio"],["ANTIOQUIA",7.7,5,6.566273,-75.517685,"Otro municipio"],["ANTIOQUIA",1.1,2,6.166695,-75.582192,"Otro municipio"],["ANTIOQUIA",13.2,3,5.928039,-75.675072,"Otro municipio"],["ANTIOQUIA",0.3,2,6.776066,-76.130765,"Otro municipio"],["ANTIOQUIA",6.9,5,6.379472,-75.444238,"Otro municipio"],["ANTIOQUIA",1.4,2,6.142892,-75.184446,"Otro municipio"],["ANTIOQUIA",0.9,1,6.815069,-75.239862,"Otro municipio"],["ANTIOQUIA",45.6,3,6.27787,-75.441612,"Otro municipio"],["ANTIOQUIA",1.3,2,5.799461,-75.906587,"Otro municipio"],["ANTIOQUIA",27.8,9,6.175079,-75.612056,"Otro municipio"],["ANTIOQUIA",31.1,7,5.597542,-75.818982,"Otro municipio"],["ANTIOQUIA",4.9,1,5.789748,-75.785499,"Otro municipio"],["ANTIOQUIA",4.7,3,6.028062,-75.429433,"Otro municipio"],["ANTIOQUIA",0.9,2,6.145238,-75.637708,"Otro municipio"],["ANTIOQUIA",42.9,15,5.743808,-75.60781,"Otro municipio"],["ANTIOQUIA",131.1,7,5.973845,-75.360874,"Otro municipio"],["ANTIOQUIA",3.4,1,6.677316,-75.812838,"Otro municipio"],["ANTIOQUIA",0.2,2,6.552116,-74.78716,"Otro municipio"],["ANTIOQUIA",223.6,13,6.173995,-75.339345,"Otro municipio"],["ANTIOQUIA",3.9,2,5.946313,-75.523455,"Otro municipio"],["ANTIOQUIA",0.0,2,5.610777,-75.176262,"Otro municipio"],["ANTIOQUIA",0.0,1,6.626492,-75.811773,"Otro municipio"],["ANTIOQUIA",37.7,6,6.219349,-75.242693,"Otro municipio"],["ANTIOQUIA",0.1,1,7.021029,-75.910357,"Otro municipio"],["ANTIOQUIA",5.8,2,5.79158,-75.839903,"Otro municipio"],["ANTIOQUIA",1.1,6,6.487028,-74.410016,"Otro municipio"],["ANTIOQUIA",0.1,1,6.186025,-74.583012,"Otro municipio"],["ANTIOQUIA",0.0,2,5.871318,-74.64119,"Otro municipio"],["ANTIOQUIA",0.2,1,6.062454,-75.501301,"Otro municipio"],["ANTIOQUIA",7.6,7,6.147148,-75.377316,"Otro municipio"],["ANTIOQUIA",0.0,1,6.850028,-75.816645,"Otro municipio"],["ANTIOQUIA",1.1,2,6.149903,-75.615479,"Otro municipio"],["ANTIOQUIA",4.0,3,5.964198,-75.976807,"Otro municipio"],["ANTIOQUIA",0.0,1,6.916676,-75.674564,"Otro municipio"],["ANTIOQUIA",2.5,2,6.44809,-75.726975,"Otro municipio"],["ANTIOQUIA",0.0,1,6.85009,-75.683352,"Otro municipio"],["ANTIOQUIA",111.6,18,8.758964,-76.52857,"Otro municipio"],["ANTIOQUIA",80.5,4,6.46012,-75.556743,"Otro municipio"],["ANTIOQUIA",6.7,2,6.485939,-75.019109,"Otro municipio"],["ANTIOQUIA",38.9,5,6.282164,-75.332616,"Otro municipio"],["ANTIOQUIA",7.6,2,5.875527,-75.567351,"Otro municipio"],["ANTIOQUIA",100.1,18,6.643366,-75.460723,"Otro municipio"],["ANTIOQUIA",0.7,2,6.473032,-75.164903,"Otro municipio"],["ANTIOQUIA",231.5,9,6.136871,-75.265465,"Otro municipio"],["ANTIOQUIA",92.9,8,5.714851,-75.309596,"Otro municipio"],["ANTIOQUIA",10.9,3,6.500745,-75.747378,"Otro municipio"],["ANTIOQUIA",10.0,4,5.664645,-75.714429,"Otro municipio"],["ANTIOQUIA",2.2,2,5.864542,-75.822956,"Otro municipio"],["ANTIOQUIA",0.0,2,6.062391,-75.791887,"Otro municipio"],["ANTIOQUIA",1.0,2,6.898393,-76.173284,"Otro municipio"],["ANTIOQUIA",43.7,7,6.317343,-76.133951,"Otro municipio"],["ANTIOQUIA",4.2,2,5.614555,-75.624452,"Otro municipio"],["ANTIOQUIA",0.6,2,6.773525,-74.798714,"Otro municipio"],["ANTIOQUIA",12.6,7,5.964693,-75.735544,"Otro municipio"],["ANTIOQUIA",2.2,2,6.676554,-74.840059,"Otro municipio"],["ANTIOQUIA",4.3,12,6.963832,-75.418828,"Otro municipio"],["ANTIOQUIA",9.8,2,6.594511,-75.013385,"Otro municipio"],["ATL\u00c1NTICO",216.4,18,10.977961,-74.815546,"Otro municipio"],["ATL\u00c1NTICO",4.0,7,10.79445,-74.916077,"Otro municipio"],["ATL\u00c1NTICO",1.6,2,10.378291,-74.880847,"Otro municipio"],["ATL\u00c1NTICO",0.0,1,10.461903,-74.879717,"Otro municipio"],["ATL\u00c1NTICO",3.9,5,10.919033,-74.870385,"Otro municipio"],["ATL\u00c1NTICO",4.8,3,10.610491,-75.14199,"Otro municipio"],["ATL\u00c1NTICO",19.8,7,10.857086,-74.776923,"Otro municipio"],["ATL\u00c1NTICO",0.0,1,10.449089,-74.956867,"Otro municipio"],["ATL\u00c1NTICO",2.2,1,10.738591,-74.754765,"Otro municipio"],["ATL\u00c1NTICO",0.4,2,10.777363,-74.852981,"Otro municipio"],["ATL\u00c1NTICO",5.6,3,10.641779,-74.753885,"Otro municipio"],["ATL\u00c1NTICO",0.4,3,11.015322,-74.888627,"Otro municipio"],["ATL\u00c1NTICO",7.7,3,10.493357,-75.125534,"Otro municipio"],["ATL\u00c1NTICO",0.5,2,10.792453,-74.759496,"Otro municipio"],["ATL\u00c1NTICO",2.9,4,10.632091,-74.921256,"Otro municipio"],["ATL\u00c1NTICO",0.1,1,10.324303,-74.959204,"Otro municipio"],["ATL\u00c1NTICO",0.2,3,10.758735,-74.757859,"Otro municipio"],["ATL\u00c1NTICO",16.3,6,10.909921,-74.786054,"Otro municipio"],["ATL\u00c1NTICO",0.1,1,10.335432,-74.881687,"Otro municipio"],["ATL\u00c1NTICO",0.0,1,10.74298,-74.976985,"Otro municipio"],["BOGOT\u00c1, D.C.",794.0,30,4.649251,-74.106992,"Otro municipio"],["BOL\u00cdVAR",10.9,11,10.385126,-75.496269,"Otro municipio"],["BOL\u00cdVAR",0.0,1,8.570107,-74.557676,"Otro municipio"],["BOL\u00cdVAR",9.5,4,10.25666,-75.344332,"Otro municipio"],["BOL\u00cdVAR",0.0,1,10.250075,-75.019215,"Otro municipio"],["BOL\u00cdVAR",1.8,1,10.250431,-74.916144,"Otro municipio"],["BOL\u00cdVAR",3.0,2,10.567452,-75.328469,"Otro municipio"],["BOL\u00cdVAR",0.0,1,8.956014,-74.077912,"Otro municipio"],["BOL\u00cdVAR",30.4,12,9.263799,-74.766742,"Otro municipio"],["BOL\u00cdVAR",1.1,1,10.233285,-75.191643,"Otro municipio"],["BOL\u00cdVAR",0.5,1,9.15784,-74.285137,"Otro municipio"],["BOL\u00cdVAR",2.0,6,9.244241,-74.42818,"Otro municipio"],["BOL\u00cdVAR",0.0,1,10.398602,-75.153101,"Otro municipio"],["BOL\u00cdVAR",0.1,1,9.214183,-74.323811,"Otro municipio"],["BOL\u00cdVAR",0.1,1,10.605294,-75.287855,"Otro municipio"],["BOL\u00cdVAR",4.5,2,10.444396,-75.369824,"Otro municipio"],["BOL\u00cdVAR",1.8,1,10.348316,-75.427249,"Otro municipio"],["BOL\u00cdVAR",1.9,2,10.444089,-75.275613,"Otro municipio"],["BOYAC\u00c1",606.2,29,5.53988,-73.355539,"Otro municipio"],["BOYAC\u00c1",2.1,1,4.970857,-73.378933,"Otro municipio"],["BOYAC\u00c1",334.6,16,5.518602,-72.88399,"Otro municipio"],["BOYAC\u00c1",4.7,5,5.755673,-73.437503,"Otro municipio"],["BOYAC\u00c1",21.4,5,5.98923,-72.911641,"Otro municipio"],["BOYAC\u00c1",0.7,1,5.227451,-73.12721,"Otro municipio"],["BOYAC\u00c1",0.1,2,6.330703,-72.584905,"Otro municipio"],["BOYAC\u00c1",4.2,7,5.454578,-73.361945,"Otro municipio"],["BOYAC\u00c1",2.1,3,5.690879,-73.92326,"Otro municipio"],["BOYAC\u00c1",6.2,4,5.512594,-73.94217,"Otro municipio"],["BOYAC\u00c1",0.0,2,5.167486,-73.368476,"Otro municipio"],["BOYAC\u00c1",25.5,6,5.61379,-73.818745,"Otro municipio"],["BOYAC\u00c1",0.9,1,6.553136,-72.500957,"Otro municipio"],["BOYAC\u00c1",4.6,3,6.187083,-72.471892,"Otro municipio"],["BOYAC\u00c1",0.0,2,6.027425,-73.4471,"Otro municipio"],["BOYAC\u00c1",0.9,2,5.558949,-73.282529,"Otro municipio"],["BOYAC\u00c1",32.8,3,5.408694,-73.296049,"Otro municipio"],["BOYAC\u00c1",6.9,4,5.634545,-73.323957,"Otro municipio"],["BOYAC\u00c1",3.0,3,5.475074,-74.045636,"Otro municipio"],["BOYAC\u00c1",0.1,3,5.828064,-72.844795,"Otro municipio"],["BOYAC\u00c1",5.6,4,6.500177,-72.738978,"Otro municipio"],["BOYAC\u00c1",23.0,5,5.544452,-73.454338,"Otro municipio"],["BOYAC\u00c1",0.1,1,5.580367,-72.965923,"Otro municipio"],["BOYAC\u00c1",5.9,3,5.639834,-73.449463,"Otro municipio"],["BOYAC\u00c1",49.4,14,5.822964,-73.03063,"Otro municipio"],["BOYAC\u00c1",0.0,3,6.407738,-72.444537,"Otro municipio"],["BOYAC\u00c1",3.9,2,6.483027,-72.497007,"Otro municipio"],["BOYAC\u00c1",0.0,3,5.668885,-72.993392,"Otro municipio"],["BOYAC\u00c1",0.0,1,5.859519,-72.918111,"Otro municipio"],["BOYAC\u00c1",0.2,1,5.751891,-73.549092,"Otro municipio"],["BOYAC\u00c1",1.2,2,5.802333,-72.80553,"Otro municipio"],["BOYAC\u00c1",4.1,4,5.083234,-73.364413,"Otro municipio"],["BOYAC\u00c1",0.0,1,6.459667,-72.500812,"Otro municipio"],["BOYAC\u00c1",12.0,5,5.007321,-73.471207,"Otro municipio"],["BOYAC\u00c1",0.3,1,4.967122,-73.489698,"Otro municipio"],["BOYAC\u00c1",0.3,3,6.462864,-72.411763,"Otro municipio"],["BOYAC\u00c1",8.9,8,5.385813,-73.363738,"Otro municipio"],["BOYAC\u00c1",3.4,1,6.145735,-72.571122,"Otro municipio"],["BOYAC\u00c1",8.0,4,5.095687,-73.444347,"Otro municipio"],["BOYAC\u00c1",61.4,7,5.632455,-73.524948,"Otro municipio"],["BOYAC\u00c1",0.2,1,4.972464,-73.319593,"Otro municipio"],["BOYAC\u00c1",0.0,1,5.550091,-74.00405,"Otro municipio"],["BOYAC\u00c1",12.5,3,5.196515,-73.14563,"Otro municipio"],["BOYAC\u00c1",0.0,1,5.754242,-72.79809,"Otro municipio"],["BOYAC\u00c1",0.0,1,5.723486,-72.849292,"Otro municipio"],["BOYAC\u00c1",2.5,6,5.876331,-73.573374,"Otro municipio"],["BOYAC\u00c1",1.2,1,5.5777,-73.367841,"Otro municipio"],["BOYAC\u00c1",0.2,4,5.532758,-74.10269,"Otro municipio"],["BOYAC\u00c1",5.3,3,5.768046,-72.937042,"Otro municipio"],["BOYAC\u00c1",35.1,13,5.355317,-73.456759,"Otro municipio"],["BOYAC\u00c1",0.7,2,5.595235,-73.308399,"Otro municipio"],["BOYAC\u00c1",1.1,1,5.140065,-73.396953,"Otro municipio"],["BOYAC\u00c1",0.1,3,5.097319,-73.052737,"Otro municipio"],["BOYAC\u00c1",9.7,6,5.779894,-73.11782,"Otro municipio"],["BOYAC\u00c1",0.2,3,6.443416,-72.459424,"Otro municipio"],["BOYAC\u00c1",1.3,3,5.656323,-73.978449,"Otro municipio"],["BOYAC\u00c1",0.2,1,5.987645,-72.749137,"Otro municipio"],["BOYAC\u00c1",9.6,4,5.558808,-73.050872,"Otro municipio"],["BOYAC\u00c1",1.1,6,5.976646,-74.587782,"Otro municipio"],["BOYAC\u00c1",0.0,1,5.52055,-74.180033,"Otro municipio"],["BOYAC\u00c1",38.9,5,5.400303,-73.334839,"Otro municipio"],["BOYAC\u00c1",3.2,5,5.539136,-73.632543,"Otro municipio"],["BOYAC\u00c1",0.1,4,5.357378,-73.208474,"Otro municipio"],["BOYAC\u00c1",7.6,5,5.697756,-73.764456,"Otro municipio"],["BOYAC\u00c1",152.5,11,5.584305,-73.542539,"Otro municipio"],["BOYAC\u00c1",93.0,13,5.492161,-73.485589,"Otro municipio"],["BOYAC\u00c1",0.0,1,5.22401,-73.077747,"Otro municipio"],["BOYAC\u00c1",5.9,8,6.056866,-73.481639,"Otro municipio"],["BOYAC\u00c1",0.0,2,4.857193,-73.263518,"Otro municipio"],["BOYAC\u00c1",4.3,3,5.874547,-72.982461,"Otro municipio"],["BOYAC\u00c1",39.9,6,5.713269,-73.602707,"Otro municipio"],["BOYAC\u00c1",68.7,3,5.511811,-73.24466,"Otro municipio"],["BOYAC\u00c1",0.8,4,6.331945,-72.684051,"Otro municipio"],["BOYAC\u00c1",0.0,1,6.041162,-72.636653,"Otro municipio"],["BOYAC\u00c1",188.2,16,5.723976,-72.924355,"Otro municipio"],["BOYAC\u00c1",0.0,3,4.985726,-73.433393,"Otro municipio"],["BOYAC\u00c1",3.6,2,5.56684,-73.450153,"Otro municipio"],["BOYAC\u00c1",2.0,4,5.764986,-73.246585,"Otro municipio"],["BOYAC\u00c1",20.4,2,5.500898,-73.332804,"Otro municipio"],["BOYAC\u00c1",0.1,1,6.230332,-72.690289,"Otro municipio"],["BOYAC\u00c1",90.5,7,5.619781,-73.620536,"Otro municipio"],["BOYAC\u00c1",0.0,2,5.022989,-73.452317,"Otro municipio"],["BOYAC\u00c1",6.1,2,5.076781,-73.421176,"Otro municipio"],["BOYAC\u00c1",51.9,4,5.317251,-73.396457,"Otro municipio"],["BOYAC\u00c1",5.7,4,5.74723,-72.999449,"Otro municipio"],["BOYAC\u00c1",7.9,3,5.579713,-73.646847,"Otro municipio"],["BOYAC\u00c1",2.8,5,6.419203,-72.691729,"Otro municipio"],["BOYAC\u00c1",81.4,6,5.566464,-73.184794,"Otro municipio"],["BOYAC\u00c1",6.6,8,5.560497,-72.985898,"Otro municipio"],["BOYAC\u00c1",2.6,5,5.730582,-73.933155,"Otro municipio"],["BOYAC\u00c1",7.6,4,5.323261,-73.491825,"Otro municipio"],["BOYAC\u00c1",3.5,4,5.689082,-73.230285,"Otro municipio"],["BOYAC\u00c1",5.3,2,6.032608,-72.856035,"Otro municipio"],["BOYAC\u00c1",4.5,6,5.221176,-73.456917,"Otro municipio"],["BOYAC\u00c1",46.0,14,5.368739,-73.522368,"Otro municipio"],["BOYAC\u00c1",16.3,1,5.436833,-73.296894,"Otro municipio"],["BOYAC\u00c1",0.3,2,5.283443,-73.17098,"Otro municipio"],["CALDAS",98.0,22,5.057657,-75.491025,"Otro municipio"],["CALDAS",41.1,6,5.610244,-75.45487,"Otro municipio"],["CALDAS",29.0,9,5.236471,-75.784343,"Otro municipio"],["CALDAS",1.5,4,5.271195,-75.49129,"Otro municipio"],["CALDAS",13.6,9,4.993785,-75.811918,"Otro municipio"],["CALDAS",77.9,11,4.985227,-75.607529,"Otro municipio"],["CALDAS",3.6,3,5.297091,-75.562474,"Otro municipio"],["CALDAS",3.9,6,5.460834,-74.668819,"Otro municipio"],["CALDAS",3.9,3,5.39647,-75.546486,"Otro municipio"],["CALDAS",0.1,2,5.255699,-75.152829,"Otro municipio"],["CALDAS",1.4,1,5.47422,-75.600049,"Otro municipio"],["CALDAS",2.3,2,5.297525,-75.053097,"Otro municipio"],["CALDAS",10.7,2,5.166895,-75.520006,"Otro municipio"],["CALDAS",2.5,4,5.574796,-74.889543,"Otro municipio"],["CALDAS",10.1,5,5.527172,-75.459621,"Otro municipio"],["CALDAS",40.9,6,5.017879,-75.624577,"Otro municipio"],["CALDAS",0.1,3,5.383281,-75.160299,"Otro municipio"],["CALDAS",6.4,3,5.423673,-75.702104,"Otro municipio"],["CALDAS",9.6,5,5.164509,-75.76722,"Otro municipio"],["CALDAS",3.5,2,5.403025,-75.487223,"Otro municipio"],["CALDAS",0.1,2,5.41308,-74.992263,"Otro municipio"],["CALDAS",0.2,4,5.08231,-75.792063,"Otro municipio"],["CALDAS",8.6,4,5.446843,-75.64966,"Otro municipio"],["CALDAS",0.7,1,5.317437,-74.911239,"Otro municipio"],["CALDAS",7.5,1,5.038925,-75.502487,"Otro municipio"],["CALDAS",21.4,7,5.062664,-75.87061,"Otro municipio"],["CAUCA",47.6,10,2.459641,-76.599377,"Otro municipio"],["CAUCA",0.2,1,1.913429,-76.85607,"Otro municipio"],["CAUCA",0.1,1,1.837538,-76.966215,"Otro municipio"],["CAUCA",5.2,4,3.134153,-76.392189,"Otro municipio"],["CAUCA",0.3,2,2.549183,-76.063503,"Otro municipio"],["CAUCA",0.1,1,2.179383,-76.763278,"Otro municipio"],["CAUCA",0.1,1,2.001803,-76.778771,"Otro municipio"],["CAUCA",1.8,3,3.220984,-76.313265,"Otro municipio"],["CAUCA",0.0,2,2.645724,-75.970685,"Otro municipio"],["CAUCA",3.2,4,3.233254,-76.417673,"Otro municipio"],["CAUCA",54.2,3,2.341507,-76.496698,"Otro municipio"],["CAUCA",0.0,1,2.260941,-76.740336,"Otro municipio"],["CAUCA",8.8,1,1.838451,-76.769467,"Otro municipio"],["CAUCA",5.0,3,2.611927,-76.379753,"Otro municipio"],["CAUCA",7.0,3,2.253156,-76.613365,"Otro municipio"],["CAUCA",0.0,1,2.038237,-76.926279,"Otro municipio"],["CAUCA",2.5,3,2.349686,-76.684476,"Otro municipio"],["CAUCA",89.3,4,2.510252,-76.403628,"Otro municipio"],["CAUCA",0.3,4,3.17762,-76.458025,"Otro municipio"],["CESAR",29.6,9,8.306811,-73.614027,"Otro municipio"],["CESAR",0.8,5,9.498062,-73.975842,"Otro municipio"],["CESAR",0.1,2,9.975098,-73.888761,"Otro municipio"],["CESAR",4.0,5,9.25875,-73.813278,"Otro municipio"],["CESAR",0.3,4,9.361058,-73.599913,"Otro municipio"],["CESAR",3.6,13,9.201716,-73.540843,"Otro municipio"],["CESAR",0.9,5,10.149883,-73.962703,"Otro municipio"],["CESAR",1.2,5,9.668461,-73.742012,"Otro municipio"],["CESAR",0.7,6,8.324793,-73.737558,"Otro municipio"],["CESAR",0.2,3,8.619298,-73.80321,"Otro municipio"],["CESAR",0.3,4,8.959399,-73.625825,"Otro municipio"],["CESAR",2.3,5,8.689451,-73.666735,"Otro municipio"],["CESAR",0.0,1,8.292292,-73.386393,"Otro municipio"],["CESAR",6.7,2,7.76111,-73.393889,"Otro municipio"],["CESAR",2.1,3,7.999855,-73.510914,"Otro municipio"],["C\u00d3RDOBA",34.4,18,8.759789,-75.873096,"Otro municipio"],["C\u00d3RDOBA",10.3,7,8.313838,-75.146048,"Otro municipio"],["C\u00d3RDOBA",3.8,6,8.221187,-75.480897,"Otro municipio"],["C\u00d3RDOBA",19.2,3,8.786939,-76.241476,"Otro municipio"],["C\u00d3RDOBA",56.3,16,8.888532,-75.796093,"Otro municipio"],["C\u00d3RDOBA",0.1,1,9.149698,-75.626886,"Otro municipio"],["C\u00d3RDOBA",1.5,5,9.105473,-75.399633,"Otro municipio"],["C\u00d3RDOBA",0.5,3,8.875794,-75.620807,"Otro municipio"],["C\u00d3RDOBA",1.5,5,9.037163,-75.799216,"Otro municipio"],["C\u00d3RDOBA",2.3,4,8.050125,-75.336031,"Otro municipio"],["C\u00d3RDOBA",40.1,10,9.240789,-75.816084,"Otro municipio"],["C\u00d3RDOBA",14.0,6,8.892098,-76.35518,"Otro municipio"],["C\u00d3RDOBA",0.0,1,9.240707,-75.67796,"Otro municipio"],["C\u00d3RDOBA",92.4,11,9.245223,-76.1291,"Otro municipio"],["C\u00d3RDOBA",1.9,8,8.4082,-75.583241,"Otro municipio"],["C\u00d3RDOBA",1.2,4,8.504099,-75.508035,"Otro municipio"],["C\u00d3RDOBA",17.4,7,9.005372,-76.260411,"Otro municipio"],["C\u00d3RDOBA",0.0,1,9.239295,-75.724987,"Otro municipio"],["C\u00d3RDOBA",1.9,7,8.943048,-75.445834,"Otro municipio"],["C\u00d3RDOBA",0.0,2,9.145448,-75.50879,"Otro municipio"],["C\u00d3RDOBA",0.3,3,9.376434,-75.76112,"Otro municipio"],["C\u00d3RDOBA",1.0,4,9.35247,-75.955107,"Otro municipio"],["C\u00d3RDOBA",0.2,2,8.799282,-75.698799,"Otro municipio"],["C\u00d3RDOBA",0.3,1,8.958436,-75.835615,"Otro municipio"],["C\u00d3RDOBA",0.3,2,9.186625,-75.553962,"Otro municipio"],["CUNDINAMARCA",0.4,2,4.375309,-74.669221,"Otro municipio"],["CUNDINAMARCA",0.4,1,4.878022,-74.438261,"Otro municipio"],["CUNDINAMARCA",16.0,14,4.562737,-74.528676,"Otro municipio"],["CUNDINAMARCA",30.4,6,4.7617,-74.46384,"Otro municipio"],["CUNDINAMARCA",6.7,2,4.272534,-74.414901,"Otro municipio"],["CUNDINAMARCA",0.1,1,4.872171,-74.539609,"Otro municipio"],["CUNDINAMARCA",19.2,5,4.737205,-74.344594,"Otro municipio"],["CUNDINAMARCA",31.1,11,3.985164,-74.484549,"Otro municipio"],["CUNDINAMARCA",3.8,2,4.730957,-74.435711,"Otro municipio"],["CUNDINAMARCA",37.6,7,4.920009,-74.02298,"Otro municipio"],["CUNDINAMARCA",2.6,2,5.34758,-74.491045,"Otro municipio"],["CUNDINAMARCA",78.7,6,4.404112,-73.946473,"Otro municipio"],["CUNDINAMARCA",22.4,3,5.349119,-73.901357,"Otro municipio"],["CUNDINAMARCA",10.4,5,4.866508,-74.05,"Otro municipio"],["CUNDINAMARCA",67.4,5,4.442671,-74.044876,"Otro municipio"],["CUNDINAMARCA",40.3,7,4.527048,-73.922894,"Otro municipio"],["CUNDINAMARCA",94.9,10,5.145224,-73.683533,"Otro municipio"],["CUNDINAMARCA",14.9,3,5.061842,-73.978497,"Otro municipio"],["CUNDINAMARCA",87.9,10,4.812564,-74.102569,"Otro municipio"],["CUNDINAMARCA",7.4,5,4.577951,-74.442261,"Otro municipio"],["CUNDINAMARCA",0.2,1,5.248747,-74.290207,"Otro municipio"],["CUNDINAMARCA",73.7,6,4.850589,-74.263103,"Otro municipio"],["CUNDINAMARCA",158.9,17,4.813353,-74.350085,"Otro municipio"],["CUNDINAMARCA",76.3,7,4.485474,-73.892523,"Otro municipio"],["CUNDINAMARCA",21.0,2,4.339093,-73.93902,"Otro municipio"],["CUNDINAMARCA",99.9,17,4.710412,-74.201528,"Otro municipio"],["CUNDINAMARCA",0.7,2,5.403997,-73.795855,"Otro municipio"],["CUNDINAMARCA",68.0,13,4.336723,-74.37543,"Otro municipio"],["CUNDINAMARCA",0.0,1,4.693579,-73.520161,"Otro municipio"],["CUNDINAMARCA",0.4,2,4.990947,-73.873464,"Otro municipio"],["CUNDINAMARCA",0.3,1,4.816411,-73.636377,"Otro municipio"],["CUNDINAMARCA",0.0,1,4.763325,-73.611037,"Otro municipio"],["CUNDINAMARCA",3.0,4,4.313069,-74.798201,"Otro municipio"],["CUNDINAMARCA",59.3,6,4.519763,-74.350766,"Otro municipio"],["CUNDINAMARCA",0.5,2,5.383378,-73.686972,"Otro municipio"],["CUNDINAMARCA",0.3,2,5.072076,-74.603402,"Otro municipio"],["CUNDINAMARCA",37.0,6,4.866719,-73.877143,"Otro municipio"],["CUNDINAMARCA",9.5,3,4.935211,-73.83293,"Otro municipio"],["CUNDINAMARCA",0.6,1,4.877968,-74.467437,"Otro municipio"],["CUNDINAMARCA",5.7,2,4.215306,-73.815107,"Otro municipio"],["CUNDINAMARCA",6.8,3,4.254679,-74.003042,"Otro municipio"],["CUNDINAMARCA",0.3,2,4.562273,-74.695474,"Otro municipio"],["CUNDINAMARCA",3.7,1,4.79057,-73.662961,"Otro municipio"],["CUNDINAMARCA",97.0,5,4.721104,-73.968161,"Otro municipio"],["CUNDINAMARCA",87.2,22,4.631028,-74.461588,"Otro municipio"],["CUNDINAMARCA",0.1,1,5.358816,-74.391022,"Otro municipio"],["CUNDINAMARCA",0.2,1,5.198945,-74.394105,"Otro municipio"],["CUNDINAMARCA",0.1,1,4.997768,-74.336885,"Otro municipio"],["CUNDINAMARCA",6.0,1,5.306131,-73.711512,"Otro municipio"],["CUNDINAMARCA",10.6,2,5.08007,-73.608226,"Otro municipio"],["CUNDINAMARCA",120.9,13,4.732791,-74.265854,"Otro municipio"],["CUNDINAMARCA",4.0,1,5.009008,-73.540444,"Otro municipio"],["CUNDINAMARCA",0.0,1,4.506298,-73.348449,"Otro municipio"],["CUNDINAMARCA",200.0,16,4.70653,-74.221154,"Otro municipio"],["CUNDINAMARCA",4.2,2,5.068705,-73.877888,"Otro municipio"],["CUNDINAMARCA",0.0,1,4.305838,-74.620009,"Otro municipio"],["CUNDINAMARCA",1.0,2,5.069466,-74.379093,"Otro municipio"],["CUNDINAMARCA",8.3,3,4.089056,-74.478301,"Otro municipio"],["CUNDINAMARCA",9.6,4,5.136907,-74.156132,"Otro municipio"],["CUNDINAMARCA",1.4,2,4.190393,-74.486641,"Otro municipio"],["CUNDINAMARCA",0.2,4,4.374832,-73.212825,"Otro municipio"],["CUNDINAMARCA",71.7,10,4.308979,-74.302276,"Otro municipio"],["CUNDINAMARCA",0.1,1,5.465413,-74.653695,"Otro municipio"],["CUNDINAMARCA",0.0,1,4.682022,-74.71438,"Otro municipio"],["CUNDINAMARCA",5.5,2,4.329884,-73.863214,"Otro municipio"],["CUNDINAMARCA",8.9,5,4.74481,-74.533705,"Otro municipio"],["CUNDINAMARCA",19.7,8,4.520304,-74.593926,"Otro municipio"],["CUNDINAMARCA",3.9,3,4.616138,-74.351443,"Otro municipio"],["CUNDINAMARCA",56.4,8,4.179433,-74.42296,"Otro municipio"],["CUNDINAMARCA",0.8,1,5.332938,-74.024754,"Otro municipio"],["CUNDINAMARCA",0.5,2,4.972917,-74.289672,"Otro municipio"],["CUNDINAMARCA",1.6,3,4.847575,-74.621919,"Otro municipio"],["CUNDINAMARCA",0.4,2,4.962167,-74.432628,"Otro municipio"],["CUNDINAMARCA",14.8,2,5.04476,-73.796099,"Otro municipio"],["CUNDINAMARCA",147.8,16,4.492625,-74.257874,"Otro municipio"],["CUNDINAMARCA",41.6,7,4.381981,-74.405534,"Otro municipio"],["CUNDINAMARCA",21.0,8,5.505231,-73.850703,"Otro municipio"],["CUNDINAMARCA",28.5,9,4.579268,-74.215463,"Otro municipio"],["CUNDINAMARCA",9.9,10,4.915395,-73.943328,"Otro municipio"],["CUNDINAMARCA",123.6,5,4.929118,-74.172773,"Otro municipio"],["CUNDINAMARCA",1.7,3,5.103495,-73.798227,"Otro municipio"],["CUNDINAMARCA",1.1,3,5.455291,-73.813938,"Otro municipio"],["CUNDINAMARCA",1.0,2,5.247482,-73.853159,"Otro municipio"],["CUNDINAMARCA",12.9,4,4.916832,-74.096461,"Otro municipio"],["CUNDINAMARCA",36.4,5,5.196333,-73.887813,"Otro municipio"],["CUNDINAMARCA",3.9,5,4.655286,-74.389193,"Otro municipio"],["CUNDINAMARCA",32.5,10,4.872014,-74.143724,"Otro municipio"],["CUNDINAMARCA",0.1,1,4.348605,-74.452662,"Otro municipio"],["CUNDINAMARCA",0.0,1,5.052278,-73.504514,"Otro municipio"],["CUNDINAMARCA",31.6,11,4.459279,-74.636296,"Otro municipio"],["CUNDINAMARCA",25.6,10,4.964641,-73.91207,"Otro municipio"],["CUNDINAMARCA",1.4,1,4.74762,-73.531489,"Otro municipio"],["CUNDINAMARCA",27.4,7,4.483788,-73.933477,"Otro municipio"],["CUNDINAMARCA",77.3,13,5.307463,-73.814367,"Otro municipio"],["CUNDINAMARCA",133.7,7,4.40245,-74.025183,"Otro municipio"],["CUNDINAMARCA",0.1,1,5.117258,-74.346163,"Otro municipio"],["CUNDINAMARCA",0.3,1,4.875208,-74.56132,"Otro municipio"],["CUNDINAMARCA",239.0,18,5.216393,-73.595704,"Otro municipio"],["CUNDINAMARCA",7.7,6,5.012754,-74.469686,"Otro municipio"],["CUNDINAMARCA",15.6,11,4.43935,-74.523131,"Otro municipio"],["CUNDINAMARCA",0.0,1,5.459272,-74.33806,"Otro municipio"],["CUNDINAMARCA",14.2,3,4.759932,-74.379566,"Otro municipio"],["CUNDINAMARCA",311.8,23,5.025477,-73.994444,"Otro municipio"],["CHOC\u00d3",1.2,6,5.682166,-76.638144,"Otro municipio"],["CHOC\u00d3",0.3,1,6.222807,-77.401359,"Otro municipio"],["CHOC\u00d3",1.1,5,7.3719,-76.71727,"Otro municipio"],["HUILA",76.7,25,2.935432,-75.277327,"Otro municipio"],["HUILA",0.4,3,1.805173,-75.888706,"Otro municipio"],["HUILA",0.2,2,2.25987,-75.772022,"Otro municipio"],["HUILA",16.2,6,3.223996,-75.239017,"Otro municipio"],["HUILA",0.2,1,2.063841,-75.788471,"Otro municipio"],["HUILA",1.1,1,3.152204,-75.054843,"Otro municipio"],["HUILA",20.3,10,2.686767,-75.325748,"Otro municipio"],["HUILA",2.7,3,3.376745,-74.802815,"Otro municipio"],["HUILA",64.1,15,2.196493,-75.627057,"Otro municipio"],["HUILA",10.7,7,2.384031,-75.547681,"Otro municipio"],["HUILA",2.8,3,2.02426,-75.757185,"Otro municipio"],["HUILA",9.5,12,2.580812,-75.447697,"Otro municipio"],["HUILA",0.1,2,2.649359,-75.634497,"Otro municipio"],["HUILA",5.1,4,1.929467,-76.217637,"Otro municipio"],["HUILA",3.7,6,2.198496,-75.979763,"Otro municipio"],["HUILA",9.4,10,2.389263,-75.891254,"Otro municipio"],["HUILA",0.0,1,2.5451,-75.808756,"Otro municipio"],["HUILA",0.0,1,2.025088,-75.995165,"Otro municipio"],["HUILA",0.0,1,2.449651,-75.773158,"Otro municipio"],["HUILA",5.8,4,2.889649,-75.435296,"Otro municipio"],["HUILA",1.5,1,1.723725,-76.133251,"Otro municipio"],["HUILA",0.3,2,2.266618,-75.804544,"Otro municipio"],["HUILA",59.8,16,1.852631,-76.049441,"Otro municipio"],["HUILA",29.2,6,2.777586,-75.258753,"Otro municipio"],["HUILA",0.3,5,1.881081,-76.27036,"Otro municipio"],["HUILA",5.9,3,2.939603,-75.586223,"Otro municipio"],["HUILA",10.3,6,1.976051,-75.79525,"Otro municipio"],["HUILA",13.5,6,2.111325,-75.823976,"Otro municipio"],["HUILA",0.6,1,2.486364,-75.730271,"Otro municipio"],["HUILA",4.6,2,3.067538,-75.138773,"Otro municipio"],["HUILA",2.3,1,2.740968,-75.567034,"Otro municipio"],["HUILA",1.0,3,1.974539,-75.932167,"Otro municipio"],["HUILA",2.7,1,3.218822,-75.217174,"Otro municipio"],["HUILA",0.0,1,2.664694,-75.518023,"Otro municipio"],["LA GUAJIRA",1.5,7,11.528588,-72.911795,"Otro municipio"],["LA GUAJIRA",0.1,2,10.511862,-73.072638,"Otro municipio"],["LA GUAJIRA",1.5,4,11.378535,-72.242738,"Otro municipio"],["LA GUAJIRA",2.9,7,11.773767,-72.438739,"Otro municipio"],["LA GUAJIRA",13.2,11,11.711904,-72.265906,"Otro municipio"],["LA GUAJIRA",0.0,1,10.560169,-73.012507,"Otro municipio"],["LA GUAJIRA",0.4,2,10.608774,-72.977583,"Otro municipio"],["MAGDALENA",0.0,2,10.188059,-74.061132,"Otro municipio"],["MAGDALENA",4.7,4,9.847047,-74.236515,"Otro municipio"],["MAGDALENA",0.0,1,10.325531,-74.868474,"Otro municipio"],["MAGDALENA",0.2,2,10.026631,-74.622242,"Otro municipio"],["MAGDALENA",0.6,1,10.257314,-74.83303,"Otro municipio"],["MAGDALENA",9.0,12,9.008503,-73.97437,"Otro municipio"],["MAGDALENA",0.7,1,10.402781,-74.823094,"Otro municipio"],["MAGDALENA",0.0,1,10.610488,-74.268444,"Otro municipio"],["MAGDALENA",7.5,8,9.144354,-74.223689,"Otro municipio"],["MAGDALENA",0.2,2,9.80186,-74.391841,"Otro municipio"],["MAGDALENA",4.3,3,10.460707,-74.613312,"Otro municipio"],["MAGDALENA",2.1,7,9.796713,-74.784549,"Otro municipio"],["MAGDALENA",0.0,1,10.994766,-74.28253,"Otro municipio"],["MAGDALENA",2.9,2,10.701952,-74.716172,"Otro municipio"],["MAGDALENA",0.1,4,10.032536,-74.213946,"Otro municipio"],["MAGDALENA",3.1,2,10.491229,-74.794189,"Otro municipio"],["MAGDALENA",0.1,4,9.241656,-74.351498,"Otro municipio"],["MAGDALENA",0.4,5,9.324294,-74.566845,"Otro municipio"],["MAGDALENA",8.1,2,10.775285,-74.720021,"Otro municipio"],["MAGDALENA",0.2,1,10.168297,-74.716878,"Otro municipio"],["MAGDALENA",77.8,6,10.763024,-74.140091,"Otro municipio"],["META",187.8,24,4.126369,-73.622601,"Otro municipio"],["META",21.7,11,3.990413,-73.766034,"Otro municipio"],["META",0.7,2,4.566225,-72.961083,"Otro municipio"],["META",2.6,3,4.286705,-72.791768,"Otro municipio"],["META",1.1,3,3.830005,-73.687302,"Otro municipio"],["META",0.8,3,3.793653,-73.837999,"Otro municipio"],["META",1.6,3,4.270042,-73.487052,"Otro municipio"],["META",0.6,3,4.352665,-73.713325,"Otro municipio"],["META",59.2,5,3.563907,-73.794225,"Otro municipio"],["META",1.9,1,3.739984,-73.835264,"Otro municipio"],["META",58.1,4,3.462875,-73.618121,"Otro municipio"],["META",455.4,22,3.547147,-73.705815,"Otro municipio"],["META",11.7,6,3.879657,-73.768815,"Otro municipio"],["META",131.2,9,3.525115,-74.023514,"Otro municipio"],["META",7.4,7,4.314905,-72.087649,"Otro municipio"],["META",21.7,11,4.09349,-72.957324,"Otro municipio"],["META",3.6,2,4.259556,-73.565408,"Otro municipio"],["META",3.5,3,3.71065,-73.242253,"Otro municipio"],["META",0.3,3,3.373728,-73.875832,"Otro municipio"],["META",0.9,3,4.458181,-73.676699,"Otro municipio"],["META",95.1,21,3.701899,-73.695812,"Otro municipio"],["NARI\u00d1O",351.1,17,1.212352,-77.278795,"Otro municipio"],["NARI\u00d1O",0.5,5,1.474978,-77.080712,"Otro municipio"],["NARI\u00d1O",4.1,1,0.882381,-77.700564,"Otro municipio"],["NARI\u00d1O",0.3,3,1.263276,-77.514512,"Otro municipio"],["NARI\u00d1O",0.5,1,1.381453,-77.156463,"Otro municipio"],["NARI\u00d1O",0.1,1,1.643878,-77.019777,"Otro municipio"],["NARI\u00d1O",6.4,2,1.207854,-77.466136,"Otro municipio"],["NARI\u00d1O",12.8,3,0.910458,-77.549409,"Otro municipio"],["NARI\u00d1O",34.3,5,0.854564,-77.517897,"Otro municipio"],["NARI\u00d1O",2.6,1,0.862978,-77.728947,"Otro municipio"],["NARI\u00d1O",13.1,3,0.906367,-77.792505,"Otro municipio"],["NARI\u00d1O",0.0,1,1.360545,-77.281869,"Otro municipio"],["NARI\u00d1O",3.7,1,1.453567,-77.438522,"Otro municipio"],["NARI\u00d1O",0.0,2,1.427277,-77.097101,"Otro municipio"],["NARI\u00d1O",9.0,4,1.407913,-77.390772,"Otro municipio"],["NARI\u00d1O",7.7,4,1.001159,-77.448913,"Otro municipio"],["NARI\u00d1O",13.1,7,0.959744,-77.731589,"Otro municipio"],["NARI\u00d1O",10.9,4,1.129574,-77.549824,"Otro municipio"],["NARI\u00d1O",8.5,4,0.919652,-77.568701,"Otro municipio"],["NARI\u00d1O",42.9,4,0.96952,-77.521227,"Otro municipio"],["NARI\u00d1O",0.3,5,1.05506,-77.496339,"Otro municipio"],["NARI\u00d1O",539.9,23,0.827732,-77.646367,"Otro municipio"],["NARI\u00d1O",0.1,3,1.601318,-76.970504,"Otro municipio"],["NARI\u00d1O",7.9,1,1.29753,-77.402882,"Otro municipio"],["NARI\u00d1O",9.6,8,1.600219,-77.131316,"Otro municipio"],["NARI\u00d1O",2.0,4,1.350814,-77.523953,"Otro municipio"],["NARI\u00d1O",0.4,4,1.288979,-77.357972,"Otro municipio"],["NARI\u00d1O",3.6,3,1.058433,-77.566082,"Otro municipio"],["NARI\u00d1O",74.4,4,0.806639,-77.573003,"Otro municipio"],["NARI\u00d1O",40.4,3,0.885125,-77.504211,"Otro municipio"],["NARI\u00d1O",23.0,6,0.870442,-77.636042,"Otro municipio"],["NARI\u00d1O",0.1,3,1.335438,-77.594341,"Otro municipio"],["NARI\u00d1O",9.8,6,1.283438,-77.47313,"Otro municipio"],["NARI\u00d1O",7.4,4,1.513762,-77.0475,"Otro municipio"],["NARI\u00d1O",0.7,1,1.503362,-77.21542,"Otro municipio"],["NARI\u00d1O",0.1,2,1.669429,-77.013984,"Otro municipio"],["NARI\u00d1O",2.0,3,1.551572,-77.11941,"Otro municipio"],["NARI\u00d1O",0.1,1,1.222589,-77.677035,"Otro municipio"],["NARI\u00d1O",1.7,2,1.037536,-77.62028,"Otro municipio"],["NARI\u00d1O",18.7,8,1.570358,-77.2808,"Otro municipio"],["NARI\u00d1O",1.2,1,1.09482,-77.393735,"Otro municipio"],["NARI\u00d1O",197.7,16,1.085044,-77.61672,"Otro municipio"],["NARI\u00d1O",0.7,1,1.115937,-77.400169,"Otro municipio"],["NORTE DE SANTANDER",95.8,13,7.905725,-72.508178,"Otro municipio"],["NORTE DE SANTANDER",69.8,9,8.081616,-73.221722,"Otro municipio"],["NORTE DE SANTANDER",14.9,4,7.642985,-72.798952,"Otro municipio"],["NORTE DE SANTANDER",2.8,2,7.612192,-72.64701,"Otro municipio"],["NORTE DE SANTANDER",3.4,3,8.041299,-72.868231,"Otro municipio"],["NORTE DE SANTANDER",6.8,2,7.268705,-72.642059,"Otro municipio"],["NORTE DE SANTANDER",9.6,1,7.741248,-73.048983,"Otro municipio"],["NORTE DE SANTANDER",3.5,3,7.603112,-72.601162,"Otro municipio"],["NORTE DE SANTANDER",110.5,7,7.138187,-72.665468,"Otro municipio"],["NORTE DE SANTANDER",6.1,4,7.539633,-72.772816,"Otro municipio"],["NORTE DE SANTANDER",1.5,2,7.714804,-72.658491,"Otro municipio"],["NORTE DE SANTANDER",8.6,5,7.938572,-72.604717,"Otro municipio"],["NORTE DE SANTANDER",4.1,2,7.916946,-72.787233,"Otro municipio"],["NORTE DE SANTANDER",2.2,2,7.506541,-72.483519,"Otro municipio"],["NORTE DE SANTANDER",3.2,3,7.298414,-72.495983,"Otro municipio"],["NORTE DE SANTANDER",0.9,1,7.639839,-73.328126,"Otro municipio"],["NORTE DE SANTANDER",14.2,2,7.833186,-72.505612,"Otro municipio"],["NORTE DE SANTANDER",3.7,2,7.945631,-72.832376,"Otro municipio"],["NORTE DE SANTANDER",45.7,3,7.300469,-72.747169,"Otro municipio"],["NORTE DE SANTANDER",205.5,16,8.248574,-73.35607,"Otro municipio"],["NORTE DE SANTANDER",25.8,5,7.372802,-72.647714,"Otro municipio"],["NORTE DE SANTANDER",4.8,4,7.436745,-72.639111,"Otro municipio"],["NORTE DE SANTANDER",1.2,3,8.359993,-72.411363,"Otro municipio"],["NORTE DE SANTANDER",5.8,1,7.577861,-72.476708,"Otro municipio"],["NORTE DE SANTANDER",6.6,6,7.773683,-72.813064,"Otro municipio"],["NORTE DE SANTANDER",10.5,2,7.875695,-72.625459,"Otro municipio"],["NORTE DE SANTANDER",0.3,1,7.865856,-72.716203,"Otro municipio"],["NORTE DE SANTANDER",64.7,3,7.204736,-72.757128,"Otro municipio"],["NORTE DE SANTANDER",4.3,3,7.307692,-72.481915,"Otro municipio"],["NORTE DE SANTANDER",2.1,2,7.914244,-72.973601,"Otro municipio"],["NORTE DE SANTANDER",10.5,2,7.847672,-72.469758,"Otro municipio"],["QUIND\u00cdO",344.6,28,4.53598,-75.680786,"Otro municipio"],["QUIND\u00cdO",1.6,1,4.360029,-75.739572,"Otro municipio"],["QUIND\u00cdO",18.4,6,4.520982,-75.646085,"Otro municipio"],["QUIND\u00cdO",5.4,5,4.617759,-75.636533,"Otro municipio"],["QUIND\u00cdO",4.6,2,4.392485,-75.687866,"Otro municipio"],["QUIND\u00cdO",1.0,4,4.674338,-75.658387,"Otro municipio"],["QUIND\u00cdO",5.7,1,4.206641,-75.790402,"Otro municipio"],["QUIND\u00cdO",18.1,9,4.453755,-75.786887,"Otro municipio"],["QUIND\u00cdO",40.9,9,4.565057,-75.749827,"Otro municipio"],["QUIND\u00cdO",1.3,2,4.335036,-75.703329,"Otro municipio"],["QUIND\u00cdO",31.7,9,4.624387,-75.765074,"Otro municipio"],["QUIND\u00cdO",0.1,2,4.637157,-75.570844,"Otro municipio"],["RISARALDA",111.1,21,4.804985,-75.719711,"Otro municipio"],["RISARALDA",5.0,5,5.106526,-75.942356,"Otro municipio"],["RISARALDA",5.3,8,4.949096,-75.958663,"Otro municipio"],["RISARALDA",53.0,10,5.200793,-75.868334,"Otro municipio"],["RISARALDA",6.1,6,4.833131,-75.675371,"Otro municipio"],["RISARALDA",5.4,7,5.315367,-75.799005,"Otro municipio"],["RISARALDA",0.6,3,5.002787,-76.0032,"Otro municipio"],["RISARALDA",4.1,10,4.896624,-75.880394,"Otro municipio"],["RISARALDA",11.0,10,4.935771,-75.73879,"Otro municipio"],["RISARALDA",0.7,2,5.297039,-75.882886,"Otro municipio"],["RISARALDA",0.2,1,5.222043,-76.030801,"Otro municipio"],["RISARALDA",24.4,6,5.340456,-75.730431,"Otro municipio"],["RISARALDA",3.7,5,4.876271,-75.623268,"Otro municipio"],["RISARALDA",5.0,3,5.074911,-75.964628,"Otro municipio"],["SANTANDER",172.3,28,7.11647,-73.132562,"Otro municipio"],["SANTANDER",0.1,3,6.162355,-73.523132,"Otro municipio"],["SANTANDER",0.0,1,5.759166,-73.91336,"Otro municipio"],["SANTANDER",1.2,1,6.694418,-73.01786,"Otro municipio"],["SANTANDER",6.4,6,5.932531,-73.615965,"Otro municipio"],["SANTANDER",0.1,1,6.634111,-73.223047,"Otro municipio"],["SANTANDER",3.8,9,7.064857,-73.849243,"Otro municipio"],["SANTANDER",11.8,1,6.899525,-73.283669,"Otro municipio"],["SANTANDER",3.2,6,5.988953,-73.771346,"Otro municipio"],["SANTANDER",0.0,1,7.347989,-72.946491,"Otro municipio"],["SANTANDER",10.7,5,6.527394,-72.695427,"Otro municipio"],["SANTANDER",17.3,2,6.629016,-72.627099,"Otro municipio"],["SANTANDER",17.5,2,6.753518,-72.973536,"Otro municipio"],["SANTANDER",94.9,5,6.840405,-72.694851,"Otro municipio"],["SANTANDER",0.1,1,6.284339,-73.146873,"Otro municipio"],["SANTANDER",1.7,1,7.28082,-72.968798,"Otro municipio"],["SANTANDER",1.3,1,6.062521,-73.637111,"Otro municipio"],["SANTANDER",21.1,8,6.320886,-73.953011,"Otro municipio"],["SANTANDER",5.5,4,6.768908,-72.694567,"Otro municipio"],["SANTANDER",0.1,2,6.357327,-73.240554,"Otro municipio"],["SANTANDER",0.0,1,6.294999,-73.040816,"Otro municipio"],["SANTANDER",7.1,1,6.605099,-73.069383,"Otro municipio"],["SANTANDER",3.2,3,6.700038,-73.51066,"Otro municipio"],["SANTANDER",0.4,1,6.245111,-73.496908,"Otro municipio"],["SANTANDER",2.5,2,6.05537,-73.815532,"Otro municipio"],["SANTANDER",1.9,2,7.470715,-73.20287,"Otro municipio"],["SANTANDER",0.3,2,6.668034,-72.699647,"Otro municipio"],["SANTANDER",1.2,3,5.804659,-73.97143,"Otro municipio"],["SANTANDER",3.9,4,7.072329,-73.099104,"Otro municipio"],["SANTANDER",0.3,1,6.638423,-73.287769,"Otro municipio"],["SANTANDER",0.6,1,5.945998,-73.344185,"Otro municipio"],["SANTANDER",145.5,13,7.070432,-73.166832,"Otro municipio"],["SANTANDER",50.2,2,6.876563,-72.856322,"Otro municipio"],["SANTANDER",0.0,2,6.245847,-73.419292,"Otro municipio"],["SANTANDER",0.1,2,5.954348,-73.700906,"Otro municipio"],["SANTANDER",2.1,6,6.025013,-73.575146,"Otro municipio"],["SANTANDER",0.0,1,6.543957,-73.308399,"Otro municipio"],["SANTANDER",0.0,1,5.876497,-73.783396,"Otro municipio"],["SANTANDER",0.3,1,6.732727,-73.096053,"Otro municipio"],["SANTANDER",7.3,5,5.85925,-73.965494,"Otro municipio"],["SANTANDER",2.7,2,6.218812,-73.811359,"Otro municipio"],["SANTANDER",0.1,3,6.178509,-73.58959,"Otro municipio"],["SANTANDER",278.6,18,7.113351,-73.219524,"Otro municipio"],["SANTANDER",50.2,9,6.755203,-73.102739,"Otro municipio"],["SANTANDER",0.0,1,6.50658,-72.593105,"Otro municipio"],["SANTANDER",24.1,7,6.703081,-72.732089,"Otro municipio"],["SANTANDER",6.4,1,7.323175,-73.015566,"Otro municipio"],["SANTANDER",2.0,1,6.475246,-72.969807,"Otro municipio"],["SANTANDER",5.7,2,6.67432,-72.809175,"Otro municipio"],["SANTANDER",0.9,3,6.26521,-73.299791,"Otro municipio"],["SANTANDER",2.2,1,6.344104,-72.816766,"Otro municipio"],["SANTANDER",0.1,1,6.406139,-73.287764,"Otro municipio"],["SANTANDER",3.6,1,6.416811,-73.17022,"Otro municipio"],["SANTANDER",27.8,6,6.997245,-73.054795,"Otro municipio"],["SANTANDER",0.1,3,5.878381,-73.677567,"Otro municipio"],["SANTANDER",1.2,2,6.650785,-74.056129,"Otro municipio"],["SANTANDER",0.5,2,7.344057,-73.899909,"Otro municipio"],["SANTANDER",30.8,8,7.265014,-73.150177,"Otro municipio"],["SANTANDER",2.0,1,7.391919,-73.49906,"Otro municipio"],["SANTANDER",2.2,1,6.811511,-72.848864,"Otro municipio"],["SANTANDER",0.3,4,6.126656,-73.50907,"Otro municipio"],["SANTANDER",18.1,13,6.551952,-73.134776,"Otro municipio"],["SANTANDER",0.4,2,6.427548,-72.867638,"Otro municipio"],["SANTANDER",0.8,2,6.658995,-72.733616,"Otro municipio"],["SANTANDER",0.3,3,6.575315,-72.644123,"Otro municipio"],["SANTANDER",21.7,9,6.880383,-73.411024,"Otro municipio"],["SANTANDER",3.7,1,6.990996,-72.907445,"Otro municipio"],["SANTANDER",0.0,1,6.339565,-73.616716,"Otro municipio"],["SANTANDER",0.1,2,6.443469,-73.337368,"Otro municipio"],["SANTANDER",54.6,15,6.46387,-73.261198,"Otro municipio"],["SANTANDER",2.8,5,6.101329,-73.44165,"Otro municipio"],["SANTANDER",0.6,2,5.918743,-73.790975,"Otro municipio"],["SANTANDER",10.8,1,7.36658,-72.984232,"Otro municipio"],["SANTANDER",162.3,9,7.201417,-72.967023,"Otro municipio"],["SANTANDER",0.1,4,6.448028,-73.143507,"Otro municipio"],["SANTANDER",19.4,13,6.009275,-73.672447,"Otro municipio"],["SANTANDER",0.0,1,7.30981,-72.871041,"Otro municipio"],["SANTANDER",0.3,4,6.670078,-73.174307,"Otro municipio"],["SANTANDER",9.4,2,6.814387,-73.268034,"Otro municipio"],["SUCRE",6.6,8,9.302322,-75.395445,"Otro municipio"],["SUCRE",0.0,1,9.319794,-74.972827,"Otro municipio"],["SUCRE",0.3,3,8.789324,-75.117141,"Otro municipio"],["SUCRE",2.6,3,9.318749,-75.293048,"Otro municipio"],["SUCRE",0.0,2,9.402779,-75.680158,"Otro municipio"],["SUCRE",0.1,1,9.100647,-75.198378,"Otro municipio"],["SUCRE",0.2,2,9.160379,-75.04959,"Otro municipio"],["SUCRE",0.1,3,8.468556,-74.537749,"Otro municipio"],["SUCRE",3.0,6,8.541163,-74.628077,"Otro municipio"],["SUCRE",0.8,3,9.183193,-75.380222,"Otro municipio"],["SUCRE",0.6,3,8.930108,-75.031089,"Otro municipio"],["SUCRE",7.8,7,9.273066,-75.243565,"Otro municipio"],["SUCRE",9.1,10,8.661774,-75.133831,"Otro municipio"],["SUCRE",0.1,2,9.39625,-75.063647,"Otro municipio"],["SUCRE",1.7,4,9.244308,-75.145999,"Otro municipio"],["SUCRE",0.2,1,8.811737,-74.723175,"Otro municipio"],["TOLIMA",48.5,20,4.432248,-75.19425,"Otro municipio"],["TOLIMA",1.8,2,3.391548,-74.9329,"Otro municipio"],["TOLIMA",3.2,4,4.567356,-74.953418,"Otro municipio"],["TOLIMA",0.0,3,4.782682,-74.764429,"Otro municipio"],["TOLIMA",2.8,3,4.631756,-75.093772,"Otro municipio"],["TOLIMA",2.2,3,5.030744,-74.884438,"Otro municipio"],["TOLIMA",76.3,11,4.438812,-75.431971,"Otro municipio"],["TOLIMA",0.0,1,4.152334,-74.717633,"Otro municipio"],["TOLIMA",0.1,2,5.078465,-75.120966,"Otro municipio"],["TOLIMA",0.8,2,4.287276,-74.898464,"Otro municipio"],["TOLIMA",0.1,3,3.798036,-75.193862,"Otro municipio"],["TOLIMA",1.3,1,4.059259,-74.692227,"Otro municipio"],["TOLIMA",0.0,1,3.539072,-74.896761,"Otro municipio"],["TOLIMA",294.9,28,4.151314,-74.885446,"Otro municipio"],["TOLIMA",1.7,3,5.123104,-74.953007,"Otro municipio"],["TOLIMA",0.0,1,4.276373,-74.818763,"Otro municipio"],["TOLIMA",38.4,19,5.153576,-75.035722,"Otro municipio"],["TOLIMA",42.3,21,4.030992,-74.968135,"Otro municipio"],["TOLIMA",13.4,2,5.080228,-75.177151,"Otro municipio"],["TOLIMA",0.4,5,5.211816,-74.75699,"Otro municipio"],["TOLIMA",9.8,1,4.176487,-74.531969,"Otro municipio"],["TOLIMA",0.5,6,4.862046,-74.910716,"Otro municipio"],["TOLIMA",20.5,10,4.92042,-75.061959,"Otro municipio"],["TOLIMA",47.8,15,5.199708,-74.889276,"Otro municipio"],["TOLIMA",1.0,1,4.203655,-74.641317,"Otro municipio"],["TOLIMA",5.1,3,4.874341,-75.171022,"Otro municipio"],["TOLIMA",0.5,2,3.624324,-75.093182,"Otro municipio"],["TOLIMA",0.9,3,3.934916,-75.222601,"Otro municipio"],["TOLIMA",5.1,7,5.120918,-75.022167,"Otro municipio"],["TOLIMA",0.3,2,4.543951,-74.878106,"Otro municipio"],["TOLIMA",1.3,2,3.750939,-74.927447,"Otro municipio"],["TOLIMA",3.5,4,3.857246,-74.935555,"Otro municipio"],["TOLIMA",4.3,4,4.011567,-75.605959,"Otro municipio"],["TOLIMA",3.7,4,4.239019,-75.240648,"Otro municipio"],["TOLIMA",3.2,4,3.929815,-75.016852,"Otro municipio"],["TOLIMA",0.3,2,3.914146,-75.480074,"Otro municipio"],["TOLIMA",2.0,5,4.133721,-75.095804,"Otro municipio"],["TOLIMA",8.1,5,4.713606,-75.097934,"Otro municipio"],["TOLIMA",0.1,1,4.048891,-74.831885,"Otro municipio"],["TOLIMA",0.7,2,4.197494,-75.115669,"Otro municipio"],["TOLIMA",24.0,11,4.717878,-74.929333,"Otro municipio"],["TOLIMA",0.0,2,5.030452,-75.117729,"Otro municipio"],["TOLIMA",5.3,2,3.936902,-74.600285,"Otro municipio"],["VALLE DEL CAUCA",174.0,26,3.413686,-76.52133,"Otro municipio"],["VALLE DEL CAUCA",18.5,7,4.674994,-75.779792,"Otro municipio"],["VALLE DEL CAUCA",6.4,7,4.171713,-76.167925,"Otro municipio"],["VALLE DEL CAUCA",0.0,1,4.794984,-75.992003,"Otro municipio"],["VALLE DEL CAUCA",0.1,3,4.726945,-76.119905,"Otro municipio"],["VALLE DEL CAUCA",0.0,1,4.337846,-76.183583,"Otro municipio"],["VALLE DEL CAUCA",8.3,9,3.900736,-76.298979,"Otro municipio"],["VALLE DEL CAUCA",7.8,13,4.208358,-76.15682,"Otro municipio"],["VALLE DEL CAUCA",65.1,15,4.334808,-75.830594,"Otro municipio"],["VALLE DEL CAUCA",20.1,3,3.933664,-76.484132,"Otro municipio"],["VALLE DEL CAUCA",84.7,14,3.408354,-76.346519,"Otro municipio"],["VALLE DEL CAUCA",24.1,9,4.742192,-75.924374,"Otro municipio"],["VALLE DEL CAUCA",57.4,12,3.657318,-76.68886,"Otro municipio"],["VALLE DEL CAUCA",0.8,4,4.906062,-76.042779,"Otro municipio"],["VALLE DEL CAUCA",0.3,2,4.760874,-76.221611,"Otro municipio"],["VALLE DEL CAUCA",61.1,11,3.684229,-76.311972,"Otro municipio"],["VALLE DEL CAUCA",26.8,8,4.510452,-76.237084,"Otro municipio"],["VALLE DEL CAUCA",15.4,11,3.724181,-76.268068,"Otro municipio"],["VALLE DEL CAUCA",15.4,11,3.761815,-76.330911,"Otro municipio"],["VALLE DEL CAUCA",5.9,5,3.258751,-76.538472,"Otro municipio"],["VALLE DEL CAUCA",11.5,3,3.649268,-76.56805,"Otro municipio"],["VALLE DEL CAUCA",230.5,24,4.533869,-76.099661,"Otro municipio"],["VALLE DEL CAUCA",0.7,2,4.523603,-76.036529,"Otro municipio"],["VALLE DEL CAUCA",0.5,4,4.575712,-75.974709,"Otro municipio"],["VALLE DEL CAUCA",163.1,18,3.531544,-76.298846,"Otro municipio"],["VALLE DEL CAUCA",33.6,10,3.821351,-76.523329,"Otro municipio"],["VALLE DEL CAUCA",7.5,9,4.156908,-76.288313,"Otro municipio"],["VALLE DEL CAUCA",3.6,9,4.413601,-76.152277,"Otro municipio"],["VALLE DEL CAUCA",0.4,2,3.995073,-76.228692,"Otro municipio"],["VALLE DEL CAUCA",52.3,9,4.270714,-75.931629,"Otro municipio"],["VALLE DEL CAUCA",0.0,1,4.608085,-76.076859,"Otro municipio"],["VALLE DEL CAUCA",7.2,3,4.212037,-76.318818,"Otro municipio"],["VALLE DEL CAUCA",33.3,12,4.085399,-76.197731,"Otro municipio"],["VALLE DEL CAUCA",0.3,4,4.703623,-75.737808,"Otro municipio"],["VALLE DEL CAUCA",0.3,3,4.575019,-76.199203,"Otro municipio"],["VALLE DEL CAUCA",0.7,2,3.698686,-76.441804,"Otro municipio"],["VALLE DEL CAUCA",2.3,3,3.861241,-76.382698,"Otro municipio"],["VALLE DEL CAUCA",59.4,13,3.540097,-76.499893,"Otro municipio"],["VALLE DEL CAUCA",40.9,10,4.392658,-76.070795,"Otro municipio"],["ARAUCA",15.2,15,7.072726,-70.747408,"Otro municipio"],["ARAUCA",0.0,2,6.281461,-71.10339,"Otro municipio"],["CASANARE",64.7,16,5.327102,-72.396132,"Otro municipio"],["CASANARE",19.3,11,5.172641,-72.546838,"Otro municipio"],["CASANARE",0.0,1,5.214527,-72.87016,"Otro municipio"],["CASANARE",0.9,5,4.877017,-72.894065,"Otro municipio"],["CASANARE",0.3,1,5.636474,-72.195323,"Otro municipio"],["CASANARE",0.3,3,5.879827,-71.890348,"Otro municipio"],["CASANARE",19.9,7,5.72773,-71.99286,"Otro municipio"],["CASANARE",0.0,1,4.854787,-73.038696,"Otro municipio"],["CASANARE",0.0,1,5.829543,-72.16165,"Otro municipio"],["CASANARE",3.5,3,5.018977,-72.74662,"Otro municipio"],["CASANARE",0.0,1,5.412178,-71.662812,"Otro municipio"],["CASANARE",15.0,8,4.61035,-72.927797,"Otro municipio"],["PUTUMAYO",9.6,5,1.20026,-76.917814,"Otro municipio"],["PUTUMAYO",1.9,1,1.147076,-77.002641,"Otro municipio"],["AMAZONAS",4.5,6,-4.19895,-69.941721,"Otro municipio"],["VICHADA",0.4,2,6.186636,-67.487095,"Otro municipio"],["VICHADA",0.0,1,4.446352,-69.795533,"Otro municipio"]],"hovertemplate":"\u003cb\u003e%{hovertext}\u003c\u002fb\u003e\u003cbr\u003e\u003cbr\u003esize=%{marker.size}\u003cbr\u003edepartamento=%{customdata[0]}\u003cbr\u003et\u002fd\u00eda=%{customdata[1]}\u003cbr\u003ecorredores=%{customdata[2]}\u003cextra\u003e\u003c\u002fextra\u003e","hovertext":["MEDELL\u00cdN","ABEJORRAL","ABRIAQU\u00cd","AMAG\u00c1","ANDES","ANGEL\u00d3POLIS","ANGOSTURA","SANTA F\u00c9 DE ANTIOQUIA","ANZ\u00c1","ARBOLETES","ARMENIA","BARBOSA","BELMIRA","BELLO","BETANIA","BETULIA","CIUDAD BOL\u00cdVAR","CAICEDO","CALDAS","CAMPAMENTO","CA\u00d1ASGORDAS","CARACOL\u00cd","CARAMANTA","EL CARMEN DE VIBORAL","CAROLINA","CISNEROS","COCORN\u00c1","CONCEPCI\u00d3N","CONCORDIA","COPACABANA","DONMAT\u00cdAS","EB\u00c9JICO","ENTRERR\u00cdOS","ENVIGADO","FREDONIA","FRONTINO","GIRARDOTA","GRANADA","GUADALUPE","GUARNE","HISPANIA","ITAG\u00dc\u00cd","JARD\u00cdN","JERIC\u00d3","LA CEJA","LA ESTRELLA","LA PINTADA","LA UNI\u00d3N","LIBORINA","MACEO","MARINILLA","MONTEBELLO","NARI\u00d1O","OLAYA","PE\u00d1OL","PEQUE","PUEBLORRICO","PUERTO BERR\u00cdO","PUERTO NARE","PUERTO TRIUNFO","RETIRO","RIONEGRO","SABANALARGA","SABANETA","SALGAR","SAN ANDR\u00c9S DE CUERQU\u00cdA","SAN JER\u00d3NIMO","SAN JOS\u00c9 DE LA MONTA\u00d1A","SAN JUAN DE URAB\u00c1","SAN PEDRO DE LOS MILAGROS","SAN ROQUE","SAN VICENTE FERRER","SANTA B\u00c1RBARA","SANTA ROSA DE OSOS","SANTO DOMINGO","EL SANTUARIO","SONS\u00d3N","SOPETR\u00c1N","T\u00c1MESIS","TARSO","TITIRIB\u00cd","URAMITA","URRAO","VALPARA\u00cdSO","VEGACH\u00cd","VENECIA","YAL\u00cd","YARUMAL","YOLOMB\u00d3","BARRANQUILLA","BARANOA","CAMPO DE LA CRUZ","CANDELARIA","GALAPA","LURUACO","MALAMBO","MANAT\u00cd","PALMAR DE VARELA","POLONUEVO","PONEDERA","PUERTO COLOMBIA","REPEL\u00d3N","SABANAGRANDE","SABANALARGA","SANTA LUC\u00cdA","SANTO TOM\u00c1S","SOLEDAD","SUAN","USIACUR\u00cd","BOGOT\u00c1, D.C.","CARTAGENA DE INDIAS","ACH\u00cd","ARJONA","ARROYOHONDO","CALAMAR","CLEMENCIA","HATILLO DE LOBA","MAGANGU\u00c9","MAHATES","MARGARITA","SANTA CRUZ DE MOMPOX","SAN ESTANISLAO","SAN FERNANDO","SANTA CATALINA","SANTA ROSA","TURBACO","VILLANUEVA","TUNJA","ALMEIDA","AQUITANIA","ARCABUCO","BEL\u00c9N","BERBEO","BOAVITA","BOYAC\u00c1","BRICE\u00d1O","BUENAVISTA","CHINAVITA","CHIQUINQUIR\u00c1","CHISCAS","CHITA","CHITARAQUE","CHIVAT\u00c1","CI\u00c9NEGA","C\u00d3MBITA","COPER","CORRALES","COVARACH\u00cdA","CUCAITA","CU\u00cdTIVA","CH\u00cdQUIZA","DUITAMA","EL COCUY","EL ESPINO","FIRAVITOBA","FLORESTA","GACHANTIV\u00c1","G\u00c1MEZA","GARAGOA","GUACAMAYAS","GUATEQUE","GUAYAT\u00c1","G\u00dcIC\u00c1N DE LA SIERRA","JENESANO","JERIC\u00d3","LA CAPILLA","VILLA DE LEYVA","MACANAL","MARIP\u00cd","MIRAFLORES","MONGUA","MONGU\u00cd","MONIQUIR\u00c1","MOTAVITA","MUZO","NOBSA","NUEVO COL\u00d3N","OICAT\u00c1","PACHAVITA","P\u00c1EZ","PAIPA","PANQUEBA","PAUNA","PAZ DE R\u00cdO","PESCA","PUERTO BOYAC\u00c1","QU\u00cdPAMA","RAMIRIQU\u00cd","R\u00c1QUIRA","ROND\u00d3N","SABOY\u00c1","S\u00c1CHICA","SAMAC\u00c1","SAN EDUARDO","SANTANA","SANTA MAR\u00cdA","SANTA ROSA DE VITERBO","SANTA SOF\u00cdA","SIACHOQUE","SOAT\u00c1","SOCOT\u00c1","SOGAMOSO","SOMONDOCO","SORA","SOTAQUIR\u00c1","SORAC\u00c1","SUSAC\u00d3N","SUTAMARCH\u00c1N","SUTATENZA","TENZA","TIBAN\u00c1","TIBASOSA","TINJAC\u00c1","TIPACOQUE","TOCA","TOTA","TUNUNGU\u00c1","TURMEQU\u00c9","TUTA","TUTAZ\u00c1","\u00daMBITA","VENTAQUEMADA","VIRACACH\u00c1","ZETAQUIRA","MANIZALES","AGUADAS","ANSERMA","ARANZAZU","BELALC\u00c1ZAR","CHINCHIN\u00c1","FILADELFIA","LA DORADA","LA MERCED","MANZANARES","MARMATO","MARQUETALIA","NEIRA","NORCASIA","P\u00c1CORA","PALESTINA","PENSILVANIA","RIOSUCIO","RISARALDA","SALAMINA","SAMAN\u00c1","SAN JOS\u00c9","SUP\u00cdA","VICTORIA","VILLAMAR\u00cdA","VITERBO","POPAY\u00c1N","ALMAGUER","BOL\u00cdVAR","GUACHEN\u00c9","INZ\u00c1","LA SIERRA","LA VEGA","PADILLA","P\u00c1EZ","PUERTO TEJADA","PURAC\u00c9","ROSAS","SAN SEBASTI\u00c1N","SILVIA","SOTAR\u00c1 - PAISPAMBA","SUCRE","TIMB\u00cdO","TOTOR\u00d3","VILLA RICA","AGUACHICA","ASTREA","BOSCONIA","CHIMICHAGUA","CHIRIGUAN\u00c1","CURUMAN\u00cd","EL COPEY","EL PASO","GAMARRA","LA GLORIA","PAILITAS","PELAYA","R\u00cdO DE ORO","SAN ALBERTO","SAN MART\u00cdN","MONTER\u00cdA","AYAPEL","BUENAVISTA","CANALETE","CERET\u00c9","CHIM\u00c1","CHIN\u00da","CI\u00c9NAGA DE ORO","COTORRA","LA APARTADA","LORICA","LOS C\u00d3RDOBAS","MOMIL","MO\u00d1ITOS","PLANETA RICA","PUEBLO NUEVO","PUERTO ESCONDIDO","PUR\u00cdSIMA DE LA CONCEPCI\u00d3N","SAHAG\u00daN","SAN ANDR\u00c9S DE SOTAVENTO","SAN ANTERO","SAN BERNARDO DEL VIENTO","SAN CARLOS","SAN PELAYO","TUCH\u00cdN","AGUA DE DIOS","ALB\u00c1N","ANAPOIMA","ANOLAIMA","ARBEL\u00c1EZ","BITUIMA","BOJAC\u00c1","CABRERA","CACHIPAY","CAJIC\u00c1","CAPARRAP\u00cd","C\u00c1QUEZA","CARMEN DE CARUPA","CH\u00cdA","CHIPAQUE","CHOACH\u00cd","CHOCONT\u00c1","COGUA","COTA","EL COLEGIO","EL PE\u00d1\u00d3N","EL ROSAL","FACATATIV\u00c1","F\u00d3MEQUE","FOSCA","FUNZA","F\u00daQUENE","FUSAGASUG\u00c1","GACHAL\u00c1","GACHANCIP\u00c1","GACHET\u00c1","GAMA","GIRARDOT","GRANADA","GUACHET\u00c1","GUADUAS","GUASCA","GUATAVITA","GUAYABAL DE S\u00cdQUIMA","GUAYABETAL","GUTI\u00c9RREZ","JERUSAL\u00c9N","JUN\u00cdN","LA CALERA","LA MESA","LA PALMA","LA PE\u00d1A","LA VEGA","LENGUAZAQUE","MACHET\u00c1","MADRID","MANTA","MEDINA","MOSQUERA","NEMOC\u00d3N","NILO","NOCAIMA","VENECIA","PACHO","PANDI","PARATEBUENO","PASCA","PUERTO SALGAR","PUL\u00cd","QUETAME","QUIPILE","APULO","SAN ANTONIO DEL TEQUENDAMA","SAN BERNARDO","SAN CAYETANO","SAN FRANCISCO","SAN JUAN DE RIOSECO","SASAIMA","SESQUIL\u00c9","SIBAT\u00c9","SILVANIA","SIMIJACA","SOACHA","SOP\u00d3","SUBACHOQUE","SUESCA","SUSA","SUTATAUSA","TABIO","TAUSA","TENA","TENJO","TIBACUY","TIBIRITA","TOCAIMA","TOCANCIP\u00c1","UBAL\u00c1","UBAQUE","VILLA DE SAN DIEGO DE UBAT\u00c9","UNE","VERGARA","VIAN\u00cd","VILLAPINZ\u00d3N","VILLETA","VIOT\u00c1","YACOP\u00cd","ZIPAC\u00d3N","ZIPAQUIR\u00c1","QUIBD\u00d3","BAH\u00cdA SOLANO","NUEVO BEL\u00c9N DE BAJIR\u00c1","NEIVA","ACEVEDO","AGRADO","AIPE","ALTAMIRA","BARAYA","CAMPOALEGRE","COLOMBIA","GARZ\u00d3N","GIGANTE","GUADALUPE","HOBO","\u00cdQUIRA","ISNOS","LA ARGENTINA","LA PLATA","N\u00c1TAGA","OPORAPA","PAICOL","PALERMO","PALESTINA","PITAL","PITALITO","RIVERA","SAN AGUST\u00cdN","SANTA MAR\u00cdA","SUAZA","TARQUI","TESALIA","TELLO","TERUEL","TIMAN\u00c1","VILLAVIEJA","YAGUAR\u00c1","RIOHACHA","LA JAGUA DEL PILAR","MAICAO","MANAURE","URIBIA","URUMITA","VILLANUEVA","ALGARROBO","ARIGUAN\u00cd","CERRO DE SAN ANTONIO","CHIVOLO","CONCORDIA","EL BANCO","EL PI\u00d1\u00d3N","EL RET\u00c9N","GUAMAL","NUEVA GRANADA","PIVIJAY","PLATO","PUEBLOVIEJO","REMOLINO","SABANAS DE SAN \u00c1NGEL","SALAMINA","SAN SEBASTI\u00c1N DE BUENAVISTA","SANTA ANA","SITIONUEVO","ZAPAY\u00c1N","ZONA BANANERA","VILLAVICENCIO","ACAC\u00cdAS","BARRANCA DE UP\u00cdA","CABUYARO","CASTILLA LA NUEVA","CUBARRAL","CUMARAL","EL CALVARIO","EL CASTILLO","EL DORADO","FUENTE DE ORO","GRANADA","GUAMAL","LEJAN\u00cdAS","PUERTO GAIT\u00c1N","PUERTO L\u00d3PEZ","RESTREPO","SAN CARLOS DE GUAROA","SAN JUAN DE ARAMA","SAN JUANITO","SAN MART\u00cdN","PASTO","ALB\u00c1N","ALDANA","ANCUYA","BUESACO","COL\u00d3N","CONSAC\u00c1","CONTADERO","C\u00d3RDOBA","CUASPUD CARLOSAMA","CUMBAL","CHACHAG\u00dc\u00cd","EL PE\u00d1OL","EL TABL\u00d3N DE G\u00d3MEZ","EL TAMBO","FUNES","GUACHUCAL","GUAITARILLA","GUALMAT\u00c1N","ILES","IMU\u00c9S","IPIALES","LA CRUZ","LA FLORIDA","LA UNI\u00d3N","LINARES","NARI\u00d1O","OSPINA","POTOS\u00cd","PUERRES","PUPIALES","SAMANIEGO","SANDON\u00c1","SAN BERNARDO","SAN LORENZO","SAN PABLO","SAN PEDRO DE CARTAGO","SANTACRUZ","SAPUYES","TAMINANGO","TANGUA","T\u00daQUERRES","YACUANQUER","SAN JOS\u00c9 DE C\u00daCUTA","\u00c1BREGO","ARBOLEDAS","BOCHALEMA","BUCARASICA","C\u00c1COTA","C\u00c1CHIRA","CHIN\u00c1COTA","CHITAG\u00c1","CUCUTILLA","DURANIA","EL ZULIA","GRAMALOTE","HERR\u00c1N","LABATECA","LA ESPERANZA","LOS PATIOS","LOURDES","MUTISCUA","OCA\u00d1A","PAMPLONA","PAMPLONITA","PUERTO SANTANDER","RAGONVALIA","SALAZAR","SAN CAYETANO","SANTIAGO","SILOS","TOLEDO","VILLA CARO","VILLA DEL ROSARIO","ARMENIA","BUENAVISTA","CALARC\u00c1","CIRCASIA","C\u00d3RDOBA","FILANDIA","G\u00c9NOVA","LA TEBAIDA","MONTENEGRO","PIJAO","QUIMBAYA","SALENTO","PEREIRA","AP\u00cdA","BALBOA","BEL\u00c9N DE UMBR\u00cdA","DOSQUEBRADAS","GU\u00c1TICA","LA CELIA","LA VIRGINIA","MARSELLA","MISTRAT\u00d3","PUEBLO RICO","QUINCH\u00cdA","SANTA ROSA DE CABAL","SANTUARIO","BUCARAMANGA","AGUADA","ALBANIA","ARATOCA","BARBOSA","BARICHARA","BARRANCABERMEJA","BETULIA","BOL\u00cdVAR","CALIFORNIA","CAPITANEJO","CARCAS\u00cd","CEPIT\u00c1","CERRITO","CHARAL\u00c1","CHARTA","CHIPAT\u00c1","CIMITARRA","CONCEPCI\u00d3N","CONFINES","COROMORO","CURIT\u00cd","EL CARMEN DE CHUCUR\u00cd","EL GUACAMAYO","EL PE\u00d1\u00d3N","EL PLAY\u00d3N","ENCISO","FLORI\u00c1N","FLORIDABLANCA","GAL\u00c1N","G\u00c1MBITA","GIR\u00d3N","GUACA","GUADALUPE","GUAVAT\u00c1","G\u00dcEPSA","HATO","JES\u00daS MAR\u00cdA","JORD\u00c1N","LA BELLEZA","LAND\u00c1ZURI","LA PAZ","LEBRIJA","LOS SANTOS","MACARAVITA","M\u00c1LAGA","MATANZA","MOGOTES","MOLAGAVITA","OIBA","ONZAGA","PALMAS DEL SOCORRO","P\u00c1RAMO","PIEDECUESTA","PUENTE NACIONAL","PUERTO PARRA","PUERTO WILCHES","RIONEGRO","SABANA DE TORRES","SAN ANDR\u00c9S","SAN BENITO","SAN GIL","SAN JOAQU\u00cdN","SAN JOS\u00c9 DE MIRANDA","SAN MIGUEL","SAN VICENTE DE CHUCUR\u00cd","SANTA B\u00c1RBARA","SANTA HELENA DEL OP\u00d3N","SIMACOTA","SOCORRO","SUAITA","SUCRE","SURAT\u00c1","TONA","VALLE DE SAN JOS\u00c9","V\u00c9LEZ","VETAS","VILLANUEVA","ZAPATOCA","SINCELEJO","BUENAVISTA","CAIMITO","COROZAL","COVE\u00d1AS","EL ROBLE","GALERAS","GUARANDA","MAJAGUAL","SAMPU\u00c9S","SAN BENITO ABAD","SAN JUAN DE BETULIA","SAN MARCOS","SAN PEDRO","SAN LUIS DE SINC\u00c9","SUCRE","IBAGU\u00c9","ALPUJARRA","ALVARADO","AMBALEMA","ANZO\u00c1TEGUI","ARMERO","CAJAMARCA","CARMEN DE APICAL\u00c1","CASABIANCA","COELLO","COYAIMA","CUNDAY","DOLORES","ESPINAL","FALAN","FLANDES","FRESNO","GUAMO","HERVEO","HONDA","ICONONZO","L\u00c9RIDA","L\u00cdBANO","SAN SEBASTI\u00c1N DE MARIQUITA","MELGAR","MURILLO","NATAGAIMA","ORTEGA","PALOCABILDO","PIEDRAS","PRADO","PURIFICACI\u00d3N","RONCESVALLES","ROVIRA","SALDA\u00d1A","SAN ANTONIO","SAN LUIS","SANTA ISABEL","SU\u00c1REZ","VALLE DE SAN JUAN","VENADILLO","VILLAHERMOSA","VILLARRICA","SANTIAGO DE CALI","ALCAL\u00c1","ANDALUC\u00cdA","ANSERMANUEVO","ARGELIA","BOL\u00cdVAR","GUADALAJARA DE BUGA","BUGALAGRANDE","CAICEDONIA","CALIMA","CANDELARIA","CARTAGO","DAGUA","EL \u00c1GUILA","EL CAIRO","EL CERRITO","EL DOVIO","GINEBRA","GUACAR\u00cd","JAMUND\u00cd","LA CUMBRE","LA UNI\u00d3N","LA VICTORIA","OBANDO","PALMIRA","RESTREPO","RIOFR\u00cdO","ROLDANILLO","SAN PEDRO","SEVILLA","TORO","TRUJILLO","TULU\u00c1","ULLOA","VERSALLES","VIJES","YOTOCO","YUMBO","ZARZAL","ARAUCA","PUERTO ROND\u00d3N","YOPAL","AGUAZUL","CH\u00c1MEZA","MONTERREY","NUNCH\u00cdA","PAZ DE ARIPORO","PORE","SABANALARGA","T\u00c1MARA","TAURAMENA","TRINIDAD","VILLANUEVA","SIBUNDOY","SANTIAGO","LETICIA","PUERTO CARRE\u00d1O","CUMARIBO"],"lat":{"dtype":"f8","bdata":"F7g81oz8GEAO+PwwQigXQNxlv+50hxpA0F\u002foEaMnGEB7gsR296AWQNL\u002fci1acBhAfPKwUGuKG0Az\u002fRLx1jkaQAe3tYXnNRlAqN+FrdmyIUAHRIgrZ58YQFJEhlW8wRlAEcZP495sGkCme53Ul1UZQECk374O\u002fBZARfMAFvl1GEDurx73rWYXQFwdAHFXnxlA0qsBSkNdGEDhRsoWSesbQFouG53zAxtAPs+fNqqjGUDhfyvZsTEWQNtQMc7fVBhA8zy4O2vnGkCOXDelvCYaQM8UOq+xOxhA1\u002fhM9s+TGUDgvDjx1S4YQOAqTyDsZBlAo1uv6UHxGUAhWcAEbk0ZQGVuvhHdQxpAe6AVGLKqGEBypgnbT7YXQHAmpguxGhtAqP3WTpSEGUCscMtHUpIYQAfvq3KhQhtAeCgK9IkcGUC3tYXnpTIXQJTdzOhHsxhAG\u002fLPDOJjFkBdUyCzsygXQJoK8Ui8HBhAuYswRbmUGEA+A+rNqPkWQBN+qZ835RdA6zpUU5K1GkCyZI7lXTUaQIqryr4rshhAXB5rRgbJF0CRmKCGb3EWQJHSbB6HgRpAJ6Q1Bp3gGEACEk2giBUcQLSrkPKTKhdA9fHQd7fyGUAf9GxWfb4YQB2qKck6fBdAfQT+8PM\u002fGEDurx73rZYYQLa8cr1tZhtABkoKLICZGEB0eXO4VtsXQMUcBB2tqhtAl6jeGtjKGUBmoDL+fWYbQMWu7e2WhCFALPGAsinXGUBeZ0P+mfEZQCZvgJnvIBlAWg9fJoqAF0DwbmWJzpIaQIzYJ4Bi5BlAURVT6SeMGEA1DYrmAdwWQMaKGkzDABpAuMzpspioFkDgEoB\u002fSnUXQEpCIm3jPxhAQtKnVfSXG0BHdTqQ9UQZQIVf6udNdRZAuY0G8BYYG0BzuFZ72NsXQHXpX5LKtBpAZFqbxvbaG0Dzcth9x2AaQOSG30239CVASZ2AJsKWJUAGvqJbr8EkQDzZzYx+7CRAueNNfovWJUAyAb9GkjglQAu45\u002fnTtiVAmPxP\u002fu7lJEBoPXyZKHolQKs97IUCjiVA6ITQQZdIJUCR0QFJ2AcmQF6B6EmZ\u002fCRA8ztNZryVJUAfMXpuoUMlQEj99QoLpiRAP6n26XiEJUAi41Eq4dElQFIQPL69qyRABirj32d8JUDIlA9B1ZgSQLitLTwvxSRA\u002fHCQEOUjIUD6YYTwaIMkQCsYldQJgCRAJc\u002f1fTiAJEB+GYwRiSIlQEoJwap66SFAXW+bqRCHIkBzS6shcXckQFQAjGfQUCJAR68GKA19IkCKPbSPFcwkQOW36GSpbSJAGO5cGOk1JUBJ8lzfh+MkQNpYiXlWsiRA1QYnol\u002fjJEDUDn9N1igWQOVeYFYo4hNAjo8WZwwTFkB+4ZUkzwUXQGnjiLX49BdAHsU56ujoFECgwabOo1IZQKLsLeV80RVABfnZyHXDFkDYgAhx5QwWQMQmMnOBqxRAhnKiXYV0FkAG9phIaTYaQN+Mmq+SvxhAB1+YTBUcGEASh2wgXTwWQCNJEK6AohVAfVwbKsaJFkA5uHTMeeYVQNP6WwLwTxdAd9hEZi4AGkCY9zjThC0WQOW1ErpLUhZAt3njpDCPFkAxJCcTt0oXQIZY\u002fRGGoRlACFdAoZ7uGUDNI38w8KwWQJkprb8lcBdAf6Dctu8BF0CbAS7IljUXQDupL0s7VRRApDMw8rLWGUDLS\u002f4nfwcUQOz3xDpV3hNApPs5BfnZGUCRfCWQEosVQL6HS447lRhAApzexfthFEBIxJRIoocWQD4mUprN4xNAtksbDkszFkCasWg6O8kUQBoUzQNYBBdAl3SUg9nkFkBI4uXpXIEXQMiYu5aQTxZAv7oqUIshFkBiS4+mehIXQPHZOjjYaxVA\u002fbypSIVhFkDIQQkzbY8UQCEeiZenYxRA8WJhiJweF0CxFwrYDsYZQFBz8iIToBZATzv8NVnzF0AB+RIqODwWQK0Tl+MV6BdAMLsnDwsVFkB39pUH6ZkVQJFigEQTKBZAUz2Zf\u002fRtFUDiWYKMgMoWQJ+OxwxUVhZAdXedDfn3FUBo6J\u002fgYuUUQHEEqRQ7OhhAxXB1AMRtE0B4Qq8\u002fiX8XQKQAUTBj2hZApu7KLhgMFkBrSNxj6VMZQBBaD18mKhhACFvs9lnlFkCARBMoYvETQDFCeLRxRBZAaJdvfVgPF0D5hsJn6wAWQJvj3Cbc6xhAjLrW3qd6FkDFq6xtihcUQBTRr62fThRAQX42ct1EFUA+XHLcKf0WQKJD4EigURZAVYodjUOtGUAEcokjD0QWQEIG8uzyPRZAYi8UsB3sFkD9SXzuBEsVQJEMObaewRZAFFrW\u002fWMhGEDwoxr2e+IUQPoJZ7eWeRVAGEFjJlG\u002fFUDaHr3hPiIVQLmKxW8KOxRAJlKazeNwFkBGzy10JfIUQNlaXyS0FRVAfQVpxqL5E0B2i8BY3\u002fATQGa+g584MBVAGoo73uTXFUBnYU87\u002fJUVQMh6avXVBRVAvW987ZnlFUA4+MJkqjAVQLR224XmqhRAiXyXUpdMFkC4dw360hsWQAckYd9OEhRAdLaA0HqIFUD3yrxV17EVQDWXGwx1qBRAseHplbKcFUDXhopx\u002fqYVQPiImBJJVBRAP8kdNpHJFUBSKXY0DkUVQLn8h\u002fTbJxRA0ova\u002fSpAFEC1NLdCWK0DQN18I7pnnf4\u002fFoTyPo5m\u002fT9FSN3OvhIJQEInhA66ZARAvaqzWmBvAUALR5BKsQMAQJ2DZ0KTxAlAPfAxWHEqBUAbSu1FtN0JQDDXogVouwJA+nspPGgWAkCkxoSYS2r9P61QpPs55QRAF0omp3YGAkAr+kMzT04AQNTzbiwozAJArb8lAP8UBECW7NgIxGsJQCob1lQWnSBAvcKC+wH\u002fIkA+yogLQPMjQBSuR+F6hCJAGOsbmNy4IkDtKM5RR2ciQOdz7na9TCRAjE0rhUBWI0CA8KFES6YgQNj0oKAUPSFAVaGBWDbrIUCVY7K4\u002f2AhQM7DCUynlSBAXqJ6a2ALH0Dk9zb92f8fQJm4VRADhSFA7nvUX6+gIEDImSZsP3EgQNbkKavpkiFAIeaSqu3GIUCgjVw3pUwiQNY4m44ANiJA6RA4EmjAIUAUPlsHBxMiQIts5\u002fupGSBAHHkgskh7IkBup60RwcghQCjWqfI9eyJAOnR63o19IkBUdCSX\u002f9AgQILknUMZAiFA06BoHsACIkBRMc7fhHoiQM0d\u002fS\u002fX4iFAh4kGKXhKIkB2NA71u8AiQGqkpfJ2tCJAHZCEfTuZIUA9npYfuOohQGQ730+NXyJA7pOjAFGAEUCOrPwyGIMTQCL\u002fzCA+QBJA63O1FfsLE0A4MSQnExcRQBYUBmUafRNAbcoV3uXyEkCGksmpneEPQAwh5\u002f1\u002f7BJASBrc1hauE0CH+fIC7GMVQEKvP4nPnRFAHqZ9c39lFUC044bfTXcTQOuM74tLxRFAV7CNeLIbEkCRYKqZtZQUQLITXoJTPxRAtqD3xhBAE0ARww5j0k8SQJbpl4i3\u002fhRAcVmFzQBnE0D5adyb30ATQLQ7pBgg8RFAyjUFMjtbEUBqvko+dtcSQHy6umOxnRVAeT4D6s1YEUAAxciSOcYSQPpGdM+69hNA7mDEPgFEE0B24JwRpQ0TQNGQ8SiVQBFA8656wDwUEkAIBhA+lIgVQFVOe0rOSRRAjEl\u002fL4V3E0AVcM\u002fzp70TQPW8GwsKgxNAwocSLXncEEB16V+SygQRQPuxSX7EPxJAfcucLospE0AkD0QWaeISQO9wOzQshhJASyAldm1vFUCWz\u002fI8uMsUQDf7A+W2\u002fRNAxyqlZ3o5FUAZkL3e\u002fVEUQGk2j8Ng7hJABpylZDkJFEDvHqD7cgYSQE+Srpl80xJAZkmAmlpGFEAGf7+YLTkRQFq8WBgiRxRA4Qz+fjFbEEC3Xz5ZMYwUQKCM8WH2whBAIvq19dN\u002fEUBnmrD9ZDwRQHKIuDmV3BVALJyk+WO6EkAI5X0czVERQF\u002fv\u002fniv+hJAdelfksoUEkCZSj\u002fh7HYSQO1Ky0i9txBA8mH2su1UFUDF46JaROQTQPmgZ7PqYxNAZylZTkLZE0AErcCQ1S0UQJzEILBy+BFABMb6BiaHEUCWs3dGWwUWQDF6bqErURJADLCPTl2pE0Dtf4C1arcTQLUy4Zf6aRRADafMzTfSFUAKZeHra\u002f0UQIG0\u002fwHWqhNAlYCYhAvJFEBMGw5LA58SQNid7jzxfBNAaeOItfhkEUB\u002fMzFdiDUUQFb18jtN1hFA4IWt2crbE0CTV+cYkP0SQPvJGB9m7xFAkuumlNc6FUDOGVHaG5wRQAjHLHsSeBRAT8qkhjaAE0BUVWgglt0UQJ+Sc2IPDRRAi\u002f1l9+TBEUDC3y9mS9YVQEm8PJ0rChNAZjOHpBYaFEDFxVG5iboWQI1HqYQn5BhAlIeFWtN8HUATDr3Fw3sHQJD0aRX94fw\u002fMbH5uDYUAkCBejNqvsoJQMgm+RG\u002fggBAJZASu7Y3CUC5xmeyf34FQMFz7+GSAwtAtyQH7GqSAUCPM03YfhIDQMTOFDqvMQBArP4Iw4ClBED356Ih4zEFQDVh+8kY3\u002f4\u002fMxgjEoWWAUDBV3TrNR0DQJVliGNdXARAKC1cVmEzAEDZ6Jyf4pgDQFNaf0sAHgdA+MJkqmCU+z8NMzSeCCICQHXkSGdgpP0\u002foZ4+An84BkAYCAJk6Bj+P7TJ4ZNOhAdASKZDp+ed\u002fz9O0ZFc\u002fuMAQCydD88S5ANA4uXpXFGKCEBrD3uhgO0FQCDT2jS2l\u002f8\u002fmSmtvyXACUCGx34WS1EFQLgdGhajDidAXCGsxhIGJUBgyOpWz8EmQLRyLzArjCdAfshbrn5sJ0BPd554zh4lQGpPyTmxNyVA22\u002ftRElgJECOWfYksLEjQBmrzf+rpiRAmx4UlKINJEAbmx2pvoMkQPXVVYFaBCJAfeasTznOJEBuMxXikTglQPQXesToSSJA7fDXZI2aI0CYE7TJ4eskQJqYLsTqlyNAcVga+FH9JUA9uaZAZmclQKTi\u002f46oECRAjrETXoL7JECtw9FVunsiQPuT+NwJpiJAoijQJ\u002fKMJUCjBz4GK1YkQE8g7BSrhiVAtOkI4GaBEEAYRKSmXewPQN21hHzQQxJAE2ba\u002fpUlEUDAIVSp2aMOQHL6er5mWQ5AjC\u002fa44UUEUB+xoUDIWkRQD\u002fiV6zhggxAkYE8u3zrDUCHFtnO97MLQArWOJuOYAxAbJT1m4kJD0DBHD1+bzMMQDVj0XR2QhFAHQOy17tfEEAc7E0MyQkRQB04Z0Rprw1AwMsMG2X9CkAkmGpmLdURQMbCEDl9nQ1A1NfzNctl8z+fHAWIgpn3P6uTMxR3POw\u002fqyUd5WA29D+eYP91bhr2P3zSiQRTTfo\u002fC3xFt15T8z\u002fONczQeCLtP6HYCpqWWOs\u002fEFzlCYSd6z9ljuVd9QDtP\u002ffHe9XKxPU\u002ford4eM9B9z\u002fvU1VoINb2P93PKcjPhvY\u002feomxTL8E8D\u002f7B5EMObbuPymXxi+8EvI\u002fh272B8pt7T9nLJrOTgbvP4wVNZiG4fA\u002fF0m70cd86j8k8Ief\u002f575PxhDOdGuwvQ\u002fVAH3PH+a+T\u002fBqQ8k75z1P0uxo3Gon\u002fQ\u002fXB0AcVfv8D9bs5WX\u002fM\u002fpP23n+6nxUuw\u002fGxNiLqna6z\u002fQXn089F31Py8Zx0j2iPQ\u002fQde+gF44+D9UyQBQxQ34P1zn3y77tfo\u002fnzpWKT3T+D+DMLd7uY\u002fzPzPDRlm\u002fmfA\u002fBTHQtS8g+T+GG\u002fD5YYTxP1CJ6xhXXPE\u002fdVd2weDa8T+srdhfdp8fQCKphZLJKSBANUbrqGqSHkDIfat14nIeQAu3fCQlFSBAMxZNZycTHUDR5ji3CfceQPVMLzGWaR5A7u2W5ICNHECWXpuNlSgeQC8zbJT12x5A58OzBBnBH0DFymjk86ofQCJVFK+yBh5Al6yKcJMxHUBG0m70MY8eQLPw9bUuVR9AyVUsflPIH0Do2EElrjMdQJVFYRdFfyBAmIi3zr99HUAexM4UOr8dQO6TowBRuCBAEolCy7pPHkB64jlbQBgfQDgVqTC2gB9Ady6M9KJ2H0BjQWFQptEcQJ32lJwTOx1AxEFClC+oH0CN8PYgBGQfQIY97fDXJBJAQ3IycatwEUD8Ny9OfBUSQBk9t9CVeBJAp658lueREUDZzCGphbISQAsNxLKZ0xBA\u002f5WVJqXQEUDlgF1NnkISQD3uW60TVxFAsTBETl9\u002fEkB+q3XicowSQA4V4\u002fxNOBNA3bHYJhVtFEDDDmPS38sTQBsQIa6czRRAliL5SiBVE0BW8xyR70IVQHJqZ5jaAhRAHTwTmiSWE0BNLsbAOr4TQNKL2v0qMBVAETl9PV\u002fjFEBs6GZ\u002foFwVQJ27XS9NgRNAUHEceLVMFEBI3GPpQ3ccQEpenWNAphhAx\u002fDYz2IJF0DRAx+DFccaQFMGDmjpuhdAqyLcZFSJGkCsqpffaUIcQNO84xQdmRtA1h9hGLD0F0CSeHk6V2QdQC9tOCwNHBpAmKQyxRyEGkAQyvs4mgMbQFuU2SCTXBtAzehHwykjGUA6QDBHjx8dQLxASYEFQBhAHvruVpZIGUD0h2aeXBMbQELpCyHnbRlAK2nFNxQuGUCFXn8Sn2saQDnU78LWzBpANo\u002fDYP76GEDUt8zpsjgYQFLy6hwD4h1A2XbaGhGsGkBvumWH+DcXQKQ1Bp0QShxAjQ5Iwr6NGkBdUyCzs8gXQBReglMfSBxA24gnu5mBG0BjR+NQv\u002fsYQBUDJJpA0RdAP+YDAp0ZGECZuFUQAy0aQB8r+G2IgRdAs5WX\u002fE\u002fuGkAdWmQ7328XQLDjv0AQ4BhAqio0EMu2GEAm4NdIEnQcQEZda+9TBRtAEDtT6LwGGkCDwTV39M8aQAmKH2PuSh1AIjgu46bmGUCmJyzxgLIaQORJ0jWTDxlA7rCJzFxgGUBEherm4p8ZQMVztoDQqhlA6WUUyy39G0ALthFPdoMXQNHoDmJnmhpA6dZrelBgHUC37XvUXw8dQF653jZTkR1AhWBVvfw+G0BjXkccsoEYQODYs+cyNRpAfuGVJM+1GUD76NSVz6IaQMyXF2AfTRpARtEDH4OFG0AF3smnx\u002fYbQAh3Z+22WxlAyCjPvBzGGUDQYb68ANsZQKiLFMrCZxhAObcJ98qsF0CBeF2\u002fYHcdQAlvD0JAzhxA58Qe2sfKGUB9rrZifwkYQCHlJ9U+PR1AjBNf7SiuGkB0Jm2q7kEbQP64\u002ffLJmiJA\u002f+kGCryjIkBU5XtGIpQhQPJDpREzoyJA+weRDDnOIkCL4eoAiDMiQC3uPzIdUiJAbLBwkubvIEBJnBVRExUhQFa2D3nLXSJA9n6jHTfcIUCQTIdOz4siQKuvrgrUUiFAexSuR+HKIkBmTSzwFX0iQATo9\u002f2bnyFArws\u002fOJ+6EUB\u002fg\u002fbq4yELQOzBpPj4RBJA56vkY3chE0AFNXwL64YSQGIx6lp7HxRAkl7U7lfBEUCERrBx\u002fZsQQMaFAyFZUBRA6rMDrismEUDJPsiyYGIOQIP5K2SuPBBAtoMR+wRQDEAxtaUO8poQQPIGmPkOfhRAWf0RhgEbEUBPzeUGQ50UQCPA6V28HxBA2uTwSSdSFEABFCNL5tgUQDatFAK5tBBAKZfGL7xyE0BYVpqUgq4TQI\u002f\u002fAkGAzBRA46qy74rQEEAvNUI\u002fU38TQP3c0JSd\u002fgxAnQ5kPbV6D0Cs\u002fZ3t0XsUQIiBrn0BLRJA2lNyTuwBDkC4A3XKo9sOQPHZOjjYCxBAkX2QZcH0EEBVpMLYQnAPQFsnLscrUA9AVydnKO6IEEDi6gCIu9oSQGNGeHsQMhBA+Z\u002f83TvKEEBREhJpG98SQCRkIM8uHxRAuHTMecZ+D0AkgQabOk8LQCL8i6AxsxJAMzFdiNWvEECBXyNJEC4TQH\u002f2I0Vk6BJAcVZETfRZEUCMo3ITtTQPQJtwr8xb1RBAtcGJ6NdWEUDPnsvUJHgPQLqGGRpPRAtATWn9LQH4EkC4k4jwL0INQOqXiLfOnxNAv4HJjSILE0BczM8NTXkNQA+22O2zChJAnRN7aB\u002fLDUBj0XR2MhgOQFh1VgvsEQpA8rbSa7MxDUCVZB2OriISQJZZhGIrGBJAtahPcodNEkCHFAMkmkAMQJBLHHkgkg5ATuyhfaygEEAgX0IFh6cRQJUPQdXo9Q9AAkcCDTYVEUCtwJDVrW4SQPUqMjog2RBAxXHg1XJXEECI2jaMgtASQINQ3sfRTBJAa2KBr+iWDUBxy0dS0uMOQHlXPWAeUgxAEw1S8BSSEUCNRj6veEocQNhl+E83IBlAJNOh0\u002fNOFUCBy2PNyLAUQJxvRPes2xRA5iSUvhCCE0BoBBvXv4sWQBmNfF7xhBdAt0WZDTLpFkAOL4hITWsTQL+AXrhzURdAOIHptG4TFEDThVj9EaYVQFR0JJf\u002fcBJAwCZr1EM08z+HbCBdbFryPyQofoy5yxDAaAbxgR2\u002fGEBLBKp\u002fEMkRQA=="},"legendgroup":"Otro municipio","lon":{"dtype":"f8","bdata":"WKg1zTvlUsBD4bN1cNtSwCFAho4dBFPAMunvpfDsUsDIs8u3PvhSwPxuumWH7VLAchdhinLVUsByUwPN5\u002fRSwAyVfy2v9lLAQzwSL08bU8DHn6hsWPJSwB7ec2A51VLAKH0h5LzqUsAfEVMiieNSwNRDNLqD\u002flLA1h72QgH\u002fUsB15EhnYAFTwHcQO1Po\u002flLA7dYyGY7oUsDYDkbsE9NSwDc10HzOAVPAbhPulXmwUsA4vCAiNelSwILGTKJe1VLASZ9W0R\u002fSUsDBjZQtksVSwLK9FvTey1LA\u002fDcvTnzQUsB3hxQDJPpSwMNGWb+Z4FLAbFuU2SDZUsCsjhzpDPFSwE4oRMAh4VLAi\u002f87okLlUsCAnDBhNOtSwIidKXReCFPA\u002fWg4ZW7cUsAxeJj2zctSwGdjJeZZz1LAW2H6XkPcUsCk\u002fnqFBfpSwITU7ewr51LA0IB6M2r0UsCbApmdRfJSwK+0jNR721LAchk3NdDoUsCiC+pb5uZSwIL+Qo8Y11LAjLysiQX0UsAKLlbUYLJSwOlDF9S31VLAX3tmSYDhUsDDYWngR8tSwKexvRb081LA9n04SIjPUsDSqwFKQ\u002fpSwP0zg\u002fjA9VLAjbW\u002fsz2aUsA8S5ARUKVSwGwhyEEJqVLA7xzKUBXgUsB7EALyJdhSwEjcY+lD9FLA\u002fBcIAmTnUsA\u002f4IEBhP5SwMbDew4s61LAnYAmwobuUsD\u002f6QYKvOtSwGTpQxfUIVPAuVFkraHjUsDLg\u002fQUOcFSwBaInpRJ1VLAlpaRek\u002fkUsD2YFJ8fN1SwMkAUMWNylLA5E7pYP3QUsA8vr1r0NNSwP7viArV71LAGJRpNLntUsACg6RPq\u002fRSwCrIz0au8lLA4jrGFRcLU8AOETenkghTwP96hQX351LA3zZTIR6zUsA4MSQnE+9SwHjt0obDtVLAi6n0E87aUsByUMJM28BSwI2Y2ecxtFLAiudsAaG6UsDncRjMX7hSwA4viEhNuFLAdHtJY7S3UsD7ljldFslSwKcgPxu5sVLAyecVTz29UsCXytsRTrBSwADHnj2XtlLAevzepj+wUsDt1cdD37hSwE8iwr8IyFLAV1wclZuwUsCaz7nb9bpSwFCMLJljvVLArP4Iw4CwUsD1uG+1TrJSwLyTT49tuFLAr+sX7Ia+UsDBO\u002fn02IZSwDFBDd\u002fC31LA53Ct9rCjUsDXvRWJCdZSwO4ljdE6wVLATptxGqK6UsD9L9eiBdVSwNL9nIL8hFLADp4JTRKxUsB4YADhQ8xSwEt4Qq8\u002fklLASDMWTWebUsAJ\u002fyJozMlSwHLFxVG5lFLAXb9gN2zSUsCoUUgyq9dSwOuPMAxY21LAj1a1pKPRUsD2XKYmwVZSwAOYMnBAWFLAbf\u002fKSpM4UsC5OZUMAFxSwFYsflNYOlLAWW5pNSRIUsAVkWEVbyVSwNl8XBsqV1LAHm0csRZ7UsBuUWaDTHxSwBlXXByVV1LA3rBtUWZ0UsDy7PKtDyBSwJ7PgHozHlLAqoJRSZ1cUsD7yoP0FFJSwN1AgXfyUlLA2xMktrtUUsBM4UGz64JSwMI0DB8RNlLAqp1haksvUsAg1bDfE11SwBLds67RPVLAxXB1AMRcUsCyEYjX9UFSwCo3UUtzHFLAhLhy9s4fUsDqBgq8kz9SwEPGo1TCOlLAsp\u002fFUiRjUsCafLPNjTNSwC9P54pSV1LAcFzGTQ0gUsBdqWdBKF5SwKq6RzZXX1LA+6wyU1oaUsD\u002fk797R1dSwKwBSkONJFLA2ERmLnBcUsBwBn+\u002fmGFSwPTBMjZ0VFLAIGPuWkKAUsBB1H0AUklSwPBQFOgTM1LASTDVzFo2UsAcmNwosmRSwDBI+rSKV1LAFOgTeZKGUsCfPgJ\u002f+DtSwNbJGYo7XVLAn8coz7xTUsAkQ46tZ1lSwIGSAgtgQ1LAJLTlXIpHUsDXv+szZx1SwHPzjeieflLAT85Q3PEvUsAOEqJ8QUNSwFzLZDiepVLA2cwhqYWLUsA5m44AblVSwBSUopV7aFLAPgRVo1dNUsDIztvY7HBSwH5zf\u002fW4YlLACJPi4xNfUsAtl43O+URSwJpeYizTXlLAEvqZet1QUsAcJhqk4D5SwH+EYcCSZlLA66hqgqhPUsDzcth9xytSwJ55Oey+KFLAObnfoSg7UsAuVP61vFtSwJBMh07PXFLAyatzDMhPUsCX\u002fiWpTFVSwHjy6bEtLFLAZ3+g3LZnUsAwmwDD8lxSwAx3Loz0WlLATFEujV9ZUsBGQfD49j9SwAGh9fBlaVLAdyy2SUUsUsDPnzaq00tSwEfM7PMYP1LAVMa\u002fz7h7UsC8lpAPel9SwJnwS\u002f28TlLAz04GR8k2UsAi\u002f8wgPl1SwIYeMXpuYVLAOxixTwBTUsBJERlW8UpSwC0hH\u002fRs31LAnnsPlxzdUsAudvusMvJSwIW2nEtx31LAKULqdvbzUsDIl1DB4eZSwGu28pL\u002f41LAYfw07s2qUsAzbmqg+eJSwFg4SfPHyVLA17\u002frM2fmUsABofXwZcNSwFLuPsdH4VLAsFjDRe64UsCC4zJuat1SwF01zxH551LAN6W8VkLKUsADmZ1F7+xSwJM16iEa8VLA+rZgqS7fUsD5gas8gb9SwMlXAimx8lLAPWGJB5TpUsC+9WG9UbpSwJLqO78o4FLAhGQBE7j3UsBgPlkxXCZTwI1F09nJNlPA5nlwd9Y9U8B2NuSfGRlTwKoM424QBFPAZ\u002fD3i9kwU8CwBFJi1zFTwNB+pIgMFFPA8G36sx\u002f+UsAF24gnuxpTwEV\u002faObJH1PASwM\u002fqmEvU8B7FoTyPjFTwLTjht9NGFPAteBFX0EnU8Au\u002frYnSDtTwGe5bHTOK1PA\u002fu+ICtUZU8AH8BZIUB1TwBr35jdMZ1LADAQBMnR+UsB1PdF14XhSwJojK78MdFLAf9x++WRmUsBQUfUrnWJSwLYwC+2cfVLAVU\u002fmH31vUsDOOXgmNG9SwH506spnc1LAOwFNhA1oUsBPBkfJq2pSwNCZtKm6WFLARFA1ejVZUsBjRKLQsmBSwC6RC87g91LAW+m12VjJUsCm7zUEx95SwDaxwFd0D1PAxeQNMPPyUsB\u002fFHXmHuhSwMBZSpaT2VLAL4hITbvnUsAonN1aJvNSwE3cKoiB1VLAfbJiuDr0UsBfDOVEuxZTwMH\u002fVrJj61LAeHqlLEMIU8DtKw\u002fSU+VSwEyOO6WD4FLAMiHmkqoQU8Ccwd8vZu5SwHlcVIuI3FLACqLuA5DgUsA4FakwtvBSwJBLHHkg\u002fVLAj95wH7nsUsADQ1a3evVSwINOCB1041LA+DJRhNSqUsAvh913DJxSwIeL3NPVoVLA6KT3ja+dUsD5hOy8jZpSwCXoL\u002fSIolLAdhn+0w2WUsDPE8\u002fZAp9SwHrgY7Dim1LAkx0bgXiBUsBR9wFIbZ9SwAJjfQOTfFLAU0FF1a95UsAzMzMzM4NSwAUYlj\u002ffglLALev+sRB7UsAnLzIBv2tSwPyO4bGfflLAVyWRfZCGUsD20hQBTpxSwH+EYcCSklLAsB73rdaQUsB+dOrKZ5ZSwGH7yRgfeVLAjpJX5xh8UsCcTrLV5YxSwOtWz0nvclLA\u002fPuMCweYUsDm6VxRSmFSwO+OjNXmd1LATbuYZrpoUsBX6e46G2dSwJyopbkVs1LAHqM883KWUsAiUWhZ92tSwNMVbCOeplLAlbpkHCN4UsDedqG5TnVSwC\u002f84HzqnVLAZ++Mtip0UsDsoBLXMYBSwPlNYaWCrFLAgGH5821qUsDPEI5Z9n1SwHgOZaiKnVLAD4EjgQaZUsAqjC0EOZlSwNRgGoaPlVLAiq2gaYltUsDspL4s7WZSwLHgfsADkVLAcVRuopZiUsC71Aj9TFZSwEtYG2MnjlLAQWMmUS94UsBxjjo6rqdSwB9JSQ9DmFLAOSnMe5yeUsD7dhIR\u002folSwCP5SiAln1LAW7G\u002f7J5NUsBol299WJNSwMKjjSPWqVLAqDrkZritUsDC3O7lPndSwIwtBDkoolLAn48y4gKmUsAf2scKfpZSwAnh0cYRm1LAfhzNkZWBUsBIpG38iZJSwLVwWYXNp1LAXtVZLbCbUsA2WDhJ83JSwEcf8wGBkFLAodrgRPSZUsD75v7qcXZSwOCfUiXKjVLAq1lnfF98UsBwKHy2DotSwDDysiYWc1LAL75ojxd0UsBw0jQomnZSwLoVwmoshlLArP2d7dF4UsBCtcGJ6JhSwJ\u002fpJcYyiVLAFokJavicUsDylxb1SWBSwNek2xK5qFLAamrZWl96UsDCS3DqA2JSwF2kUBa+e1LARPzDlh50UsCSWiiZnIFSwHUF24gnllLAzqW4quyjUsArhqsDIGZSwOZY3lUPnlLAhiFy+nqhUsB9BWnGopVSwBsrMc9KmFLABW1y+KR\u002fUsDfiO5Z1yhTwCO9qN2vWVPAuRluwOctU8AP0765v9FSwJNwIY\u002fg+FLAuXL2zmjxUsAJjPUNTM9SwAu2EU928lLAiNo2jILDUsAyryMO2dRSwD9vKlJhs1LAle6usyHoUsD\u002f6Js0DeNSwGUBE7h18FLAHGFREafcUsA\u002fGk6Zm+hSwJJZvcPtDVPALbXeb7T+UsB4mzdOCvlSwGechqjC81LA7UeKyLD\u002fUsACKbFre\u002fFSwBgFwePb21LAMsozL4cIU8BbDB6mffNSwDiFlQoqA1PAey++aI\u002fQUsBhiQeUTRFTwG9Kea2E5VLAN4lBYOXyUsAXLNUFvPRSwOeNk8K87lLAVyQmqOHIUsAWbvlISuRSwEXaxp+o+1LAqOLGLebNUsDa5PBJJ+FSwAFqatlaOlLAmZzaGaZEUsDG3\u002fYEiQ9SwLQevkwUHFLA2nOZmgQRUsAm\u002fijqzEBSwAmISbiQPlLATS8xlumDUsDcgM8PI49SwEnb+BOVt1LApgwc0NKnUsCPpQ9dULVSwAYN\u002fRNcflLAKuJ0kq20UsCtM74vLpFSwGXequtQjlLA2A5G7BOZUsCjj\u002fmAQKdSwAJHAg02slLA44i1+BSSUsDmkxXD1a1SwAtHkEqxjVLA83UZ\u002ftOyUsABp3fxfpZSwKw5QDBHpFLAutv10hSuUsAzTkNU4a1SwLHdPUD3iFLAPl3dsdhnUsDxZ3izBnFSwHZvRWKCPVLAPYGwU6wyUsBtHofB\u002fGtSwCrFjsahdVLA5Nwm3CtfUsDUmuYdp21SwJkqGJXUclLArOEi93R1UsAi\u002fmFLj2dSwK6BrRIsbVLAJ2vUQzRxUsDiP91AgYFSwLwhjQqcBVLAQuvhy0Q9UsBlOQmlL2RSwOgWuhKBT1LAlDKpoQ14UsAZj1IJT2tSwIUKDi+IbFLAdNL7xtdRU8BEGapiKkVTwFEwYwrWbFPAklm9w+1gU8AuAmN9A0pTwKINwAZEQVPAQN8WLNVdU8AyyF2EKWNTwJRsdTklYVPAHGFREaduU8CoOuRmuHJTwGYwRiQKUlPA5iSUvhBcU8Ar2hznNkZTwFIMkGgCWVPA9G+X\u002fbpcU8BBR6ta0m5TwJSjAFEwY1PA9gzhmGVkU8Czsn3IW2FTwK4upwTEX1PArI2xE15pU8DIKM+8HD5TwGqJldHIWVPAQlw5e2dIU8AI6SlyiGFTwI84ZAPpVlPArDb\u002frzpkU8CiYMYUrGRTwCTSNv5EYFPAejiB6bRoU8ABa9WuCWZTwGowDcNHXlPA16NwPQpDU8DgufdwyU1TwLSqJR3lQFPALzTXaaRHU8DVz5uKVGtTwDmX4qqyZ1PA4C2QoPhRU8CZEkn0MllTwIGyKVd4Z1PA4PdvXpxZU8D9ogT9hSBSwHCzeLEwTlLAucSRByIzUsDWi6GcaClSwOWXwRiRN1LAj8ahfhcpUsDXw5eJIkNSwEVmLnB5JlLANiIYB5cqUsDWdD3RdTFSwHZtb7ckKlLAdJXurrMmUsA\u002fVYUGYjJSwKj\u002frPnxHlLAzhd7L74fUsDovTEEAFVSwMUdb\u002fJbIFLAa378pUU1UsBx5eyd0S9SwI1F09nJVlLAU8prJXQpUsDj4NIx5yhSwDTyecVTGlLAdm9FYoIeUsCEY5Y9CTRSwEp\u002fL4UHKFLAA5MbRdYtUsCyuP\u002fIdDBSwOscA7LXHlLAlpaRek8+UsAzwtuDEB5SwMdkcf+R61LAY0LMJVXvUsDqW+Z0WelSwMl06PS86FLA8YEd\u002fwXsUsAkRzoDI+pSwFosRfKV8lLAcalKW1zyUsAZqmIq\u002fe9SwARVo1cD7VLARkHw+PbwUsCKx0W1iORSwJPkub4P7lLAH0yKj0\u002f8UsCoOA68Wv1SwFAAxciS91LArWpJRznrUsDKFd7lIvNSwDnWxW00AFPADmYTYFj4UsAoJ9pVSO9SwCkGSDSB+FLAyOvBpPgBU8ADP6phv+5SwCwpd5\u002fj51LAlDMUd7z9UsBPrFPle0hSwG7fo\u002f56YVLAX16AfXR6UsAF+kSeJEFSwMOedvhrZ1LAI57sZkZOUsDY1k\u002f\u002fWXZSwOZ4BaInUlLAoPmcu11xUsBVvfxOkzxSwFhwP+CBLFLArRbYYyIoUsCiXvBpTj5SwPIlVHB4LFLAluoCXmZJUsCJm1PJAD5SwAA7N23GaFLAnG7ZIf58UsBgeCXJcyxSwAK7mjxlT1LA1Em2upxCUsB\u002f+WTFcERSwAbYR6euYFLAu0c2V81fUsDbNSGtMXRSwLvVc9L7TFLApu81BMcsUsCcFrzoK35SwMe5TbhXRlLAXvOqzmpSUsCFsYUgB1ZSwEj7H2CtSlLAGjbK+s02UsBd3hyu1VpSwH7k1qTbbFLANxsrMc9kUsCfxyjPvFNSwE30+SgjclLAsWt7uyVGUsD+nlinyn1SwC2UTE7tc1LAHQOy17tlUsD6K2SuDE5SwIVBmUaTRlLABYasbvUlUsC6MNKL2i5SwH47iQj\u002fQFLApBthURE+UsBpb\u002fCFyTNSwKYol8YvU1LABp\u002fm5EU0UsDVPbK5alJSwAJIbeLkSlLA\u002fz7jwoFDUsBTdvpBXWtSwNzWFp6Xg1LAERjrG5h5UsAh5\u002f1\u002fnElSwHmvWpnwX1LAHbCryVM2UsD7V1aalGBSwEkShCugSFLAFLGIYYc3UsCh9IWQ8y5SwH3mrE85KVLAwHebN05aUsDMejGUEzpSwOC6YkZ4Z1LA4q3zb5dVUsD18dB3t1BSwNGRXP5DXFLACD2bVZ9yUsBP6zao\u002fT5SwLXeb7TjPVLA0O\u002f7Ny9JUsDGUiRfCWtSwGkewCK\u002fN1LAsB2M2CdLUsDUDRR4J1FSwHiXi\u002fhO2VLAnGotzEK+UsBUAfc8f8dSwCAKZkzB0lLAOIdrtYfrUsC9j6M5ssxSwFoNiXssw1LAOx3IemqiUsCrl99pMqhSwBDOp45V2FLA+5C3XP3BUsDRXKeRls9SwDkM5q+QyFLARN\u002fdyhLEUsDrjzAMWMlSwDqSy39IrlLA30+Nl27MUsAPnDOitLtSwLxa7swEvVLATMecZ+ywUsD0UUZcAMZSwL1V16GauFLAgnSxaaXbUsDyYfay7a1SwGN7Lei9x1LAiSgmb4C5UsD6eyk8aMxSwCCaeXJNrFLAAtU\u002fiGS5UsDwF7Mlq7hSwPt2EhH+vFLAMQvtnGa0UsDbb+1EScJSwDvHgOz1vVLACd0lcVbLUsCKWS+GcrBSwBhftMcLolLAafzCK0m6UsBYrOEi98NSwIhH4uXpuFLAm1d1VgupUsBgOUIG8spSwNukorH2xVLApMNDGD\u002fOUsA6AyMva8FSwPgaguMyuFLAfnGpSlu7UsD+JhQi4LtSwOHtQQjI5lLAQnbexmbPUsDSN2kaFMFSwDxqTIi53lLA3bQZpyHGUsCnyveMRMZSwBxClZo9tVLATgrzHmfHUsD9hR4xertSwJwyN9+Ix1LA4dHGEWumUsAeG4F4XSFTwK1rtBzo8VLAkst\u002fSL8KU8Aroib6fP9SwB9oBYasB1PAgEbp0r8LU8A2zNB4IhNTwPXWwFYJClPAP5C8cyj1UsCdvMgE\u002fB5TwFQcB14tFlPAdNGQ8Sj7UsBy4UBIFixTwCh9IeS8AlPAxFvn3y4OU8AiUWhZ9xNTwOmZXmIsD1PAqkavBigRU8C\u002fuFSlLRVTwPNzQ1N2IlPAih9j7lokU8Dy64fYYAZTwMIWu31WAlPAe4fboWH+UsCWIvlKIBNTwBkD6zh+IVPAv4BeuHMSU8C2uwfovglTwNY2xeOiDlPAVcA9z5\u002f7UsDP2QJC6wRTwBLYnINnFFPA8pnsn6cMU8CKrgs\u002fOO9SwPeQ8L2\u002fDFPAfc9IhEYcU8Coj8AffhhTwPWfNT\u002f+H1PAGm7A54cEU8AzMV2I1a9RwPEuF\u002fGdxlHAijkIOloZUsBxjc9k\u002fyJSwGSSkbOwN1LA499nXDg5UsAGSgosgAxSwMeDLXb7+FHAa2CrBIv\u002fUcAbn8n+eUJSwH\u002fZPXlYClLAh6JAn8gvUsBe2QWDa+pRwOwUqwZhO1LA53Pudr06U8A9KChFK0BTwDY9KChFfFHA48KBkCzfUMDieD4D6nJRwA=="},"marker":{"color":"#1c7ed6","size":{"dtype":"f8","bdata":"himjKXz8MEDyFMyOFeQHQDcedkY5sdI\u002fZ9h1uC329j97oaxTT3oYQLu1gQKAjNU\u002fIPW9E4bb\u002fT8964sfdcHbP9N70dtxhgNAsLlldpGRCkB9XV58Zj7FP2h9jiRTMQdAfhT6\u002fIVw2T8Vu\u002fo6+5MNQH9Jr138i+0\u002fiL17sxNw\u002fT84NGFVbrXrP5NMCPQh+No\u002fSEcyxJaB9j90qNuPAqgCQGv2MqSmKgBAlXP+L30+1D\u002f+aCcfFhbxP7gC96G2RRRAgwlJqCrM9D+XwUHS9fb4P48vGzWWmfg\u002fvLCDPni\u002f9T98377mh4vzPzwfRDrlSPg\u002f0JbS7mMn8z9izkFZVeDbPwz43d4OLAZAmb4cbye48D\u002f2QuuAhAMNQDxE0ipbCOE\u002fIE8k23b8BEDQDbT1CeXyP1mdgQkGHu8\u002f3ZmxBRQBG0CePx\u002fDzzjyP8Wlf1TiGRVAUo\u002f9QARRFkBHgPhmEK0BQLKdoDu+VgFAPuqCtSNk7j\u002fQrjqkdTUaQPVxZKzF5iZAi9SwJzOg\u002fT93h8zjU6baP2HIbxmn6C1At0WqOamb\u002fz9PqhHxhdfJP5qZmZmZmbk\u002fRl8gS2GMGEDd6yrNzHbOP2i3iu7XSQNAjCLIKTql8D\u002ftyNxBBvLPP1riueroH8I\u002fugthYHYg2z8N9eLYKBwGQJqZmZmZmbk\u002fP8vauMB+8D+fBMdHzQAAQNtCP5EdAcU\u002fws3L51Fv+T+amZmZmZm5Pzw0FjqFISVA7TkqXXTxIUAHx0RUs7cEQCRNPQJs9hhAqaK3KNUHBkD1i4FuuwIkQD7Nhxzmqeo\u002fukZYxI5uLkA9iFYVqEcjQCMN5ICMdApA4JFNBQVKCUDzhxysQ3n3P6O2\u002fSc9O8E\u002fHHSSxkuj7z+RfPw6zm0aQDDQjtPrZwBAhZMSV4vg6D+gdCuVC3IMQPtBWvWuePc\u002fCMTl9B2CAEBd9M+saQoJQC3rCJERbC1ApwZCSxsUAEBpJE0d0gz0P8sqazh1278\u002fiD6BBAa+\u002fz\u002fxWhpxNnoBQI4+oGxayxFAM6iYbbuYxz+e38qyvqT3P55X6odEauQ\u002fLJqR4cfiAkD8KqugBgLjPzP1901dJwZACqPK9f9E5z\u002fex9AUag37PyGCgltNndI\u002fI4YjlgJr3D\u002fPqRkQvCMQQPHg+sfQ68w\u002fmpmZmZmZuT8zTYyjfS08QBhZjL5fWgpAniQWXzV0wT8S0fh5VK0IQHPMYaDxQsA\u002fcsEet\u002fRH9T8OZy8QjtD7P5qZmZmZmbk\u002fGLsF9XgQFkDtxWPj5N7wP\u002fE3qrEVhOU\u002fG7nWydaP9j8eCL\u002fJEvjLP6JBDDp\u002fp80\u002fmH2avQY61D\u002fdVr6n1\u002fUAQKtlWxvjPfU\u002fSlj9MkAj9j87oN123544QBHkawArGfc\u002fHFsxK+NKMkAhJnGBBWsBQC6Q4IXQfxJA3uRZp9gF6j+llAvPkv3VP5+QPA6fUQBAkyW8ybNC9z\u002f3pexavd0DQLsO2dtJOMk\u002fjdVoMK0xFEDlM8zWj+3uP8Sz6e1qGwFAElWox72jxz94s\u002fqK\u002fBzuP8g6CKEj6xZAANjXM3P2BEBuD3OcQK\u002f7PzmJ18D69NU\u002falMSQSDbAkB8JAGJAjATQN9yAS68rtQ\u002f46doRh5nA0DMjflG\u002fh4cQM\u002fsEA6duco\u002f2k0otlGQ\u002fz+xWWIsb0DLP5qZmZmZmbk\u002fDcdq6o5D2T8E37Nyy5bxP5+dOhVWQgBAmpmZmZmZuT\u002fLE0lnq6oLQIozqxfVJ+I\u002ftwSg2cH74T92uK+bxuUHQGTa5R9Qjv0\u002fUgSguFOPBkA74Ykk21kfQL7qtuK3Qt8\u002fmpmZmZmZuT+nW7NomEIMQLVwOIJ7wrs\u002fLaUvgh3qxj+inK8mG3v5P9Og4jgTSvE\u002fNhgcC\u002fe82T8Tz\u002fmAGnMCQMF5bz7ysxdAXEag0Vma6z+UQBvZ2Z3wP0ZmNRZSoM0\u002feNgKr0vzCEDSfCcksfDaP9jKTefHVfI\u002fIUsM3oRF2j9Y02HLtdUIQAbN+RlY1\u002fA\u002fmpmZmZmZuT92jYuy0\u002fUYQDCsoSl0mfw\u002fXOuis3Xv1D\u002fr5gO+dRQGQGS2sF2+sShAftpFiQRJI0CamZmZmZm5P\u002fhWWhgHZQNAYggq\u002fI4uxj+WMMRQjp4AQPrBKwVbRBlAZKKDBKaSIEB61qYF\u002fe3rP5qZmZmZmbk\u002fjAL1FGVvK0Ag7MMDr4DMP8H67hkehf4\u002fzflj45529j\u002fOb1XaahYSQPpt4YW26dA\u002fXAKJNXwGI0A7funAT0XAP77hUNI4uANApq3IvtTPHEAzAXnfbR4DQFSEGWVSdQZAUKoOSAbW+j95vEVCIwoiQFng+iLylARAiEqoD1Om+T9QHTgIxBUGQAZK1ObY\u002ff0\u002fLuYQQhZ\u002fAkAcAqdF\u002fPYAQN25W+UAIBtAzmSMVcAkEEBOvNHMgeTgP\u002fZl59n0yyNALLA+59GiGUBQ6im4hIwVQKdOAwB9wPM\u002f7hRI6HyIDUDW1gOBi6YhQCeCKQTKXv4\u002fFIsaXajI\u002fz8AOd5kgYP\u002fP9RpL+6R0NQ\u002fdZQFtj3K8j8mbNEcGDH4P+xmn5jCOQpA1\u002fXrVnpY+T8IHPMsHnAJQN6wq9GRlRlA\u002fNLPgqn+zj8051ReeDEEQN+to3ROxwhAEPgk31jx\u002fT8zwlCTeBXQP2qQgEv5wNk\u002f9L\u002fUael+B0DhBYlUOkvqP5rrp+293wVAf80ZUemFEkA0H\u002fGSoJYbQOaOQHESXNk\u002fLqpPUOqEzj\u002fg5F9gRzcCQHBSNRSaIeA\u002fDgJEA6OrzD+ilr0Df1jVPxszb\u002fhFU\u002fU\u002fAxzJ\u002fEazxz938vVhEs38P+OsoTRRbx1A0YCCmZRxuj+9UP1KsMMHQHzOepvD5wFAXnJrFnMpBUCamZmZmZm5P44soIg5Kfk\u002fayoGoGHmIkDgaWxric3iPx3jB+qmvhVASCaTxhHq7D\u002fE1+oKe0PWPy+\u002fvuyiBQBAFvnPZJx84j+3JFk0PUn+PzTSUpbdIe8\u002fx\u002ft0mVU68T\u002fHQVA\u002fLnnqPydI4R5wtd4\u002fGi75UPRO4D+6olFVFCz4Pza5zI4X2sU\u002fegqvMfLDBEBu1Ox79kL3PzYjLgnFeRdAL9XEuB6rCUBRjOpVPCP\u002fP1jcwAc+hhFA28yj\u002f0cEHkDGIoEajtDWP0pFqBuQyPM\u002fTUOfR9Yp5j\u002f9IrAG1m\u002fzP8dWFwdwefg\u002f3O\u002fXyrNQGUC\u002fSZCDEvoNQLF5guKsFcQ\u002ftl0kXmc6I0BT0DFpQeb1P5SMj744mPE\u002f38OfftSpEECamZmZmZm5P2kYlutWFvY\u002f1wHtPFJawj9GpidD8FHgP72CkhifSvA\u002fgTHdwgn02D9SS6zFVo7hP\u002fwYr4BpHOA\u002fCmgINAfe4z8B65hZi7\u002fkP2ACm5RY+Q9AfRXMvkcPFkAViC88Iq0EQCiQHuYFudg\u002f5Go9h6aMEUCdV+18wUwWQDv3G8dmEv8\u002fRB9ybZ+GGEBGnh7XAbH5PxL1JTk7vSFAFjz1I6TvEkD9Z9sQeNYJQPzbqm6obCBAC0ofF+NnGUCN44O5hXwjQDvwmho+1g5ASFctsQ7BIkCZCDSxqLQFQPNeAAMQft4\u002fcWtEVFgrIUCppoCnPTUpQF\u002fojF2+eSFA5RoNRO1WEkDM9Foknv4jQE5Ptk10Buo\u002fWGIgR9p9IEDibN9GDq3GPwr1Lc8ql+M\u002f2ovEFWQ84D+amZmZmZm5P9da4n2Bv\u002fs\u002f05t7CanMHkAaj25WoVHnP9+kQQZhVeE\u002fQKdWb+ZQGEABIu16eLcIQD8rxuDJ8+c\u002f1znlaNwaA0D2g15OcusEQOhvgRh1YuI\u002fUTKKR3Th\u002fj\u002foCH2ilLIjQCMwpDhZriJA7aqa8ZOf0j9Kpjpm+3LcP6XB3whu9NI\u002foEM7R1SXA0D93vLl7hAKQEk8SN\u002fz\u002fSVAyVVd3rsPAEBI1wcemY\u002fMP10k1mgLSSxAcSZLyhtYAEA8bOaRybfAP0FTOGtdBPA\u002f6JsJDqkRB0A9WiXSn7oIQOLEcUznN\u002fM\u002fQk7ddWE43D\u002fK2m0oMfAgQDhzWTar8NA\u002fmpmZmZmZuT\u002fwmw5KcssCQEN89fQwzwdAf19jPObEEUDNoTu1Jrr\u002fP2HTc5xuBx5A1EopY0cW7D+xLSYpRxHmP4bZ\u002ffytRfQ\u002f2O59y49Z4z+8\u002fYtVDtQOQAv+EWJ+UChAGZdnMoPMGUBXg6S3DVkSQKsp36TpVRVAxkzmRaEtCUDQjlm3MjwmQLHeAWIyBfU\u002fvOLLLQh78D9Fy\u002fdgI1\u002fvP0NbUJuatwxA9Ik9SgEkGECwpxCYGIn\u002fPxMeiPyLyxZApdvEXOQj0D+UB9ZjQBjKP38EQlELfhZA\u002fFygtxM5FEDnBccoztPyP7VM8VYZ8RRAmNtO9f6VIUC\u002fiU98YR8nQFcH+s5xbtE\u002f2IutqI7c4T+2eWiymuouQBFHF4ubKwZAP3bOQcKWD0CamZmZmZm5P3ByCJPTIw5Ajv\u002fESIyoMUBP91UhwbDxP4LPrzxn1uA\u002fN9HsaI4l8T+e3oP1DIUhQCBSr6iqSeU\u002fp6PcI0Qy3j+Yb+yM3R4QQE8okeJ\u002fR9s\u002fs\u002f5LJhGx8D9tgYgSoAMSQNlCbtq8Vfo\u002fQVgL0r8DIEAspxcFMB4KQOrA\u002fGG7+\u002fo\u002flZap4xewCEDiA8dqF5XXP8xtXx\u002fxJQJAYL3lKPTX\u002fj\u002fO5tQ8KYUIQJqZmZmZmbk\u002fmpmZmZmZuT8AbeeK0VnBP3DtReIlRwNADI7sqOa38z93UoX0fXzhPwBpowNu8R5AfH0ZXF+hFUCZa18AkNfgPyYbDDLkdQNAY7VlsROeCUBEiuQ3TGQNQKe9n+stJOg\u002fbD4DC9ghAUBHkUpGg1v4P\u002fnMz23vP+8\u002fGX4Afwdh+j\u002fHCTMO3J68P6NluLWQhPM\u002fZyMEFPJN1T\u002ffkNLJ53nzP9TDVdzWdvs\u002fPJ7ZwkAbDUCamZmZmZm5P8ZqiyKUP+Q\u002foixyCSgdxD\u002fPHo1p+GMBQLcc3hZFWbw\u002fgWkJEp7D3z9v\u002fpRpkCvoP0XpZ\u002faI7wdAlVF9kiL96T8Jko1154G6P0rige5L5wVAhAe2jePn3z9V3VU1w4kAQAj44kjlafc\u002fmpmZmZmZuT95qBPWHFD7P6T\u002fhhUb09c\u002fXSsww4tO\u002fD+g9By9kGvXPxWeTntcDeU\u002fFZ\u002fFWRrVBkDwYk032+7bP5wqHHBepSFAl2U+bf1nK0AigmdISp8SQGwtkbxWd+o\u002fRx4agwvQ+T84bDTTrtPwP1wVEfzgFOw\u002fIlApKQ2N9D+H9Bx2bh\u002foP9pjK+dsxR5AZU64sokT9j+IHBpJVnoeQN7Ek2IJVzVAuuEaN+hSC0AVuDdrt+gmQDg8hkoYwgVAzysjQpmhEkAR290qDYj+P2jae55v+v0\u002fiX0e7+mi4j\u002fgTtAPzevuP3WEtdgVgiNArb92tb+8MkAHvr52YvDmP7TZ6fipIABAQab5hyW+4j\u002fDPMDUHtPlP8GHlv7Tm80\u002fjH\u002f5ag1EBEBBU5cFGq0MQMQkqjJvaRdATtvxq1jm+T98DZf2XecMQJqZmZmZmbk\u002fNj7MFK7y\u002fj+amZmZmZm5P2zDMCAzDwhAXIH99XFEBkChawsIqfwMQNm+I9ZNXwpAtqAGTFhXB0C\u002fnr3ZjjQaQBDaag9Fo+I\u002fFBAMGZc8N0Dv2bG1mjTQP4kIzJtmbQZAGpT3sXzKCECyRED14c32P2qlqIFEmOQ\u002fn9jTqNpd\u002fj9HsQbSIj8hQAzApS93bBlANqx\u002fkuQvE0CxTB3ckyTWPzvia7qa+whAMY1J9vu8BUBu37IV0srqP6lMnQDj2tQ\u002fsw\u002f5vkGG9j+FKG2yPEjPPyVP\u002fIHjE\u002fU\u002f5t6sygJKEUDI7HNxKynxPwyfzROfHixAceS2Hyck6z\u002frNQ7jQJIjQEPiT09YtSBAgMNE7o7YDkAu3FZEKpD6Pxq92nqtXP0\u002fzDaHGuzrBEAdi2Rk9LoIQMgnVGbqAf4\u002fjsXnblkGJUD9a45GWcADQEiCFfSyavM\u002ffzlDX4llB0Bj\u002fF8iYDQAQJMGas5EuPc\u002fMKTeI\u002fS0\u002fD95T0EDS7HtP7OM3wkTIw5AzPCeA\u002f+m\u002fj9AkjyoKwobQJiJFAVMrCxAZkM8GqhMFECksVKPY5IBQLRahCRXZPE\u002fTaSfZjFJA0BElVMu0ZQEQOsnsgLU9QlANekMYOhs4T8zDESZxxYgQJVcu+2jjQBAWOaGajAf9z9UrZhvHuMJQKEVbN44kDJAElcAnt4Y9D9WnTKJqSgRQNL\u002fQAsFggJAEtteyrUrAUDA7NGEVpLvP0oCZoTGFANAf7fU+vcHEUBpr8rlVpUZQEGCfOG4gvI\u002fkRAvNWKIFkBlImanXOXSP8P4iH4RFCVA6I5KfY\u002fVAUCNZLoeG2kCQB21FewNHR1A9MNBgKTTA0BgafQdUJkCQCmZYgbAPOk\u002fBw\u002fMxXFDAEC5HyQn+XwKQDpqNfOv0+o\u002fotEbzQc+3z+C7LbdnsMTQJ1coelVxP4\u002f6N+7qLLdAUCYuhS5KEEqQOkCfdNYlNc\u002fmpmZmZmZuT8aG9iBm9fxP5yVatPWRwRA6rPfhb001j\u002fPwlutTgz\u002fP6BDJ5gwcAtAsvEoSgWX\u002fD9hKVvqj2DKP079Xh+pNgpAbRPbNBCnEECr80AwFLsQQFUtMsLMeiNAviI3jsA30D9exBbLPdb0Pxs3sPtJ+fE\u002fz3UunFJaEkBV0nUQq9ACQF6tz5oxl9Y\u002fmpmZmZmZuT+KMCM5D0gFQLzGGb5toPw\u002fjRQ0Jvhe4z+xG2hVrGj5P5\u002fvxR2LRPY\u002fK\u002fn+cgFF4j9pdajJO0fxP4cgCyZjcv8\u002fyp7L39Gt4T+LpLCed8DoP\u002fak2onfHihABItQmIdZHEBwk4bXJLu9PyvvSbSAfNM\u002fzvDGrivt9j+KIpGvdF3EP5qZmZmZmbk\u002f\u002fVBwfleL4j\u002fCuWitbY8FQJ1uNWq+H\u002fo\u002fJ0N+\u002fWfczj9zK8zRE7EwQGdqmtOJVBxAo7hbgMEowT8ALXDkI6MTQFA\u002fTV8ZRgRA1w6fqm9u9j8QVTnAOCMDQD+HU9lfk+0\u002feioTpwTI9z88Twru1NDOP1K8MRFUPf4\u002faWcEHHQYFUB3ZV8F0zDOP3gHfGGCdvE\u002fWNQO2XHm5j8so67LLDcWQEOsXBrtt\u002fY\u002fGPOsD+2v9z9taPEj8rDiP09GuJUEBxFA2+Q15kY\u002f5T9q3pvRMCjtPw6PF3fyUuI\u002fDgz+AkOkEkCt115r\u002fcL+Pz87wRRjq8Q\u002fowLaHByu0T9Vb65dS4wdQCuUgIRD1fo\u002fdR2UuglK6T\u002fmEF3kY00KQMby18nieSlAgqEJG9\u002fM0D+aLhLLf6IRQJqZmZmZmbk\u002fxJarJuu04D808D7bgHYIQNxCZwMwlQRAmpmZmZmZuT9N0DmuXt\u002fgPypjT2bQyPk\u002fmpmZmZmZuT8tJzv+RjbUP0i8yhm9B9w\u002fXL2+ujmX0T\u002f5E90QQ9D7P+cQa9ofguw\u002fdIyeXWsx6D\u002fKgck+K2IGQNOmJoHhHQhATnAcqQxC2D\u002fiZeULo670P8WJCCgumt0\u002fRSaSi9jeG0CF6kmKfcD1P9ZCMpupb\u002fw\u002fuYQaYBf7yT9FsWpX18P6P\u002fZToGsGifc\u002fN\u002fr44zZ5IUCamZmZmZm5P7IO7GtN4tE\u002fhfgX2bTi6z+lCHrGGqfVP+tqpc\u002frfPI\u002fYu8mTREYxj\u002fBp30waywxQCVssM39mfQ\u002fmpmZmZmZuT\u002f6rWSrHMkYQFK2byf+BhpALJpi3wdNDUBlNr+yuerjP14fsaZ++whA\u002fWucu62n5j9fLzY80yASQLqJ+a22pxtAyTP0k+zg7z\u002fHInCANRsCQAo4Ulh4seY\u002f4VIbKR6W7j9FSmP19QQCQMv2Zfx4cuA\u002fa0teZZDs8T8c7UV8y\u002fP9P9E\u002fvIwEkgBAcwiiNiH4\u002fj91qCaywaD8P93GqD1bJuE\u002fnKdGs5hc9j87ZVZi7bwGQOiUxCJz9Nc\u002f7AQq4YTG6j+c4X9QO5cTQOaMSP9jg8I\u002f4FYNl4V4AkCwoQ9ZlmIqQANJef9dMhFA+fzlMgZCBECamZmZmZm5PwogDf1mQNI\u002fs5PB6J8Vxz+ghYKod\u002foGQDzrnoWvZgZAGRzYb20jIECo\u002frmd8PIRQLJvRM5UaSJA6FUHrGGmE0BHVlYk0koeQGvMu\u002fMBP+0\u002fHPX92Hss4D8IGJh8DkUfQNiqSfU0txRAOZZCxK9eD0Bgf0uqvWYPQMPAVemIcgNAaR4JDe0XC0BiTW1zsF0uQLvd2UXgfes\u002fmD+malUC5z9lhj2v\u002fokpQBC+c9K7LhdAdIVNe53xBUCYJ5aCfSv+PwM2jpXAwOQ\u002fQkfGw8LqHEAclBu9+MbIPzEHjinxZgVAle\u002fk\u002f8MTF0DZx5USOI\u002fiPxXUy7V2fOA\u002fYILrKa9x6j9M18039H\u002f4Pwge5ceO0R5A1zP26tGTGUCPyHgAtyQPQDgOwbIWHMc\u002fyyWYFeYWIEDYhteYzpcRQJqZmZmZmbk\u002fi\u002fMeAZ9D7j8mQZP4W2DhP7Ep4cEI2uA\u002fXoxp8cTTEUCamZmZmZm5P22T5qGZ8cE\u002f9+YPgo8j\u002fj+AskHyTI7CP72XhEZF\u002fA5AsRd9JWXOCEAGPuHi2v31P5mqypdj8ABA0vljgvgW5D9+qQYoNknBPw=="},"sizemode":"area","sizeref":0.058218385014166145},"mode":"markers","name":"Otro municipio","showlegend":true,"subplot":"map","type":"scattermap"},{"customdata":[["ANTIOQUIA",0.3,1,6.909655,-75.077501,"Municipio PDET"],["ANTIOQUIA",1.1,1,7.074703,-75.148355,"Municipio PDET"],["ANTIOQUIA",116.2,15,7.882968,-76.625279,"Municipio PDET"],["ANTIOQUIA",3.4,3,7.755148,-76.652652,"Municipio PDET"],["ANTIOQUIA",3.1,7,7.977278,-75.197996,"Municipio PDET"],["ANTIOQUIA",53.2,13,7.666147,-76.681531,"Municipio PDET"],["ANTIOQUIA",13.8,6,6.998112,-76.261614,"Municipio PDET"],["ANTIOQUIA",0.5,2,7.171629,-75.764673,"Municipio PDET"],["ANTIOQUIA",60.3,8,7.242875,-76.435875,"Municipio PDET"],["ANTIOQUIA",13.7,6,8.434526,-76.787271,"Municipio PDET"],["ANTIOQUIA",0.4,2,7.029424,-74.698135,"Municipio PDET"],["ANTIOQUIA",11.9,8,8.276884,-76.380567,"Municipio PDET"],["ANTIOQUIA",32.8,9,8.089929,-76.728858,"Municipio PDET"],["ANTIOQUIA",0.0,1,7.1652,-75.439274,"Municipio PDET"],["ANTIOQUIA",4.6,1,7.00396,-73.912445,"Municipio PDET"],["BOL\u00cdVAR",0.0,1,8.458865,-73.941099,"Municipio PDET"],["BOL\u00cdVAR",0.1,1,9.586942,-74.827399,"Municipio PDET"],["BOL\u00cdVAR",28.3,13,9.718653,-75.121178,"Municipio PDET"],["BOL\u00cdVAR",51.1,5,9.982402,-75.300516,"Municipio PDET"],["BOL\u00cdVAR",1.4,4,9.830275,-75.12105,"Municipio PDET"],["BOL\u00cdVAR",4.4,4,9.953751,-75.081761,"Municipio PDET"],["BOL\u00cdVAR",0.5,3,7.476747,-73.924602,"Municipio PDET"],["BOL\u00cdVAR",0.0,1,7.953916,-73.947264,"Municipio PDET"],["BOL\u00cdVAR",0.1,1,9.746306,-74.817879,"Municipio PDET"],["CAQUET\u00c1",10.3,9,1.618196,-75.609831,"Municipio PDET"],["CAQUET\u00c1",3.0,3,1.332371,-74.847867,"Municipio PDET"],["CAQUET\u00c1",1.2,5,1.033473,-75.919205,"Municipio PDET"],["CAQUET\u00c1",0.0,3,1.679951,-75.283631,"Municipio PDET"],["CAQUET\u00c1",0.0,1,1.570226,-75.326093,"Municipio PDET"],["CAQUET\u00c1",1.7,4,1.909063,-75.157604,"Municipio PDET"],["CAQUET\u00c1",0.0,1,1.330266,-75.973796,"Municipio PDET"],["CAQUET\u00c1",22.2,10,2.119413,-74.767894,"Municipio PDET"],["CAQUET\u00c1",0.2,1,0.87654,-75.619902,"Municipio PDET"],["CAQUET\u00c1",0.1,2,1.194619,-75.70671,"Municipio PDET"],["CAUCA",0.0,1,2.040998,-77.215773,"Municipio PDET"],["CAUCA",2.8,1,2.623371,-76.570682,"Municipio PDET"],["CAUCA",0.1,3,2.798059,-76.484319,"Municipio PDET"],["CAUCA",4.4,10,3.034531,-76.408941,"Municipio PDET"],["CAUCA",0.4,2,3.173854,-76.261866,"Municipio PDET"],["CAUCA",2.6,3,2.451409,-76.810911,"Municipio PDET"],["CAUCA",0.1,2,2.571337,-77.88797,"Municipio PDET"],["CAUCA",0.0,1,2.777834,-76.323877,"Municipio PDET"],["CAUCA",0.1,4,1.789193,-77.164319,"Municipio PDET"],["CAUCA",4.6,4,3.254651,-76.228722,"Municipio PDET"],["CAUCA",0.5,4,2.754684,-76.629106,"Municipio PDET"],["CAUCA",8.7,6,2.115875,-76.981075,"Municipio PDET"],["CAUCA",0.9,3,2.64228,-76.528615,"Municipio PDET"],["CAUCA",9.6,15,3.015008,-76.485141,"Municipio PDET"],["CAUCA",0.0,1,2.777312,-77.667541,"Municipio PDET"],["CAUCA",0.1,2,2.953017,-76.270284,"Municipio PDET"],["CESAR",21.4,23,10.460472,-73.259398,"Municipio PDET"],["CESAR",9.2,9,10.040454,-73.238389,"Municipio PDET"],["CESAR",0.1,4,9.704404,-73.278707,"Municipio PDET"],["CESAR",0.8,6,9.563752,-73.334143,"Municipio PDET"],["CESAR",1.1,3,10.390776,-73.029472,"Municipio PDET"],["CESAR",0.1,3,10.417321,-73.586211,"Municipio PDET"],["CESAR",4.4,8,10.387552,-73.171365,"Municipio PDET"],["CESAR",0.5,2,10.333039,-73.181208,"Municipio PDET"],["C\u00d3RDOBA",0.0,1,7.973777,-75.416818,"Municipio PDET"],["C\u00d3RDOBA",1.5,1,7.787303,-75.533476,"Municipio PDET"],["C\u00d3RDOBA",96.2,18,8.170612,-76.059797,"Municipio PDET"],["C\u00d3RDOBA",40.4,14,8.255016,-76.150756,"Municipio PDET"],["CHOC\u00d3",0.4,1,8.512178,-77.279951,"Municipio PDET"],["CHOC\u00d3",0.0,1,6.559708,-76.886773,"Municipio PDET"],["CHOC\u00d3",0.2,1,7.158294,-76.970798,"Municipio PDET"],["CHOC\u00d3",15.7,7,7.436704,-77.113156,"Municipio PDET"],["HUILA",22.7,5,2.521674,-75.315389,"Municipio PDET"],["LA GUAJIRA",1.0,4,11.27155,-73.307598,"Municipio PDET"],["LA GUAJIRA",1.1,5,10.886734,-72.846319,"Municipio PDET"],["LA GUAJIRA",0.0,2,10.769546,-73.000629,"Municipio PDET"],["MAGDALENA",15.8,10,11.204679,-74.199829,"Municipio PDET"],["MAGDALENA",18.0,3,10.589791,-74.186702,"Municipio PDET"],["MAGDALENA",88.9,20,11.006654,-74.241286,"Municipio PDET"],["MAGDALENA",1.8,6,10.514146,-74.191453,"Municipio PDET"],["META",0.0,2,2.896617,-72.135509,"Municipio PDET"],["META",0.4,2,3.382732,-74.044328,"Municipio PDET"],["META",0.1,1,2.177143,-73.78661,"Municipio PDET"],["META",2.5,2,3.239634,-74.351508,"Municipio PDET"],["META",2.4,3,2.624006,-72.760209,"Municipio PDET"],["META",19.0,6,3.272117,-73.37385,"Municipio PDET"],["META",24.6,7,2.939621,-73.206314,"Municipio PDET"],["META",10.9,6,3.125579,-73.750966,"Municipio PDET"],["NARI\u00d1O",0.2,1,2.479688,-78.110217,"Municipio PDET"],["NARI\u00d1O",0.3,1,1.494587,-77.521303,"Municipio PDET"],["NARI\u00d1O",0.3,4,2.507139,-78.452992,"Municipio PDET"],["NARI\u00d1O",0.1,1,1.627196,-77.458686,"Municipio PDET"],["NARI\u00d1O",0.2,1,1.212492,-77.995153,"Municipio PDET"],["NARI\u00d1O",11.9,9,1.807399,-78.764073,"Municipio PDET"],["NORTE DE SANTANDER",0.1,1,8.510579,-73.446687,"Municipio PDET"],["NORTE DE SANTANDER",0.1,2,8.574281,-73.09614,"Municipio PDET"],["NORTE DE SANTANDER",0.7,2,8.082105,-72.800577,"Municipio PDET"],["NORTE DE SANTANDER",0.0,1,8.438134,-73.28707,"Municipio PDET"],["NORTE DE SANTANDER",13.3,4,8.639891,-72.734496,"Municipio PDET"],["SUCRE",0.2,1,9.494192,-75.353256,"Municipio PDET"],["SUCRE",0.1,2,9.545352,-75.312697,"Municipio PDET"],["SUCRE",0.6,4,9.380269,-75.268716,"Municipio PDET"],["SUCRE",0.4,2,9.331395,-75.305949,"Municipio PDET"],["SUCRE",0.8,5,9.527176,-75.229037,"Municipio PDET"],["SUCRE",0.2,3,9.333157,-75.541264,"Municipio PDET"],["SUCRE",2.9,7,9.736955,-75.522398,"Municipio PDET"],["SUCRE",0.4,4,9.451819,-75.44085,"Municipio PDET"],["TOLIMA",0.0,1,3.590591,-75.382545,"Municipio PDET"],["TOLIMA",3.9,5,3.722918,-75.480765,"Municipio PDET"],["TOLIMA",1.3,3,3.197911,-75.644163,"Municipio PDET"],["TOLIMA",2.4,2,3.529932,-75.644069,"Municipio PDET"],["VALLE DEL CAUCA",9.4,12,3.875708,-77.01074,"Municipio PDET"],["VALLE DEL CAUCA",14.8,10,3.324118,-76.234199,"Municipio PDET"],["VALLE DEL CAUCA",25.9,12,3.419793,-76.241799,"Municipio PDET"],["ARAUCA",2.0,5,7.02702,-71.426733,"Municipio PDET"],["ARAUCA",6.4,5,6.796695,-71.76877,"Municipio PDET"],["ARAUCA",133.5,13,6.953926,-71.872812,"Municipio PDET"],["ARAUCA",96.2,8,6.453324,-71.754427,"Municipio PDET"],["PUTUMAYO",0.1,1,1.151172,-76.654238,"Municipio PDET"],["PUTUMAYO",8.5,2,0.962854,-76.407663,"Municipio PDET"],["PUTUMAYO",0.1,2,1.028821,-76.61721,"Municipio PDET"],["GUAVIARE",7.1,8,2.565932,-72.639254,"Municipio PDET"],["GUAVIARE",0.0,2,1.960982,-72.655197,"Municipio PDET"],["GUAVIARE",0.2,3,2.330164,-72.627304,"Municipio PDET"]],"hovertemplate":"\u003cb\u003e%{hovertext}\u003c\u002fb\u003e\u003cbr\u003e\u003cbr\u003esize=%{marker.size}\u003cbr\u003edepartamento=%{customdata[0]}\u003cbr\u003et\u002fd\u00eda=%{customdata[1]}\u003cbr\u003ecorredores=%{customdata[2]}\u003cextra\u003e\u003c\u002fextra\u003e","hovertext":["AMALFI","ANOR\u00cd","APARTAD\u00d3","CAREPA","CAUCASIA","CHIGOROD\u00d3","DABEIBA","ITUANGO","MUTAT\u00c1","NECOCL\u00cd","REMEDIOS","SAN PEDRO DE URAB\u00c1","TURBO","VALDIVIA","YOND\u00d3","ARENAL","C\u00d3RDOBA","EL CARMEN DE BOL\u00cdVAR","MAR\u00cdA LA BAJA","SAN JACINTO","SAN JUAN NEPOMUCENO","SAN PABLO","SIMIT\u00cd","ZAMBRANO","FLORENCIA","CARTAGENA DEL CHAIR\u00c1","CURILLO","EL DONCELLO","EL PAUJ\u00cdL","PUERTO RICO","SAN JOS\u00c9 DEL FRAGUA","SAN VICENTE DEL CAGU\u00c1N","SOLITA","VALPARA\u00cdSO","BALBOA","CAJIB\u00cdO","CALDONO","CALOTO","CORINTO","EL TAMBO","GUAPI","JAMBAL\u00d3","MERCADERES","MIRANDA","MORALES","PAT\u00cdA","PIENDAM\u00d3 - TUN\u00cdA","SANTANDER DE QUILICHAO","TIMBIQU\u00cd","TORIB\u00cdO","VALLEDUPAR","AGUST\u00cdN CODAZZI","BECERRIL","LA JAGUA DE IBIRICO","MANAURE BALC\u00d3N DEL CESAR","PUEBLO BELLO","LA PAZ","SAN DIEGO","MONTEL\u00cdBANO","SAN JOS\u00c9 DE UR\u00c9","TIERRALTA","VALENCIA","ACAND\u00cd","BOJAY\u00c1","CARMEN DEL DARI\u00c9N","RIOSUCIO","ALGECIRAS","DIBULLA","FONSECA","SAN JUAN DEL CESAR","SANTA MARTA","ARACATACA","CI\u00c9NAGA","FUNDACI\u00d3N","MAPIRIP\u00c1N","MESETAS","LA MACARENA","URIBE","PUERTO CONCORDIA","PUERTO LLERAS","PUERTO RICO","VISTAHERMOSA","EL CHARCO","LOS ANDES","MOSQUERA","POLICARPA","RICAURTE","SAN ANDR\u00c9S DE TUMACO","EL CARMEN","EL TARRA","SARDINATA","TEORAMA","TIB\u00da","COLOS\u00d3","CHAL\u00c1N","LOS PALMITOS","MORROA","OVEJAS","PALMITO","SAN ONOFRE","SAN JOS\u00c9 DE TOLUVIEJO","ATACO","CHAPARRAL","PLANADAS","RIOBLANCO","BUENAVENTURA","FLORIDA","PRADERA","ARAUQUITA","FORTUL","SARAVENA","TAME","MOCOA","PUERTO GUZM\u00c1N","VILLAGARZ\u00d3N","SAN JOS\u00c9 DEL GUAVIARE","CALAMAR","EL RETORNO"],"lat":{"dtype":"f8","bdata":"T5KumXyjG0ABp3fxfkwcQHqobcMoiB9AKo9uhEUFH0CyZmSQu+gfQGVQbXAiqh5ACft2EhH+G0BFLjiDv68cQGIQWDm0+BxA\u002fYUeMXreIEC53jZTIR4cQEOSWb3DjSBAieyDLAsuIEBhMlUwKqkcQPn3GRcOBBxA3o5wWvDqIEA0TG2pgywjQDZYOEnzbyNAzAwbZf32I0BwXwfOGakjQPoNEw1S6CNATN2VXTDoHUBJhhxbz9AfQP6d7dEbfiNAy0kofSHk+T+XOPJAZFH1P73IBPwaifA\u002ftB6+TBTh+j8oQ1VMpR\u002f5P\u002fEO8KSFi\u002f4\u002fGLFPAMVI9T\u002ftvI3NjvQAQM1YNJ2dDOw\u002fM+IC0Cgd8z98nGnC9lMAQNMyUu+p\u002fARASzrKwWxiBkDdlV0wuEYIQPM64pANZAlA5PVgUnycA0BB9Q8iGZIEQCO8PQgBOQZAzLbT1oig\u002fD9KJqd2hgkKQAaE1sOXCQZAWmQ730\u002ftAEDB\u002f1ayYyMFQExtqYO8HghAi06WWu83BkCaQXxgx58HQIpyafzC6yRAGvz9YrYUJEDaVx6kp2gjQPMbJhqkICNAlx+4yhPIJEA33h0Zq9UkQLD\u002fOjdtxiRAyJV6FoSqJEBSY0LMJeUfQLYr9MEyJh9APZzAdFpXIEDZ6Qd1kYIgQB123zE8BiFA\u002fzwNGCQ9GkCynITSF6IcQCkhWFUvvx1AVmMJa2MsBEAldQKaCIsmQKaAtP8BxiVABYnt7gGKJUAhW5avy2gmQEXzABb5LSVAccYwJ2gDJkAKvf4kPgclQBJNoIhFLAdAtg95y9UPC0D+uP3yyWoBQMsTCDvF6glA7Q+U2\u002fb9BEAtfH2tSy0KQBoUzQNYhAdA3IMQkC8BCUDpRIKpZtYDQJRt4A7U6fc\u002fizVc5J4OBECK6UKs\u002fgj6PwuW6gJeZvM\u002fbyu9Nhvr\u002fD98DFacagUhQKhtwygIJiFAGa2jqgkqIEAFiIIZU+AgQG0CDMufRyFAwePbuwb9IkDLnZlgOBcjQIFdTZ6ywiJAqB3+mqypIkDieD4D6g0jQPDd5o2TqiJAUz9vKlJ5I0BAbOnRVOciQNh+MsaHuQxAkIR9O4nIDUA1JsRcUpUJQLvUCP1MPQxAucMmMnMBD0ADXJAty5cKQMO3sG68WwtACFqBIasbHEAAjGfQ0C8bQGU3M\u002frR0BtAtvepKjTQGUB1IsFUM2vyPz9UGjGzz+4\u002fHQJHAg128D84FD5bB4cEQPq2YKkuYP8\u002fSIjyBS2kAkA="},"legendgroup":"Municipio PDET","lon":{"dtype":"f8","bdata":"ERrBxvXEUsCtTPilfslSwAr4NZIEKFPA0erkDMUpU8BJL2r3q8xSwHQNMzSeK1PAP4ulSL4QU8CXyAVn8PBSwDeJQWDlG1PAtoXnpWIyU8BZTGw+rqxSwPW7sDVbGFPAZFsGnKUuU8Dr\u002frEQHdxSwIWZtn9lelLAF9NM9zp8UsCPb+8a9LRSwKm\u002fXmHBx1LAL\u002ft1pzvTUsCSy39Iv8dSwKZFfZI7xVLAPPTdrSx7UsBnKy\u002f5n3xSwHRFKSFYtFLAkUWaeAfnUsDjFvNzQ7ZSwHZUNUHU+lLAb0ijAifSUsAXnSy13tRSwAFuFi8WylLAcD51rFL+UsDbMuAsJbFSwGYucHms51LAZXCUvDrtUsAHl445z01TwJ6ayw2GJFPANnUeFf8eU8CWP98WLBpTwMx7nGnCEFPA3j1A9+UzU8AQdR+A1HhTwE27mGa6FFPAIsfWM4RKU8AMeJlhow5TwOntz0VDKFPAFvvL7sk+U8A0SwLU1CFTwLg81owMH1PATu\u002fi\u002fbhqU8B0KENVTBFTwHapEfqZUFLAea7vw0FPUsCkiuJV1lFSwP1LUpliVVLAdAmH3uJBUsCNYyR7hGVSwHWr56T3SlLAgnFw6ZhLUsCWmGclrdpSwNtMhXgk4lLAiNnLttMDU8BAa378pQlTwOFembfqUVPAdH6K48A4U8BsQe+NIT5TwCjWqfI9R1PAKSFYVS\u002fUUsAplIWvr1NSwPC+KhcqNlLAeJs3TgpAUsC28pL\u002fyYxSwEIG8uzyi1LA5L7VOnGPUsAmbhXEQIxSwBPU8C2sCFLAA5MbRdaCUsA4LXjRV3JSwBISaRt\u002fllLA\u002fkemQ6cwUsAE54wo7VdSwD+toj80TVLAHJqy0w9wUsCmnZrLDYdTwKETQgddYVPAYFYo0v2cU8CESIYcW11TwAthNZawf1PAbLBwkuawU8AYIxKFllxSwJn1YignRlLAgjtQpzwzUsBqatlaX1JSwL3CgvsBL1LAaccNv5vWUsCrI0c6A9RSwF36l6Qy0VLAnE8dq5TTUsC8JM6KqM5SwCOgwhGk4lLAu18F+G7hUsBDHOviNtxSwOQPBp572FLA7wOQ2sTeUsDFknL3OelSwITXLm046VLAlDDT9q9AU8BhcM0d\u002fQ5TwCdNg6J5D1PA78ftl0\u002fbUcBXCRaHM\u002fFRwJvj3Cbc91HACw4viEjwUcA7cw8J3ylTwIMyjSYXGlPA6DBfXoAnU8CU9ZuJ6ShSwP3bZb\u002fuKVLAmSmtvyUoUsA="},"marker":{"color":"#f08c00","size":{"dtype":"f8","bdata":"\u002fc9n11Xr4D894NOTCQXxP8lw8OyvjyVAvcZB+oBv\u002fT+REYFx\u002fgP8P\u002fgUpkjALx1AnlWiAeK5DUCWbB0P1gvmPyByz1uuDR9ADV9DGFWbDUA\u002fPc+KIGrlP5cTgaTeoAtASkEfhCnsFkDXgxOzrCrFP+5pC0gwJwFAmpmZmZmZuT+uNb11nsfWP2xx1vwmShVAiqsM7xeaHEBFGOz8vCTzP2BUiHHMvQBAhRP4tFem5j8hRqKPHLHJP3jIrTC1TNc\u002f+9lGTymnCUAwJrgEVtb7P9wfUOHbwvE\u002fmpmZmZmZuT+amZmZmZm5P6KolNpzGfU\u002fmpmZmZmZuT\u002fx3urGBdsSQB4b0bkUUd8\u002floQ3V3et0D\u002fGsrN8XhPBP7xAxUUQw\u002fo\u002fW2Jsfhiy0T9rQcb8wbUAQHMWRgcGeOM\u002ftXVoDiO7+T9L+qESDXbOP7OSIdRdCsA\u002fAEAMj2c21z8y+J0hfi4BQES\u002fQkcls+Y\u002fQOtHP\u002fCRB0C+sGgW80vuP+7XvzlI1AhAfb+g+qJjwD8h0uiHBcDSP27YqWWihRJAI3qfV4NFCEDVmphBDGXXP1eG34G9P+w\u002fnH06zzmj8D9PceCsGYPVPzaX+RIo3QBA6kq+SR4R5j+kHtVdgUzHP\u002fiqcauAc\u002fM\u002f4ZkFIbSdI0A+e5jBVmwZQJYfAoNuseM\u002fmpmZmZmZuT9oux9VFmrbPx3NkEpZvA9ANyH2TjUTE0C+rYgcBBDwP\u002fNaH20KJfE\u002fARgV5IwCxj+uNIiWcNYPQPL9RYts8xBA2B+6xsvcIkAB24ALXWP1P+U5U0ra1MQ\u002f63Tfhcm55D8zN0uefgjQPw6o\u002ferrDPk\u002fsu+26quc+D8yrOMtxm8RQEc7Ku1u2RNAfoZ3m6FfCkAWK4Kvu\u002fXYP8LLbATOCuE\u002fgFxJdQ5r4j\u002fUVjxlej3SP3QM+mxBLt8\u002fDvM8PiOfC0AvbwT8rdDRP8mTilOBpNg\u002f\u002fBr1HqLl6j+amZmZmZm5P5y8rpL9KQ1Ax0dBoSlg2T\u002fFKjcFIwTRPzKFUOVBKOg\u002fUgksHjKK4z84PE7lbwbtP6eIljVpxNs\u002fcT0KCYVC+z8Hc00x9hvjP5qZmZmZmbk\u002fw4YG87mR\u002fz+97CCOcTLyPx2igCvss\u002fg\u002fjPI6G6iLCEDrYB6gSr4OQO16PyykWxRAaKYtbUFk9j9lxM8HCzoEQJKmljI6HCdA2P9m\u002fgufI0BjKZn3zpHOP4+aJT1WYQdATIWWd1U2zj8FahOkV1MFQDyZQWKVbcI\u002frlKcfxGR3j8="},"sizemode":"area","sizeref":0.058218385014166145},"mode":"markers","name":"Municipio PDET","showlegend":true,"subplot":"map","type":"scattermap"}],                        {"template":{"layout":{"colorway":["#1c7ed6","#7048e8","#f08c00","#2f9e44","#e03131","#868e96"],"font":{"color":"#212529","family":"Inter, Segoe UI, Helvetica, Arial, sans-serif","size":12},"hoverlabel":{"font":{"size":12}},"legend":{"font":{"size":11},"orientation":"h","x":0,"y":1.01,"yanchor":"bottom"},"margin":{"b":50,"l":60,"r":20,"t":92},"paper_bgcolor":"white","plot_bgcolor":"white","title":{"font":{"size":15},"x":0.01,"xanchor":"left","y":0.985,"yanchor":"top","yref":"container"},"xaxis":{"automargin":true,"gridcolor":"#eef0f2","linecolor":"#ced4da","zerolinecolor":"#dee2e6"},"yaxis":{"automargin":true,"gridcolor":"#eef0f2","linecolor":"#ced4da","zerolinecolor":"#dee2e6"}}},"map":{"domain":{"x":[0.0,1.0],"y":[0.0,1.0]},"center":{"lat":6.2,"lon":-74.2},"zoom":4.6,"style":"carto-positron"},"legend":{"title":{"text":""},"tracegroupgap":0,"itemsizing":"constant","y":0.02,"x":0.01,"yanchor":"bottom","orientation":"v","bgcolor":"rgba(255,255,255,0.85)"},"height":540,"margin":{"l":0,"r":0,"t":50,"b":0},"title":{"text":"Municipios de origen de los corredores (tama\u00f1o = toneladas por d\u00eda)"}},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('28ac7ccb-ba63-41dc-89f0-96189189da04');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div></div></div>
+</div>
+<p><strong>Interpretación.</strong> La oferta que llega a las centrales se concentra en el altiplano
+cundiboyacense, Antioquia, el Eje Cafetero y Nariño, que forman las burbujas más grandes. Los
+municipios PDET (naranja) son numerosos en el Caribe, el Pacífico y el sur, pero sus burbujas son
+pequeñas: aportan muchos corredores con poco volumen. Esa diferencia anticipa uno de los resultados
+centrales del EDA, que los corredores pequeños son los que más se interrumpen. Amplias zonas de la
+Orinoquía, la Amazonía y el Pacífico no tienen corredores regulares: el modelo no aprende nada sobre
+ellas, una limitación de cobertura del SIPSA-A.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">F</span><span class="o">.</span><span class="n">fig_toneladas_mercado</span><span class="p">(</span><span class="mi">2024</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div style="height:440px; width:100%;">            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script><script>if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-4.1.1.min.js" integrity="sha256-O24V1F27f8pb0glCkelh3cVHLNiHAJ5gCaVtq2aNch8=" crossorigin="anonymous"></script>                <div id="52fa5409-e86e-4fa1-a549-c394e741c932" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("52fa5409-e86e-4fa1-a549-c394e741c932")) {                    Plotly.newPlot(                        "52fa5409-e86e-4fa1-a549-c394e741c932",                        [{"hovertemplate":"miles de toneladas=%{x}\u003cbr\u003e=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"","marker":{"color":"#1c7ed6","pattern":{"shape":""}},"name":"","orientation":"h","showlegend":false,"textposition":"auto","x":{"dtype":"f8","bdata":"6Kv1j09dWkCZ8iGoGrtcQDo6rkb2mGBA2UcCaG8nYUAhlzjyQPFhQCI4LuOmL2ZAxduUPOicZkDI4u33ek1sQCxymeSRxm1Af2FDgYhQcEADQBU3jt9yQKQ1Bp0w33pAN+0YDU\u002fef0DjtipHsPGOQFPt0\u002fHI86FA"},"xaxis":"x","y":["Neiva, Surabastos","Armenia, Mercar","Barranquilla, Granabastos","Pereira, Mercasa","Sincelejo, Nuevo Mercado","Tunja, Complejo de Servicios del Sur","Medell\u00edn, Plaza Minorista \"Jos\u00e9 Mar\u00eda Villa\"","Cali, Cavasa","Cali, Santa Elena","C\u00facuta, Cenabastos","Cartagena, Bazurto","Barranquilla, Barranquillita","Bucaramanga, Centroabastos","Medell\u00edn, Central Mayorista de Antioquia","Bogot\u00e1, D.C., Corabastos"],"yaxis":"y","type":"bar"}],                        {"template":{"layout":{"colorway":["#1c7ed6","#7048e8","#f08c00","#2f9e44","#e03131","#868e96"],"font":{"color":"#212529","family":"Inter, Segoe UI, Helvetica, Arial, sans-serif","size":12},"hoverlabel":{"font":{"size":12}},"legend":{"font":{"size":11},"orientation":"h","x":0,"y":1.01,"yanchor":"bottom"},"margin":{"b":50,"l":60,"r":20,"t":92},"paper_bgcolor":"white","plot_bgcolor":"white","title":{"font":{"size":15},"x":0.01,"xanchor":"left","y":0.985,"yanchor":"top","yref":"container"},"xaxis":{"automargin":true,"gridcolor":"#eef0f2","linecolor":"#ced4da","zerolinecolor":"#dee2e6"},"yaxis":{"automargin":true,"gridcolor":"#eef0f2","linecolor":"#ced4da","zerolinecolor":"#dee2e6"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"miles de toneladas"},"nticks":4,"tickangle":0},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":""}},"legend":{"tracegroupgap":0},"barmode":"relative","height":440,"margin":{"t":60},"title":{"text":"Toneladas por central en 2024 (top 15)"}},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('52fa5409-e86e-4fa1-a549-c394e741c932');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div></div></div>
+</div>
+<p><strong>Interpretación.</strong> En 2024 Corabastos (Bogotá) recibió 32 % del volumen nacional, 2,3 veces lo que
+recibió la segunda central, y las cinco primeras (Corabastos, la Central Mayorista de Antioquia,
+Centroabastos, Barranquillita y Bazurto) concentraron 63 %. Un modelo ajustado por filas estará
+dominado por los corredores hacia estas centrales; por eso el capítulo 3 evalúa el desempeño por
+central y por región, no solo en el agregado. Con el selector de año del dashboard se ve que las
+cuatro primeras mantienen su orden entre 2018 y 2025, mientras el quinto puesto cambia: Cavasa (Cali)
+en 2018, Cenabastos (Cúcuta) en 2021 y Bazurto (Cartagena) en 2024-2025.</p>
+</section>
+<section id="dos-corredores-de-ejemplo">
+<h2>1.4 Dos corredores de ejemplo<a class="headerlink" href="#dos-corredores-de-ejemplo" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">F</span><span class="o">.</span><span class="n">fig_corredor_ejemplo</span><span class="p">(</span><span class="s2">"Estable"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div style="height:370px; width:100%;">            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script><script>if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-4.1.1.min.js" integrity="sha256-O24V1F27f8pb0glCkelh3cVHLNiHAJ5gCaVtq2aNch8=" crossorigin="anonymous"></script>                <div id="5fd0035d-4241-4948-8819-725a8d863cc9" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("5fd0035d-4241-4948-8819-725a8d863cc9")) {                    Plotly.newPlot(                        "5fd0035d-4241-4948-8819-725a8d863cc9",                        [{"line":{"color":"#1c7ed6","width":1.6},"name":"Abastecimiento en t+1 (t\u002fd\u00eda)","x":["2023-01-02T00:00:00.000000","2023-01-09T00:00:00.000000","2023-01-16T00:00:00.000000","2023-01-23T00:00:00.000000","2023-01-30T00:00:00.000000","2023-02-06T00:00:00.000000","2023-02-13T00:00:00.000000","2023-02-20T00:00:00.000000","2023-02-27T00:00:00.000000","2023-03-06T00:00:00.000000","2023-03-13T00:00:00.000000","2023-03-20T00:00:00.000000","2023-03-27T00:00:00.000000","2023-04-03T00:00:00.000000","2023-04-10T00:00:00.000000","2023-04-17T00:00:00.000000","2023-04-24T00:00:00.000000","2023-05-01T00:00:00.000000","2023-05-08T00:00:00.000000","2023-05-15T00:00:00.000000","2023-05-22T00:00:00.000000","2023-05-29T00:00:00.000000","2023-06-05T00:00:00.000000","2023-06-12T00:00:00.000000","2023-06-19T00:00:00.000000","2023-06-26T00:00:00.000000","2023-07-03T00:00:00.000000","2023-07-10T00:00:00.000000","2023-07-17T00:00:00.000000","2023-07-24T00:00:00.000000","2023-07-31T00:00:00.000000","2023-08-07T00:00:00.000000","2023-08-14T00:00:00.000000","2023-08-21T00:00:00.000000","2023-08-28T00:00:00.000000","2023-09-04T00:00:00.000000","2023-09-11T00:00:00.000000","2023-09-18T00:00:00.000000","2023-09-25T00:00:00.000000","2023-10-02T00:00:00.000000","2023-10-09T00:00:00.000000","2023-10-16T00:00:00.000000","2023-10-23T00:00:00.000000","2023-10-30T00:00:00.000000","2023-11-06T00:00:00.000000","2023-11-13T00:00:00.000000","2023-11-20T00:00:00.000000","2023-11-27T00:00:00.000000","2023-12-04T00:00:00.000000","2023-12-11T00:00:00.000000","2023-12-18T00:00:00.000000","2023-12-25T00:00:00.000000","2024-01-01T00:00:00.000000","2024-01-08T00:00:00.000000","2024-01-15T00:00:00.000000","2024-01-22T00:00:00.000000","2024-01-29T00:00:00.000000","2024-02-05T00:00:00.000000","2024-02-12T00:00:00.000000","2024-02-19T00:00:00.000000","2024-02-26T00:00:00.000000","2024-03-04T00:00:00.000000","2024-03-11T00:00:00.000000","2024-03-18T00:00:00.000000","2024-03-25T00:00:00.000000","2024-04-01T00:00:00.000000","2024-04-08T00:00:00.000000","2024-04-15T00:00:00.000000","2024-04-22T00:00:00.000000","2024-04-29T00:00:00.000000","2024-05-06T00:00:00.000000","2024-05-13T00:00:00.000000","2024-05-20T00:00:00.000000","2024-05-27T00:00:00.000000","2024-06-03T00:00:00.000000","2024-06-10T00:00:00.000000","2024-06-17T00:00:00.000000","2024-06-24T00:00:00.000000","2024-07-01T00:00:00.000000","2024-07-08T00:00:00.000000","2024-07-15T00:00:00.000000","2024-07-22T00:00:00.000000","2024-07-29T00:00:00.000000","2024-08-05T00:00:00.000000","2024-08-12T00:00:00.000000","2024-08-19T00:00:00.000000","2024-08-26T00:00:00.000000","2024-09-02T00:00:00.000000","2024-09-09T00:00:00.000000","2024-09-16T00:00:00.000000","2024-09-23T00:00:00.000000","2024-09-30T00:00:00.000000","2024-10-07T00:00:00.000000","2024-10-14T00:00:00.000000","2024-10-21T00:00:00.000000"],"y":{"dtype":"f8","bdata":"3WcXEJviUkAbcu6zC9hRQP2drJY3Jk1ANeTcZxdQUEBmZmZmZhZRQEz0d7JaflBAKVyPwvXIUEDW8sYIJvpKQNmL5sTdFllAvatfa\u002fMEVUCMo7NOmRxbQH2CRu2\u002fUFdAKlBKht+4XUAGgZVDC25mQBjNibs971ZA\u002feC9JT39UEBN6DJ2RLJNQAaBlUOLfE9AtjYPZH4QVEDYHU4f\u002f0hOQCOY6O9k1U1AYlNpyLknUUBpyLnPLkBXQEtDzn12EVVAGBCbSkOeU0BkfvDeksZUQAjvLelpXlRAZmZmZmZCVEDzxggm+htTQCRV12BfxlhAslreGMEkV0AHdVAHdXBWQO6\u002fUMRjAVlAB\u002ftyJYC2WkDCRH8nq+1ZQEeqrsG+LFpAC1GBUjL0VkA+hLSFZY9WQI8FB7hhHlVAymp5YwTLVkB0n11AbCJXQGDl0CLbqVJA2gXEptIYVkCJhHF01vlTQHVQB3VQk2BAU2nIuc\u002fGXUB2DfblSqRbQEOXsSMSDlxAlkOLbOdrVEA2lYac+\u002fxaQKRwPQrXb1RAWvW52ooBYEAfhetRuI5hQAkm+jtZnVtAl3pXv9bOXkDQcTHFmoVaQCpQSobfNFlAdwGxqTTsWECWhpz77IJWQHvRnLjb+1ZA6HWH08ePWUDTTWIQWOFWQM7Ah5C2+FVADuqgDupYYUBEi2zn+xtZQAIrhxbZ3k5A\u002fwtFPBaMRkAN9uVKAH1GQBcc4IZZwlBAfyer5Y2hTEDyjzzTCsFTQC5jRySM61ZAIuc+u4BAWEDhNwMfQsJVQMkzrRAVWE1ASgwCK4dGWEA0rRAVKI1TQO6\u002fUMRj4VZAcyWAXndQWUBk+M3Ah6BZQL1oTtztUVdAGvgQ0haGV0DP91PjpdNZQFe\u002f1uaBJFZAQxGPBQcQXECyWt4YwdxZQEKj9l8osl1A1TXYlythUUC6jB2RMKZXQFj2ojlxB1pASZIkSZKMWkDaSNU12BddQDqogzqoW19AnAcyP3jPXEBizUaqrvVgQA=="},"type":"scatter"},{"line":{"color":"#868e96","dash":"dash"},"name":"Umbral: 50 % del promedio de 8 semanas","x":["2023-01-02T00:00:00.000000","2023-01-09T00:00:00.000000","2023-01-16T00:00:00.000000","2023-01-23T00:00:00.000000","2023-01-30T00:00:00.000000","2023-02-06T00:00:00.000000","2023-02-13T00:00:00.000000","2023-02-20T00:00:00.000000","2023-02-27T00:00:00.000000","2023-03-06T00:00:00.000000","2023-03-13T00:00:00.000000","2023-03-20T00:00:00.000000","2023-03-27T00:00:00.000000","2023-04-03T00:00:00.000000","2023-04-10T00:00:00.000000","2023-04-17T00:00:00.000000","2023-04-24T00:00:00.000000","2023-05-01T00:00:00.000000","2023-05-08T00:00:00.000000","2023-05-15T00:00:00.000000","2023-05-22T00:00:00.000000","2023-05-29T00:00:00.000000","2023-06-05T00:00:00.000000","2023-06-12T00:00:00.000000","2023-06-19T00:00:00.000000","2023-06-26T00:00:00.000000","2023-07-03T00:00:00.000000","2023-07-10T00:00:00.000000","2023-07-17T00:00:00.000000","2023-07-24T00:00:00.000000","2023-07-31T00:00:00.000000","2023-08-07T00:00:00.000000","2023-08-14T00:00:00.000000","2023-08-21T00:00:00.000000","2023-08-28T00:00:00.000000","2023-09-04T00:00:00.000000","2023-09-11T00:00:00.000000","2023-09-18T00:00:00.000000","2023-09-25T00:00:00.000000","2023-10-02T00:00:00.000000","2023-10-09T00:00:00.000000","2023-10-16T00:00:00.000000","2023-10-23T00:00:00.000000","2023-10-30T00:00:00.000000","2023-11-06T00:00:00.000000","2023-11-13T00:00:00.000000","2023-11-20T00:00:00.000000","2023-11-27T00:00:00.000000","2023-12-04T00:00:00.000000","2023-12-11T00:00:00.000000","2023-12-18T00:00:00.000000","2023-12-25T00:00:00.000000","2024-01-01T00:00:00.000000","2024-01-08T00:00:00.000000","2024-01-15T00:00:00.000000","2024-01-22T00:00:00.000000","2024-01-29T00:00:00.000000","2024-02-05T00:00:00.000000","2024-02-12T00:00:00.000000","2024-02-19T00:00:00.000000","2024-02-26T00:00:00.000000","2024-03-04T00:00:00.000000","2024-03-11T00:00:00.000000","2024-03-18T00:00:00.000000","2024-03-25T00:00:00.000000","2024-04-01T00:00:00.000000","2024-04-08T00:00:00.000000","2024-04-15T00:00:00.000000","2024-04-22T00:00:00.000000","2024-04-29T00:00:00.000000","2024-05-06T00:00:00.000000","2024-05-13T00:00:00.000000","2024-05-20T00:00:00.000000","2024-05-27T00:00:00.000000","2024-06-03T00:00:00.000000","2024-06-10T00:00:00.000000","2024-06-17T00:00:00.000000","2024-06-24T00:00:00.000000","2024-07-01T00:00:00.000000","2024-07-08T00:00:00.000000","2024-07-15T00:00:00.000000","2024-07-22T00:00:00.000000","2024-07-29T00:00:00.000000","2024-08-05T00:00:00.000000","2024-08-12T00:00:00.000000","2024-08-19T00:00:00.000000","2024-08-26T00:00:00.000000","2024-09-02T00:00:00.000000","2024-09-09T00:00:00.000000","2024-09-16T00:00:00.000000","2024-09-23T00:00:00.000000","2024-09-30T00:00:00.000000","2024-10-07T00:00:00.000000","2024-10-14T00:00:00.000000","2024-10-21T00:00:00.000000"],"y":{"dtype":"f8","bdata":"or+T1fJQR0DwZLW8MQFHQIJSMvxmmEZAwQ2z1LtVRUBQE7qMHapDQOMrvuIreEJARM59dgGLQUDbPJD5wW9BQK5H4XoUb0BALSx70Zw1QUBhU2nIOZtBQPT91HhpLENAvDGCiX4MRED2rn6tzaBFQK4QFSiFLElAzF40J07xSUC8q19rU2FKQMcIJvqbGUlAX2vzQMZwSEDF3Z7jQo9HQFLv6te6iUZAzy4gNvWvRED7+EeeaTlBQGX4zcCHQ0FArgTQ6w7GQUAtOMANs15CQOnvZLW8\u002f0JA88YIJnoJQ0DiseAAN61DQD9Bo\u002fZfM0RAdwGxqTQnRUC\u002fk9XyxiNFQPjZBcSmT0VA8o880wr8RUCG3wx8CLpGQD0K16Pwa0dAuhJArzspSED8I8+0QqRIQODJanljXUhAPN9PjZccSED1\u002fdR46SdIQOWZVogK7EdAMFcC6HXqRkBS7+rX2m9GQJtKQ859qUVAmPQ0ocvvRkA5cbfnuNZHQDZSdQ12p0hAxld8xddPSUBKDAIrB\u002flIQETCODprA0pAnu+nxkvOSUBjPMiuc09LQI1JAaZNjktAJYFH1h5JS0DJrnNRcK5LQBqqo2VhfUtArIvbaIAWTEA12YCKZ9RLQPS7rEjKFkxAzNgRCeP1SkBC5gfvLcRJQDrrlMmtLElAAfS6w+kRSEBLAL3ucBdJQK5H4XpUFElAL5oTd7vkR0AdWmQ7H31GQE4f\u002f8hzBUVAEzRq\u002f8XrQ0DRnLjbs9lCQLU2D2S+kkJAmejvZPUZQUAUNGr\u002fhf5AQGAo4rHgyEFA3aoon6A1QkAEjdp\u002fodZDQCifoFH7L0RArgTQ6w5CRUBedzh9\u002fPNFQAVKyfCbSkZAOTrrlMksRkBB8kwrRGVGQP6drJY3ykdAXzQn7vaFR0DgADfMUpZIQDm0yHa+9UhA84P3lvSBSUCiy9gRCXpIQCCwcmiRhEhA6O9ktbzUSEA3Ax9C2utIQGjU\u002fgtFyklASGedMrkzSkDj3GcXEJJKQA=="},"type":"scatter"},{"marker":{"color":"#e03131","size":9,"symbol":"x"},"mode":"markers","name":"Interrupci\u00f3n (y = 1)","x":["2024-04-08T00:00:00.000000","2024-04-15T00:00:00.000000"],"y":{"dtype":"f8","bdata":"\u002fwtFPBaMRkAN9uVKAH1GQA=="},"type":"scatter"}],                        {"template":{"layout":{"colorway":["#1c7ed6","#7048e8","#f08c00","#2f9e44","#e03131","#868e96"],"font":{"color":"#212529","family":"Inter, Segoe UI, Helvetica, Arial, sans-serif","size":12},"hoverlabel":{"font":{"size":12}},"legend":{"font":{"size":11},"orientation":"h","x":0,"y":1.01,"yanchor":"bottom"},"margin":{"b":50,"l":60,"r":20,"t":92},"paper_bgcolor":"white","plot_bgcolor":"white","title":{"font":{"size":15},"x":0.01,"xanchor":"left","y":0.985,"yanchor":"top","yref":"container"},"xaxis":{"automargin":true,"gridcolor":"#eef0f2","linecolor":"#ced4da","zerolinecolor":"#dee2e6"},"yaxis":{"automargin":true,"gridcolor":"#eef0f2","linecolor":"#ced4da","zerolinecolor":"#dee2e6"}}},"title":{"text":"Corredor estable: Tunja \u2192 Cartagena, Bazurto (2,1 % de semanas con interrupci\u00f3n)"},"yaxis":{"title":{"text":"toneladas por d\u00eda de encuesta"}},"height":370},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('5fd0035d-4241-4948-8819-725a8d863cc9');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">F</span><span class="o">.</span><span class="n">fig_corredor_ejemplo</span><span class="p">(</span><span class="s2">"Irregular"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div style="height:370px; width:100%;">            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script><script>if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>                <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-4.1.1.min.js" integrity="sha256-O24V1F27f8pb0glCkelh3cVHLNiHAJ5gCaVtq2aNch8=" crossorigin="anonymous"></script>                <div id="d1976fee-afec-4797-adf0-110657876d7d" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("d1976fee-afec-4797-adf0-110657876d7d")) {                    Plotly.newPlot(                        "d1976fee-afec-4797-adf0-110657876d7d",                        [{"line":{"color":"#1c7ed6","width":1.6},"name":"Abastecimiento en t+1 (t\u002fd\u00eda)","x":["2023-01-02T00:00:00.000000","2023-01-09T00:00:00.000000","2023-01-16T00:00:00.000000","2023-01-23T00:00:00.000000","2023-01-30T00:00:00.000000","2023-02-06T00:00:00.000000","2023-02-13T00:00:00.000000","2023-02-20T00:00:00.000000","2023-02-27T00:00:00.000000","2023-03-06T00:00:00.000000","2023-03-13T00:00:00.000000","2023-03-20T00:00:00.000000","2023-03-27T00:00:00.000000","2023-04-03T00:00:00.000000","2023-04-10T00:00:00.000000","2023-04-17T00:00:00.000000","2023-04-24T00:00:00.000000","2023-05-01T00:00:00.000000","2023-05-08T00:00:00.000000","2023-05-15T00:00:00.000000","2023-05-22T00:00:00.000000","2023-05-29T00:00:00.000000","2023-06-05T00:00:00.000000","2023-06-12T00:00:00.000000","2023-06-19T00:00:00.000000","2023-06-26T00:00:00.000000","2023-07-03T00:00:00.000000","2023-07-10T00:00:00.000000","2023-07-17T00:00:00.000000","2023-07-24T00:00:00.000000","2023-07-31T00:00:00.000000","2023-08-07T00:00:00.000000","2023-08-14T00:00:00.000000","2023-08-21T00:00:00.000000","2023-08-28T00:00:00.000000","2023-09-04T00:00:00.000000","2023-09-11T00:00:00.000000","2023-09-18T00:00:00.000000","2023-09-25T00:00:00.000000","2023-10-02T00:00:00.000000","2023-10-09T00:00:00.000000","2023-10-16T00:00:00.000000","2023-10-23T00:00:00.000000","2023-10-30T00:00:00.000000","2023-11-06T00:00:00.000000","2023-11-13T00:00:00.000000","2023-11-20T00:00:00.000000","2023-11-27T00:00:00.000000","2023-12-04T00:00:00.000000","2023-12-11T00:00:00.000000","2023-12-18T00:00:00.000000","2023-12-25T00:00:00.000000","2024-01-01T00:00:00.000000","2024-01-08T00:00:00.000000","2024-01-15T00:00:00.000000","2024-01-22T00:00:00.000000","2024-01-29T00:00:00.000000","2024-02-05T00:00:00.000000","2024-02-12T00:00:00.000000","2024-02-19T00:00:00.000000","2024-02-26T00:00:00.000000","2024-03-04T00:00:00.000000","2024-03-11T00:00:00.000000","2024-03-18T00:00:00.000000","2024-03-25T00:00:00.000000","2024-04-01T00:00:00.000000","2024-04-08T00:00:00.000000","2024-04-15T00:00:00.000000","2024-04-22T00:00:00.000000","2024-04-29T00:00:00.000000","2024-05-06T00:00:00.000000","2024-05-13T00:00:00.000000","2024-05-20T00:00:00.000000","2024-05-27T00:00:00.000000","2024-07-29T00:00:00.000000","2024-08-05T00:00:00.000000","2024-08-12T00:00:00.000000","2024-08-19T00:00:00.000000","2024-08-26T00:00:00.000000","2024-09-02T00:00:00.000000","2024-09-09T00:00:00.000000","2024-09-16T00:00:00.000000","2024-09-23T00:00:00.000000","2024-09-30T00:00:00.000000","2024-10-07T00:00:00.000000","2024-10-14T00:00:00.000000"],"y":{"dtype":"f8","bdata":"AAAAAAAAPkAAAAAAAAA0QF\u002fxFV\u002fxFTlAAAAAAAAAAAAAAAAAAAAuQAAAAAAAABdAJUmSJEkSKUBJkiRJkiQKQAAAAAAAAAAAJUmSJEmS7D+SJEmSJMksQLdt27Zt2yRAAAAAAAAAAAAAAAAAAADuPwAAAAAAACRAAAAAAAAAJEAAAAAAAIAvQAAAAAAAAC5A27Zt27ZtE0AAAAAAAAAAANu2bdu2bRNAAAAAAAAAJkAAAAAAAAAUQAAAAAAAAAAAbtu2bdu2LEB8xVd8xVcjQNu2bdu2bSNAAAAAAAAAFEDNzMzMzMwuQNu2bdu2bS5AAAAAAAAAFEDbtm3btm0HQEmSJEmSJC9Abtu2bdu2I0AAAAAAAAAUQAAAAAAAABRAt23btm3bEkC3bdu2bVswQNu2bdu2bes\u002fAAAAAAAAAAAAAAAAAAAAANu2bdu2bS1At23btm3b9j9u27Zt27YTQNu2bdu2bSNAAAAAAAAAAAAAAAAAAAAAAG7btm3btg1AVVVVVVVVH0Dbtm3btm0VQKuqqqqqquo\u002fMzMzMzMzG0AAAAAAAADwPwAAAAAAAAAAAAAAAAAAAADbtm3btm0jQLdt27Zt2xpAAAAAAAAAFEDbtm3btm0TQAAAAAAAAAAAAAAAAAAAAADbtm3btm0TQHzFV3zF1yVAbtu2bdu2E0AAAAAAAAAAAMm5zy4gNsU\u002f27Zt27ZtMEBu27Zt27YTQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANu2bdu2bRNAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB5Abtu2bdu2I0Dbtm3btm0TQNu2bdu2bR9AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFEAAAAAAAAAAALdt27Zt2yNAbtu2bdu2LUAAAAAAAAAAAA=="},"type":"scatter"},{"line":{"color":"#868e96","dash":"dash"},"name":"Umbral: 50 % del promedio de 8 semanas","x":["2023-01-02T00:00:00.000000","2023-01-09T00:00:00.000000","2023-01-16T00:00:00.000000","2023-01-23T00:00:00.000000","2023-01-30T00:00:00.000000","2023-02-06T00:00:00.000000","2023-02-13T00:00:00.000000","2023-02-20T00:00:00.000000","2023-02-27T00:00:00.000000","2023-03-06T00:00:00.000000","2023-03-13T00:00:00.000000","2023-03-20T00:00:00.000000","2023-03-27T00:00:00.000000","2023-04-03T00:00:00.000000","2023-04-10T00:00:00.000000","2023-04-17T00:00:00.000000","2023-04-24T00:00:00.000000","2023-05-01T00:00:00.000000","2023-05-08T00:00:00.000000","2023-05-15T00:00:00.000000","2023-05-22T00:00:00.000000","2023-05-29T00:00:00.000000","2023-06-05T00:00:00.000000","2023-06-12T00:00:00.000000","2023-06-19T00:00:00.000000","2023-06-26T00:00:00.000000","2023-07-03T00:00:00.000000","2023-07-10T00:00:00.000000","2023-07-17T00:00:00.000000","2023-07-24T00:00:00.000000","2023-07-31T00:00:00.000000","2023-08-07T00:00:00.000000","2023-08-14T00:00:00.000000","2023-08-21T00:00:00.000000","2023-08-28T00:00:00.000000","2023-09-04T00:00:00.000000","2023-09-11T00:00:00.000000","2023-09-18T00:00:00.000000","2023-09-25T00:00:00.000000","2023-10-02T00:00:00.000000","2023-10-09T00:00:00.000000","2023-10-16T00:00:00.000000","2023-10-23T00:00:00.000000","2023-10-30T00:00:00.000000","2023-11-06T00:00:00.000000","2023-11-13T00:00:00.000000","2023-11-20T00:00:00.000000","2023-11-27T00:00:00.000000","2023-12-04T00:00:00.000000","2023-12-11T00:00:00.000000","2023-12-18T00:00:00.000000","2023-12-25T00:00:00.000000","2024-01-01T00:00:00.000000","2024-01-08T00:00:00.000000","2024-01-15T00:00:00.000000","2024-01-22T00:00:00.000000","2024-01-29T00:00:00.000000","2024-02-05T00:00:00.000000","2024-02-12T00:00:00.000000","2024-02-19T00:00:00.000000","2024-02-26T00:00:00.000000","2024-03-04T00:00:00.000000","2024-03-11T00:00:00.000000","2024-03-18T00:00:00.000000","2024-03-25T00:00:00.000000","2024-04-01T00:00:00.000000","2024-04-08T00:00:00.000000","2024-04-15T00:00:00.000000","2024-04-22T00:00:00.000000","2024-04-29T00:00:00.000000","2024-05-06T00:00:00.000000","2024-05-13T00:00:00.000000","2024-05-20T00:00:00.000000","2024-05-27T00:00:00.000000","2024-07-29T00:00:00.000000","2024-08-05T00:00:00.000000","2024-08-12T00:00:00.000000","2024-08-19T00:00:00.000000","2024-08-26T00:00:00.000000","2024-09-02T00:00:00.000000","2024-09-09T00:00:00.000000","2024-09-16T00:00:00.000000","2024-09-23T00:00:00.000000","2024-09-30T00:00:00.000000","2024-10-07T00:00:00.000000","2024-10-14T00:00:00.000000"],"y":{"dtype":"f8","bdata":"JUmSJEnCG0Dbtm3btqUgQLdt27Zt2yJA4yu+4iv+JUDjK77iK\u002f4lQCy+4iu+QidALL7iK75aJ0C+4iu+4oskQA7qoA7q6BtADuqgDupoFEBCHdRBHUQPQLZt27Zt6wlAJUmSJEkiD0AlSZIkSaIHQCVJkiRJOgVA27Zt27b1A0C2bdu2bVMHQLZt27ZtMw9ASpIkSZIgE0AlSZIkSb4QQNu2bdu2RQxAtm3btm2zDkDbtm3btt0RQNu2bdu2nRBAtm3btm07DECRJEmSJIkLQPEVX\u002fEV3whAzczMzMxMC0DNzMzMzMwNQJIkSZIkiRFAbtu2bduWEkBu27Zt25YSQCVJkiRJUhNAAAAAAACgE0C94iu+4qsTQOIrvuIrfhJA4iu+4it+EkBJkiRJkqQPQLdt27ZtGxBASZIkSZIkDkDbtm3btq0MQEmSJEmS5ARAJUmSJElSB0CSJEmSJIkFQAAAAAAAgAVAAAAAAAAACEBJkiRJkqT\u002fP5EkSZIkyf4\u002fAAAAAABAAUCqqqqqqioFQM\u002fzPM\u002fzfABADMMwDMMwAEAFTuAETiABQJzACZzAifk\u002fnMAJnMCJ+T+cwAmcwIn5P5zACZzAif8\u002fs0ZrtEZr\u002fj\u002f92I\u002f92A\u002f+P6\u002f4iq\u002f4CgFAkiRJkiRJ+z+SJEmSJEn6P0mSJEmSJP8\u002fgzqogzoIBUA6qIM6qKMCQAd1UAd1kP4\u002fexSuR+G6+T\u002fPLiA2laYCQD0K16NwHQVAPQrXo3AdBUBiU2nIua8CQAXEptKQc\u002fo\u002f4XoUrkdh+j\u002fhehSuR2H6P1h8xVd8ZQJAWHzFV3wlBkAzMzMzMxMLQDMzMzMzEwtAkSRJkiRpDECRJEmSJGkMQJEkSZIkaQxAtm3btm17AkCRJEmSJIkBQCRJkiRJkvs\u002fSpIkSZKk+z8lSZIkSdICQA=="},"type":"scatter"},{"marker":{"color":"#e03131","size":9,"symbol":"x"},"mode":"markers","name":"Interrupci\u00f3n (y = 1)","x":["2023-01-23T00:00:00.000000","2023-02-06T00:00:00.000000","2023-02-20T00:00:00.000000","2023-02-27T00:00:00.000000","2023-03-06T00:00:00.000000","2023-03-27T00:00:00.000000","2023-04-03T00:00:00.000000","2023-05-15T00:00:00.000000","2023-06-12T00:00:00.000000","2023-08-07T00:00:00.000000","2023-09-25T00:00:00.000000","2023-10-02T00:00:00.000000","2023-10-09T00:00:00.000000","2023-10-23T00:00:00.000000","2023-11-13T00:00:00.000000","2023-11-20T00:00:00.000000","2023-12-18T00:00:00.000000","2024-01-01T00:00:00.000000","2024-01-08T00:00:00.000000","2024-01-15T00:00:00.000000","2024-02-19T00:00:00.000000","2024-02-26T00:00:00.000000","2024-03-25T00:00:00.000000","2024-04-01T00:00:00.000000","2024-04-22T00:00:00.000000","2024-04-29T00:00:00.000000","2024-05-06T00:00:00.000000","2024-05-20T00:00:00.000000","2024-05-27T00:00:00.000000","2024-08-26T00:00:00.000000","2024-09-02T00:00:00.000000","2024-09-09T00:00:00.000000","2024-09-23T00:00:00.000000","2024-10-14T00:00:00.000000"],"y":{"dtype":"f8","bdata":"AAAAAAAAAAAAAAAAAAAXQEmSJEmSJApAAAAAAAAAAAAlSZIkSZLsPwAAAAAAAAAAAAAAAAAA7j8AAAAAAAAAAAAAAAAAAAAA27Zt27ZtB0Dbtm3btm3rPwAAAAAAAAAAAAAAAAAAAAC3bdu2bdv2PwAAAAAAAAAAAAAAAAAAAACrqqqqqqrqPwAAAAAAAPA\u002fAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMm5zy4gNsU\u002fAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="},"type":"scatter"}],                        {"template":{"layout":{"colorway":["#1c7ed6","#7048e8","#f08c00","#2f9e44","#e03131","#868e96"],"font":{"color":"#212529","family":"Inter, Segoe UI, Helvetica, Arial, sans-serif","size":12},"hoverlabel":{"font":{"size":12}},"legend":{"font":{"size":11},"orientation":"h","x":0,"y":1.01,"yanchor":"bottom"},"margin":{"b":50,"l":60,"r":20,"t":92},"paper_bgcolor":"white","plot_bgcolor":"white","title":{"font":{"size":15},"x":0.01,"xanchor":"left","y":0.985,"yanchor":"top","yref":"container"},"xaxis":{"automargin":true,"gridcolor":"#eef0f2","linecolor":"#ced4da","zerolinecolor":"#dee2e6"},"yaxis":{"automargin":true,"gridcolor":"#eef0f2","linecolor":"#ced4da","zerolinecolor":"#dee2e6"}}},"title":{"text":"Corredor irregular: Palmira \u2192 Cartagena, Bazurto (39,5 % de semanas con interrupci\u00f3n)"},"yaxis":{"title":{"text":"toneladas por d\u00eda de encuesta"}},"height":370},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('d1976fee-afec-4797-adf0-110657876d7d');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };            </script>        </div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">K</span><span class="p">[</span><span class="s2">"ejemplos"</span><span class="p">])[[</span><span class="s2">"tipo"</span><span class="p">,</span> <span class="s2">"origen"</span><span class="p">,</span> <span class="s2">"depto"</span><span class="p">,</span> <span class="s2">"central"</span><span class="p">,</span> <span class="s2">"t_dia"</span><span class="p">,</span> <span class="s2">"tasa_interrupcion"</span><span class="p">,</span> <span class="s2">"semanas"</span><span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>tipo</th>
+      <th>origen</th>
+      <th>depto</th>
+      <th>central</th>
+      <th>t_dia</th>
+      <th>tasa_interrupcion</th>
+      <th>semanas</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Estable</td>
+      <td>TUNJA</td>
+      <td>BOYACÁ</td>
+      <td>Cartagena, Bazurto</td>
+      <td>90.676</td>
+      <td>0.021</td>
+      <td>95</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Irregular</td>
+      <td>PALMIRA</td>
+      <td>VALLE DEL CAUCA</td>
+      <td>Cartagena, Bazurto</td>
+      <td>7.357</td>
+      <td>0.395</td>
+      <td>86</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><strong>Interpretación.</strong> Los dos corredores llegan a Bazurto (Cartagena) y se eligieron con reglas
+explícitas sobre 2023-2024: el estable es el de mayor volumen (Tunja, 91 t/día) y el irregular, el
+de mayor tasa de interrupción entre los que mueven al menos 5 t/día (Palmira, 7,4 t/día). El primero
+casi nunca cae por debajo del umbral (2,1 % de las semanas); el segundo se interrumpe en 39,5 % de
+las semanas, con caídas a cero seguidas de recuperación. La figura muestra cómo funciona la
+definición: cada cruz roja es una semana en que la carga quedó por debajo de la línea punteada (la
+mitad del promedio móvil). Se eligieron corredores grandes porque agregan muchas cargas y no
+exponen la actividad de un productor individual.</p>
+</section>
+<section id="detalles-que-no-aparecen-en-el-dashboard">
+<h2>1.5 Detalles que no aparecen en el dashboard<a class="headerlink" href="#detalles-que-no-aparecen-en-el-dashboard" title="Link to this heading">#</a></h2>
+<p><strong>Construcción del panel.</strong> Los 18 archivos de microdatos del DANE (2018-2025) cambiaron cuatro
+veces de encabezados, de codificación de texto y de formato numérico; el Entregable 1 los
+normalizó, unificó dos nombres de central escritos de forma distinta, excluyó las importaciones
+(4,7 % del volumen) y agregó las cargas por corredor y semana. Todas las predictoras se calculan con
+ventanas que terminan en la semana <span class="math notranslate nohighlight">\(t\)</span>.</p>
+<p><strong>Partición.</strong> La prueba son las semanas objetivo de 2025 y el entrenamiento, las semanas objetivo
+hasta el 27 de octubre de 2024. Entre ambos se deja un hueco de 10 semanas, mayor que la ventana de 8
+semanas de las predictoras, para que ninguna fila de prueba use semanas que fueron objetivo en
+entrenamiento.</p>
+<p><strong>Ética.</strong> SIPSA-A no contiene datos personales. El dashboard solo muestra agregados municipales y
+corredores de gran volumen. Un modelo que etiquete corredores PDET como frágiles podría reforzar
+estigmas territoriales; sus resultados deben usarse para priorizar apoyo, no para excluir
+territorios de mercados o inversiones.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "ml-sipsa"
+        },
+        kernelOptions: {
+            name: "ml-sipsa",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'ml-sipsa'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="intro.html"
+       title="página anterior">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">anterior</p>
+        <p class="prev-next-title">Dashboard de interrupciones en corredores de abastecimiento de alimentos</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="02_eda.html"
+       title="siguiente página">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">siguiente</p>
+        <p class="prev-next-title">2. Análisis exploratorio</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contenido
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#el-problema-y-su-relacion-con-la-tesis">1.1 El problema y su relación con la tesis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definicion-de-la-variable-objetivo">1.2 Definición de la variable objetivo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#donde-nacen-los-corredores">1.3 Dónde nacen los corredores</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dos-corredores-de-ejemplo">1.4 Dos corredores de ejemplo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detalles-que-no-aparecen-en-el-dashboard">1.5 Detalles que no aparecen en el dashboard</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+Por Camilo Molina Guerrero y Lina Margarita Buelvas
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
