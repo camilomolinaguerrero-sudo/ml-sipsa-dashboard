@@ -223,8 +223,9 @@
 <li class="toctree-l1"><a class="reference internal" href="01_contexto.html">1. Contexto del problema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="02_eda.html">2. Análisis exploratorio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="03_modelos_base.html">3. Modelos base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="04_dashboard.html">4. Desarrollo y despliegue del dashboard</a></li>
-<li class="toctree-l1"><a class="reference internal" href="05_conclusiones.html">5. Conclusiones y limitaciones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_modelos_adicionales.html">4. Modelos adicionales y comparación</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_dashboard.html">5. Desarrollo y despliegue del dashboard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_conclusiones.html">6. Conclusiones y limitaciones</a></li>
 </ul>
 
     </div>
@@ -403,8 +404,8 @@
 <h1>Dashboard de interrupciones en corredores de abastecimiento de alimentos<a class="headerlink" href="#dashboard-de-interrupciones-en-corredores-de-abastecimiento-de-alimentos" title="Link to this heading">#</a></h1>
 <p><strong>Segundo entregable del proyecto de Machine Learning</strong> · Doctorado en Ingeniería</p>
 <p><strong>Autores:</strong> Camilo Molina Guerrero y Lina Margarita Buelvas</p>
-<p>Dashboard en Dash y Plotly con tres pestañas (contexto, análisis exploratorio y modelos base) e informe
-del desarrollo</p>
+<p>Dashboard en Dash y Plotly con tres pestañas (contexto, análisis exploratorio y modelos base, con diez
+modelos comparados) e informe del desarrollo</p>
 <hr class="docutils" />
 <div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
 <div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-3 sd-row-cols-lg-3 sd-g-2 sd-g-xs-2 sd-g-sm-2 sd-g-md-2 sd-g-lg-2 docutils">
@@ -477,8 +478,14 @@ detalles metodológicos que no caben en el dashboard.</p>
 <tr class="row-odd"><td><p>SVM lineal</p></td>
 <td><p>AUC-ROC 0,795 (IC 95 %: 0,792-0,799); diferencia con la logística trivial (0,002)</p></td>
 </tr>
+<tr class="row-even"><td><p><strong>XGBoost (mejor modelo)</strong></p></td>
+<td><p>AUC-ROC 0,806 (IC 95 %: 0,802-0,809); AUC-PR 0,569; mejora pequeña (+0,013) y consistente sobre la logística</p></td>
+</tr>
+<tr class="row-odd"><td><p>Otros modelos del curso</p></td>
+<td><p>Random Forest 0,799; SVM RBF 0,798; logística por segmentos 0,795; Lasso 0,793; PCA + logística 0,792; k-NN 0,787; Naive Bayes 0,765</p></td>
+</tr>
 <tr class="row-even"><td><p>Departamentos no vistos</p></td>
-<td><p>AUC 0,780 (logística) y 0,783 (SVM)</p></td>
+<td><p>AUC 0,792 (XGBoost), 0,780 (logística) y 0,783 (SVM lineal)</p></td>
 </tr>
 </tbody>
 </table>
@@ -496,6 +503,8 @@ y los mismos datos:</p>
 <li><p><strong>Análisis exploratorio</strong>: objetivo y tiempo, variables y relaciones, espacio y auditoría de fuga.</p></li>
 <li><p><strong>Modelos base</strong>: preprocesamiento, validación, umbrales, métricas con intervalos de confianza,
 comparaciones, coeficientes, validación espacial, curva de aprendizaje y residuos.</p></li>
+<li><p><strong>Modelos adicionales y comparación</strong>: Lasso, k-NN, Naive Bayes, Random Forest, XGBoost, SVM RBF, PCA +
+logística y logística por segmentos frente a la logística.</p></li>
 <li><p><strong>Desarrollo y despliegue del dashboard</strong>: arquitectura, callbacks y despliegue en Render.</p></li>
 <li><p><strong>Conclusiones y limitaciones</strong>.</p></li>
 </ol>
