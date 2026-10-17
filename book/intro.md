@@ -4,8 +4,8 @@
 
 **Autores:** Camilo Molina Guerrero y Lina Margarita Buelvas
 
-Dashboard en Dash y Plotly con tres pestañas (contexto, análisis exploratorio y modelos base) e informe
-del desarrollo
+Dashboard en Dash y Plotly con tres pestañas (contexto, análisis exploratorio y modelos base, con diez
+modelos comparados) e informe del desarrollo
 
 ---
 
@@ -52,7 +52,9 @@ detalles metodológicos que no caben en el dashboard.
 | Línea base trivial | Dummy: AUC 0,50; persistencia: AUC 0,584 |
 | Regresión logística | AUC-ROC 0,793 (IC 95 %: 0,789-0,797); AUC-PR 0,539; recall 0,76 con umbral 0,26 |
 | SVM lineal | AUC-ROC 0,795 (IC 95 %: 0,792-0,799); diferencia con la logística trivial (0,002) |
-| Departamentos no vistos | AUC 0,780 (logística) y 0,783 (SVM) |
+| **XGBoost (mejor modelo)** | AUC-ROC 0,806 (IC 95 %: 0,802-0,809); AUC-PR 0,569; mejora pequeña (+0,013) y consistente sobre la logística |
+| Otros modelos del curso | Random Forest 0,799; SVM RBF 0,798; logística por segmentos 0,795; Lasso 0,793; PCA + logística 0,792; k-NN 0,787; Naive Bayes 0,765 |
+| Departamentos no vistos | AUC 0,792 (XGBoost), 0,780 (logística) y 0,783 (SVM lineal) |
 
 Los corredores pequeños e irregulares son los que más se interrumpen. Los que nacen en municipios PDET
 se interrumpen más (33 % frente a 28 %), pero la diferencia desaparece al controlar por tamaño,
@@ -67,8 +69,10 @@ y los mismos datos:
 2. **Análisis exploratorio**: objetivo y tiempo, variables y relaciones, espacio y auditoría de fuga.
 3. **Modelos base**: preprocesamiento, validación, umbrales, métricas con intervalos de confianza,
    comparaciones, coeficientes, validación espacial, curva de aprendizaje y residuos.
-4. **Desarrollo y despliegue del dashboard**: arquitectura, callbacks y despliegue en Render.
-5. **Conclusiones y limitaciones**.
+4. **Modelos adicionales y comparación**: Lasso, k-NN, Naive Bayes, Random Forest, XGBoost, SVM RBF, PCA +
+   logística y logística por segmentos frente a la logística.
+5. **Desarrollo y despliegue del dashboard**: arquitectura, callbacks y despliegue en Render.
+6. **Conclusiones y limitaciones**.
 
 Las figuras de este libro son interactivas, igual que en el dashboard: se puede pasar el cursor para
 ver valores, hacer zoom y ocultar series desde la leyenda.

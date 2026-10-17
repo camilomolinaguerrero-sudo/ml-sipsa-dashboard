@@ -6,5 +6,6 @@ parts:
       - file: 01_contexto
       - file: 02_eda
       - file: 03_modelos_base
-      - file: 04_dashboard
-      - file: 05_conclusiones
+      - file: 04_modelos_adicionales
+      - file: 05_dashboard
+      - file: 06_conclusiones

@@ -1,4 +1,4 @@
-# 5. Conclusiones y limitaciones
+# 6. Conclusiones y limitaciones
 
 ## Conclusiones
 
@@ -15,9 +15,13 @@
    0,795) superan con amplitud a los Dummy (0,50) y a la persistencia (0,58), generalizan a departamentos
    no vistos (0,78), están bien calibradas y no muestran sobreajuste. Entre ellas la diferencia es
    trivial (0,002 de AUC; McNemar p = 0,13): la forma lineal, no la función de pérdida, fija el techo.
-4. **El límite está en la forma del modelo.** La curva de aprendizaje se aplana desde unas 50 mil filas y
-   los residuos conservan algo de dependencia espacial (I = 0,045). Los modelos no lineales del curso y
-   las variables de vecindad tienen margen para mejorar.
+4. **Un modelo flexible rompe ese techo, aunque por poco.** De los ocho modelos adicionales del curso,
+   XGBoost es el mejor (AUC 0,806; AUC-PR 0,569; Brier 0,150): mejora a la logística en 0,013, una diferencia
+   pequeña según la escala del curso pero consistente en todas las regiones, grupos de alimentos y
+   validaciones, y detecta 841 interrupciones más en 2025 con la misma precisión. Su curva de aprendizaje
+   sigue subiendo con más datos, a diferencia de la de los lineales. Random Forest y la SVM RBF mejoran de
+   forma trivial; Lasso, PCA + logística y la logística por segmentos no aportan; k-NN es costoso y algo
+   peor, y Naive Bayes falla por la correlación entre predictoras.
 5. **Hallazgo para la tesis.** Los corredores que nacen en municipios PDET se interrumpen más, pero el
    efecto PDET desaparece al controlar por escala, regularidad y distancia. Las intervenciones que
    consoliden cargas y regularicen despachos atacan la causa de su fragilidad.
@@ -37,8 +41,8 @@
 
 ## Siguientes pasos
 
-* Modelos no lineales del curso (k-NN, Random Forest, XGBoost, SVM con kernel) con el mismo pipeline y
-  la misma validación, añadidos como nuevas opciones del dashboard.
+* Ajuste más fino de XGBoost (más árboles con parada temprana temporal, rejillas más amplias) y
+  modelos más expresivos para la tesis, incluido deep learning, comparados contra XGBoost.
 * Variables de vecindad espacial y fuentes externas (IDEAM, INVÍAS) para los choques locales.
 * Análisis de sensibilidad del umbral y de la ventana que definen la interrupción.
 

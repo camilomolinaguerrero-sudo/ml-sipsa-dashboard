@@ -131,3 +131,83 @@ def preprocesador():
 def particion(p: pd.DataFrame):
     """(train, test) según la semana objetivo t+1."""
     return p[p["semana_t1"] <= FIN_TRAIN].copy(), p[p["semana_t1"] >= INICIO_TEST].copy()
+
+
+# ---------------------------------------------------------------- modelos adicionales (Entregable 2, ampliación)
+from sklearn.base import ClassifierMixin  # noqa: E402
+from sklearn.cluster import KMeans  # noqa: E402
+from sklearn.linear_model import LogisticRegression  # noqa: E402
+
+# Nombre del modelo -> columna de probabilidades en data/predicciones_test.parquet
+COLUMNA_MODELO = {
+    "Regresión logística": "p_logistica", "SVM lineal": "p_svm", "Lasso (L1)": "p_lasso",
+    "k-NN": "p_knn", "Naive Bayes": "p_nb", "Random Forest": "p_rf", "XGBoost": "p_xgb",
+    "SVM RBF (Nyström)": "p_svm_rbf", "PCA + logística": "p_pca_log", "Logística por segmentos": "p_segmentos",
+}
+
+
+def preprocesador_denso():
+    """Mismo preprocesamiento, con salida densa (Naive Bayes, PCA y Nyström no aceptan matrices dispersas)."""
+    ct = preprocesador()
+    ct.set_params(sparse_threshold=0)
+    return ct
+
+
+class LogisticaSegmentada(BaseEstimator, ClassifierMixin):
+    """Agrupa las filas con k-means según el perfil del corredor (escala y regularidad, calculados con
+    información hasta t) y ajusta una regresión logística con el pipeline completo en cada segmento."""
+
+    def __init__(self, k=2, C=0.01, columnas=("log_base8", "cv8", "activas26", "n_alimentos8", "dist_km"),
+                 n_kmeans=60000, random_state=SEMILLA):
+        self.k = k
+        self.C = C
+        self.columnas = columnas
+        self.n_kmeans = n_kmeans
+        self.random_state = random_state
+
+    def _z(self, X, ajustar=False):
+        Z = X[list(self.columnas)].astype(float).copy()
+        for c in ("n_alimentos8", "dist_km"):
+            if c in Z:
+                Z[c] = np.log1p(Z[c].clip(lower=0))
+        if ajustar:
+            self.mediana_ = Z.median()
+            Z = Z.fillna(self.mediana_)
+            self.media_, self.desv_ = Z.mean(), Z.std().replace(0, 1)
+        Z = Z.fillna(self.mediana_)
+        return ((Z - self.media_) / self.desv_).to_numpy()
+
+    def fit(self, X, y):
+        y = np.asarray(y)
+        Z = self._z(X, ajustar=True)
+        rng = np.random.default_rng(self.random_state)
+        idx = rng.choice(len(Z), min(self.n_kmeans, len(Z)), replace=False)
+        self.km_ = KMeans(self.k, n_init=10, random_state=self.random_state).fit(Z[idx])
+        etiquetas = self.km_.predict(Z)
+        self.modelos_ = {}
+        for g in range(self.k):
+            m = etiquetas == g
+            self.modelos_[g] = Pipeline([("prep", preprocesador()),
+                                         ("clf", LogisticRegression(C=self.C, max_iter=3000, random_state=self.random_state))]
+                                        ).fit(X[m], y[m])
+        self.classes_ = np.array([0, 1])
+        return self
+
+    def segmento(self, X):
+        return self.km_.predict(self._z(X))
+
+    def predict_proba(self, X):
+        etiquetas = self.segmento(X)
+        p = np.empty(len(X))
+        for g, modelo in self.modelos_.items():
+            m = etiquetas == g
+            if m.any():
+                p[m] = modelo.predict_proba(X[m])[:, 1]
+        return np.column_stack([1 - p, p])
+
+    def decision_function(self, X):
+        p = np.clip(self.predict_proba(X)[:, 1], 1e-9, 1 - 1e-9)
+        return np.log(p / (1 - p))
+
+    def predict(self, X):
+        return (self.predict_proba(X)[:, 1] >= 0.5).astype(int)

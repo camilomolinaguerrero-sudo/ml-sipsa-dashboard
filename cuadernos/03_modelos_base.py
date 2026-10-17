@@ -78,6 +78,7 @@ F.fig_cv("SVM lineal")
 
 # %%
 cv = F.tabla("cv_resultados")
+cv = cv[cv["modelo"].isin(["Regresión logística", "SVM lineal"])]
 cv.groupby(["modelo", "C"])[["auc_train", "auc_valid", "ap_valid"]].mean()
 
 # %% [markdown]
@@ -133,7 +134,7 @@ pd.Series(M["SVM lineal"]["platt"]).to_frame("Platt: p = 1 / (1 + exp(-(a·s + b
 F.fig_roc_pr(["Regresión logística", "SVM lineal", "Persistencia", "Dummy (estratificado)"])
 
 # %%
-tabla = MET[MET["metrica"] != "Brier"].copy()
+tabla = MET[(MET["metrica"] != "Brier") & MET["modelo"].isin(["Regresión logística", "SVM lineal", "Persistencia", "Dummy (estratificado)", "Dummy (clase mayoritaria)"])].copy()
 tabla["valor (IC 95 %)"] = [f"{v:.3f} ({a:.3f}–{b:.3f})" for v, a, b in zip(tabla["valor"], tabla["ic_inf"], tabla["ic_sup"])]
 tabla.pivot(index="modelo", columns="metrica", values="valor (IC 95 %)")[["AUC-ROC", "AUC-PR", "F1", "recall", "precision", "accuracy"]]
 
@@ -155,6 +156,7 @@ tabla.pivot(index="modelo", columns="metrica", values="valor (IC 95 %)")[["AUC-R
 
 # %%
 cmp = F.tabla("comparaciones")
+cmp = cmp[cmp["modelo_a"].isin(["Regresión logística", "SVM lineal"])]
 cmp[["modelo_a", "modelo_b", "auc_a", "auc_b", "delta_auc", "ic_boot_inf", "ic_boot_sup", "z", "p_delong_holm",
      "solo_a_acierta", "solo_b_acierta", "chi2_mcnemar", "p_mcnemar"]]
 
@@ -189,7 +191,7 @@ for m, col in [("Regresión logística", "p_logistica"), ("SVM lineal", "p_svm")
 F.fig_calibracion()
 
 # %%
-MET[MET["metrica"] == "Brier"][["modelo", "valor"]]
+MET[(MET["metrica"] == "Brier") & MET["modelo"].isin(["Regresión logística", "SVM lineal", "Constante (tasa de train)"])][["modelo", "valor"]]
 
 # %% [markdown]
 # **Interpretación.** Las probabilidades de ambos modelos están bien calibradas en el rango donde hay más
@@ -253,7 +255,7 @@ F.fig_dependencia()
 F.fig_cv_espacial()
 
 # %%
-F.tabla("cv_espacial").groupby("modelo")[["auc", "ap"]].agg(["mean", "std"])
+F.tabla("cv_espacial").query("modelo in ['Regresión logística', 'SVM lineal']").groupby("modelo")[["auc", "ap"]].agg(["mean", "std"])
 
 # %% [markdown]
 # **Interpretación.** Evaluados en grupos de departamentos que no vieron al entrenar, los modelos obtienen
@@ -266,17 +268,17 @@ F.tabla("cv_espacial").groupby("modelo")[["auc", "ap"]].agg(["mean", "std"])
 # ## 3.9 Curva de aprendizaje
 
 # %%
-F.fig_curva_aprendizaje()
+F.fig_curva_aprendizaje(["Regresión logística", "SVM lineal"])
 
 # %%
-F.tabla("curva_aprendizaje").assign(brecha=lambda d: d["auc_train"] - d["auc_valid"])
+F.tabla("curva_aprendizaje").query("modelo in ['Regresión logística', 'SVM lineal']").assign(brecha=lambda d: d["auc_train"] - d["auc_valid"])
 
 # %% [markdown]
 # **Interpretación.** Con 10 mil filas la brecha entre entrenamiento y validación es de 0,08 (sobreajuste
 # por pocos datos); desde 50 mil filas cae por debajo de 0,01 y el AUC de validación solo mejora de 0,781 a
 # 0,784 (logística) al pasar de 100 mil a 500 mil filas. La muestra es más que suficiente para un modelo
-# lineal; el límite es su **forma**, no la cantidad de datos. Los modelos no lineales de los siguientes
-# entregables (k-NN, Random Forest, XGBoost, SVM con kernel) tienen margen para mejorar.
+# lineal; el límite es su **forma**, no la cantidad de datos. El capítulo 4 lo comprueba con los modelos no
+# lineales del curso: XGBoost sí sigue mejorando con más datos.
 
 # %% [markdown]
 # ## 3.10 Desempeño por subgrupo

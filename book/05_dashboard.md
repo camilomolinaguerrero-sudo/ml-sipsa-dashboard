@@ -1,11 +1,11 @@
-# 4. Desarrollo y despliegue del dashboard
+# 5. Desarrollo y despliegue del dashboard
 
 Este capítulo documenta cómo se construyó el dashboard, qué hace cada pestaña y cómo se publicó en
 Render siguiendo la guía del curso
 ([Render y Dash Tools](https://lihkir.github.io/DataVizPython/dash_dataviz.html#render-y-dash-tool) y el
 [tutorial de Charming Data](https://www.youtube.com/watch?v=XWJBJoV5yww)).
 
-## 4.1 Arquitectura
+## 5.1 Arquitectura
 
 El dashboard no entrena modelos ni carga el panel completo de 744 mil filas. Un script previo calcula
 todo lo que se muestra y lo guarda en archivos pequeños; el dashboard y este libro leen esos mismos
@@ -15,8 +15,9 @@ interpreta en el libro es idéntica a la que aparece en pantalla.
 
 ```text
 proyecto_sipsa/ (Entregable 1)               entregable2_dashboard/ (este repositorio)
-└── panel_corredores.parquet  ──►  scripts/preparar_artefactos.py
-                                        │  entrena logística y SVM lineal, valida, calcula EDA
+└── panel_corredores.parquet  ──►  scripts/preparar_artefactos.py   (EDA, logística, SVM lineal)
+                                   scripts/modelos_adicionales.py   (8 modelos más del curso)
+                                        │  validan con bloques temporales y evalúan en 2025
                                         ▼
                                    data/  (parquet, json, joblib; ~10 MB)
                                         │
@@ -30,7 +31,8 @@ proyecto_sipsa/ (Entregable 1)               entregable2_dashboard/ (este reposi
 
 | Archivo | Función |
 |---|---|
-| `scripts/preparar_artefactos.py` | Lee el panel del Entregable 1, reproduce la partición cronológica, entrena y valida los modelos, y precalcula agregados, estadísticos, curvas y predicciones de prueba |
+| `scripts/preparar_artefactos.py` | Lee el panel del Entregable 1, reproduce la partición cronológica, entrena y valida la logística y la SVM lineal, y precalcula agregados, estadísticos, curvas y predicciones de prueba |
+| `scripts/modelos_adicionales.py` | Entrena y valida Lasso, k-NN, Naive Bayes, Random Forest, XGBoost, SVM RBF, PCA + logística y logística por segmentos con el mismo esquema, y los integra a los artefactos |
 | `src/modelo_utils.py` | Variables, partición, `Winsorizador`, `BloquesTemporales` y preprocesador; lo importan el script, la app y el libro |
 | `src/figuras.py` | Todas las figuras de Plotly; una sola definición para el dashboard y el libro |
 | `src/app.py` | Aplicación Dash: diseño, pestañas y callbacks; expone `server = app.server` |
@@ -38,7 +40,7 @@ proyecto_sipsa/ (Entregable 1)               entregable2_dashboard/ (este reposi
 | `data/` | Artefactos que consume la app |
 | `render.yaml`, `requirements.txt` | Configuración del despliegue en Render |
 
-## 4.2 Contenido de las pestañas
+## 5.2 Contenido de las pestañas
 
 **1. Contexto del problema.** Planteamiento, relación con la tesis, definición formal de la variable
 objetivo, indicadores de tamaño de los datos, mapa interactivo de los municipios de origen
@@ -58,14 +60,15 @@ que muestra cómo se marca una interrupción.
 * *Fuga de datos*: AUC univariado de todas las variables, con las variables de control que delatan la
   fuga, y la tabla de decisiones de la auditoría.
 
-**3. Modelos base.** Selector de modelo (regresión logística o SVM lineal) y un deslizador de umbral
-que recalcula en vivo la matriz de confusión, las métricas y el número de alertas sobre las 103.466
-predicciones de 2025. Además: curvas ROC y PR con las líneas base, tabla de métricas con intervalos
-bootstrap, comparaciones de DeLong y McNemar, calibración, coeficientes, validación temporal y
-espacial, curva de aprendizaje, AUC por subgrupo y un simulador que calcula la probabilidad de
+**3. Modelos base.** Una comparación de los diez modelos (AUC-ROC o AUC-PR con intervalos de confianza);
+un selector de modelo y un deslizador de umbral que recalcula en vivo la matriz de confusión, las
+métricas y el número de alertas sobre las 103.466 predicciones de 2025; curvas ROC y PR con las líneas
+base; tabla de métricas con intervalos bootstrap y comparaciones de DeLong y McNemar contra la logística;
+calibración; coeficientes (modelos lineales) o importancia por permutación (todos); validación temporal y
+espacial; curva de aprendizaje; AUC por subgrupo, y un simulador que calcula la probabilidad de
 interrupción de un corredor hipotético con el pipeline logístico entrenado.
 
-## 4.3 Interactividad: callbacks
+## 5.3 Interactividad: callbacks
 
 Cada elemento interactivo es un `@app.callback` que recibe el valor de un control (`Input`) y devuelve
 una figura o un bloque de texto (`Output`). Los principales:
@@ -77,12 +80,14 @@ una figura o un bloque de texto (`Output`). Los principales:
 | Dimensión y valores (EDA) | serie semanal | agrega `serie_semanal` y suaviza con media móvil de 13 semanas |
 | Variable y escala (EDA) | histograma, deciles y resumen | usa la muestra estratificada y las tablas precalculadas |
 | Capa del mapa (EDA) | coropleta | `choropleth_map` con el GeoJSON municipal |
+| Métrica de comparación | AUC de los diez modelos con IC | `fig_comparacion_modelos` sobre `metricas_test` |
+| Modelo | umbral inicial, descripción y calibración | lee los hiperparámetros elegidos y las curvas de calibración |
 | Modelo y umbral | indicadores, matriz, lectura | `metricas_umbral` sobre las predicciones de prueba |
-| Modelo y número de coeficientes | coeficientes y validación cruzada | lee los coeficientes y los resultados por pliegue |
+| Modelo, tipo de interpretación y número de variables | coeficientes o importancia, validación cruzada | coeficientes (lineales), importancia por permutación (todos) y resultados por pliegue |
 | Subgrupo | AUC por subgrupo | calcula el AUC por grupo con al menos 300 filas |
 | Simulador | probabilidad | `predict_proba` del pipeline logístico serializado |
 
-## 4.4 Despliegue en Render
+## 5.4 Despliegue en Render
 
 Se siguió el procedimiento del curso. La estructura que Render espera es la que genera Dash Tools:
 
@@ -113,17 +118,18 @@ ml-sipsa-dashboard/
 En el plan gratuito el servicio se suspende tras unos 15 minutos sin visitas; la primera carga
 posterior tarda alrededor de un minuto mientras se reactiva.
 
-## 4.5 Reproducibilidad
+## 5.5 Reproducibilidad
 
 ```bash
 python3.11 -m venv ~/.venvs/ml-sipsa-jb
 ~/.venvs/ml-sipsa-jb/bin/pip install -r requirements-dev.txt
-# 1) artefactos (requiere el panel del Entregable 1)
+# 1) artefactos (requiere el panel del Entregable 1); el segundo script tarda unas dos horas
 ~/.venvs/ml-sipsa-jb/bin/python scripts/preparar_artefactos.py --proyecto "../proyecto_sipsa"
+~/.venvs/ml-sipsa-jb/bin/python scripts/modelos_adicionales.py --proyecto "../proyecto_sipsa"
 # 2) dashboard local
 ~/.venvs/ml-sipsa-jb/bin/python src/app.py
 # 3) libro
-for n in 01_contexto 02_eda 03_modelos_base; do
+for n in 01_contexto 02_eda 03_modelos_base 04_modelos_adicionales; do
   ~/.venvs/ml-sipsa-jb/bin/python scripts/py2nb.py cuadernos/$n.py book/$n.ipynb --ejecutar
 done
 ~/.venvs/ml-sipsa-jb/bin/jupyter-book build book/

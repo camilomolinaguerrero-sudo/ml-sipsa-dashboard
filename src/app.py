@@ -16,7 +16,7 @@ import dash_bootstrap_components as dbc
 from dash import Dash, Input, Output, State, dcc, html
 
 import figuras as F
-from modelo_utils import CATEGORICAS, ETIQUETAS, NUMERICAS, X_COLS
+from modelo_utils import CATEGORICAS, COLUMNA_MODELO, ETIQUETAS, NUMERICAS, X_COLS
 
 LIBRO = "https://camilomolinaguerrero-sudo.github.io/ml-sipsa-dashboard/"
 REPO = "https://github.com/camilomolinaguerrero-sudo/ml-sipsa-dashboard"
@@ -348,43 +348,95 @@ def cb_mapa(capa):
 
 
 # ============================================================================ 3. modelos
-MODELOS_PROB = {"Regresión logística": "p_logistica", "SVM lineal": "p_svm"}
+DESCRIPCION = {
+    "Regresión logística": "Combinación lineal de las variables pasada por la función logística, con penalización L2.",
+    "SVM lineal": "Hiperplano de margen máximo con pérdida bisagra; las probabilidades se obtienen con calibración de Platt.",
+    "Lasso (L1)": "Logística con penalización L1: lleva a cero los coeficientes de las variables menos útiles (selección de variables).",
+    "k-NN": "La probabilidad es la proporción de interrupciones entre los k corredor-semanas más parecidos (distancia euclidiana "
+            "sobre las variables escaladas).",
+    "Naive Bayes": "Bayes gaussiano: supone que las variables son independientes dada la clase, un supuesto que aquí no se cumple "
+                   "(hay correlaciones de hasta 0,91).",
+    "Random Forest": "150 árboles entrenados sobre submuestras del 25 % de las filas y subconjuntos aleatorios de variables; promedia sus votos.",
+    "XGBoost": "400 árboles poco profundos entrenados en secuencia, cada uno corrigiendo los errores de los anteriores (gradient boosting).",
+    "SVM RBF (Nyström)": "SVM con kernel gaussiano aproximado con 300 componentes de Nyström; probabilidades por calibración de Platt.",
+    "PCA + logística": "Reduce las variables preprocesadas a unas pocas componentes principales y ajusta una logística sobre ellas.",
+    "Logística por segmentos": "K-means separa los corredores por escala y regularidad y ajusta una logística distinta en cada segmento.",
+}
+MODELOS = F.modelos_entrenados()
+BASES = ["Persistencia", "Dummy (estratificado)", "Dummy (clase mayoritaria)"]
+
+
+def params_texto(modelo):
+    r = MOD[modelo]
+    p = r.get("params") or f"C={r['C']:g}"
+    return p.replace(".", ",")
+
+
+def lectura_comparacion():
+    auc = MET[(MET["metrica"] == "AUC-ROC") & MET["modelo"].isin(MODELOS)].set_index("modelo")["valor"].sort_values(ascending=False)
+    ref = auc["Regresión logística"]
+    mejor = auc.index[0]
+    d = auc - ref
+    cerca = [m for m in auc.index if m != "Regresión logística" and abs(d[m]) < 0.01]
+    peores = auc.index[-2:].tolist()
+    p1 = (f"El mayor AUC-ROC en prueba lo obtiene **{mejor}** ({num(auc[mejor], 3)})"
+          + (f", {num(d[mejor], 3)} puntos por encima de la logística: una diferencia {F.escala_dauc(d[mejor])} según la escala del curso."
+             if mejor != "Regresión logística" else ", por encima de todos los modelos alternativos."))
+    p2 = (f"{len(cerca)} de los {len(MODELOS) - 1} modelos alternativos quedan a menos de 0,01 de la logística (diferencia trivial). "
+          f"Los de menor desempeño son {peores[0]} ({num(auc[peores[0]], 3)}) y {peores[1]} ({num(auc[peores[1]], 3)}). "
+          "Todos superan con amplitud a la persistencia (0,584) y a los Dummy (0,50).")
+    return lectura(p1, p2, "La tabla de comparaciones prueba cada modelo contra la logística con DeLong (corrección de Holm) y McNemar.",
+                   titulo="Qué dice la comparación")
 
 
 def tab_modelos():
-    lg, sv = MOD["Regresión logística"], MOD["SVM lineal"]
-    auc_l, auc_s = metrica("Regresión logística", "AUC-ROC"), metrica("SVM lineal", "AUC-ROC")
-    auc_p = metrica("Persistencia", "AUC-ROC")
-    cmp_ls = COMP[(COMP["modelo_a"] == "Regresión logística") & (COMP["modelo_b"] == "SVM lineal")].iloc[0]
     tabla_met = MET[MET["metrica"].isin(["accuracy", "precision", "recall", "F1", "AUC-ROC", "AUC-PR"])].copy()
+    orden = MET[MET["metrica"] == "AUC-ROC"].sort_values("valor", ascending=False)["modelo"].tolist()
     tabla_met["valor"] = [f"{v:.3f} [{a:.3f}; {b:.3f}]".replace(".", ",") if pd.notna(a) else f"{v:.3f}".replace(".", ",")
                           for v, a, b in zip(tabla_met["valor"], tabla_met["ic_inf"], tabla_met["ic_sup"])]
     tabla_met = tabla_met.pivot(index="modelo", columns="metrica", values="valor")[
-        ["AUC-ROC", "AUC-PR", "F1", "recall", "precision", "accuracy"]].reindex(
-        ["Regresión logística", "SVM lineal", "Persistencia", "Dummy (estratificado)", "Dummy (clase mayoritaria)"]).reset_index()
-    tabla_cmp = COMP.assign(
-        par=COMP["modelo_a"] + " vs " + COMP["modelo_b"],
-        dAUC=[f"{d:+.3f} [{a:+.3f}; {b:+.3f}]".replace(".", ",") for d, a, b in zip(COMP["delta_auc"], COMP["ic_boot_inf"], COMP["ic_boot_sup"])],
-        DeLong=[f"z = {z:.1f}; p = {p:.1e}".replace(".", ",") for z, p in zip(COMP["z"], COMP["p_delong_holm"])],
-        McNemar=[f"χ² = {c:.0f}; p = {p:.1e}".replace(".", ",") for c, p in zip(COMP["chi2_mcnemar"], COMP["p_mcnemar"])],
-    )[["par", "dAUC", "DeLong", "McNemar"]].rename(columns={"par": "Comparación", "dAUC": "ΔAUC [IC 95 % bootstrap]",
-                                                            "DeLong": "DeLong (p Holm)", "McNemar": "McNemar (umbrales elegidos)"})
+        ["AUC-ROC", "AUC-PR", "F1", "recall", "precision", "accuracy"]].reindex(orden).reset_index()
+    umbrales = {m: MOD[m]["umbral"] for m in MODELOS}
+    tabla_met.insert(1, "umbral", [num(umbrales[m], 2) if m in umbrales else ("ratio_t < 0,5" if m == "Persistencia" else "—")
+                                   for m in tabla_met["modelo"]])
+    c = COMP.copy()
+    tabla_cmp = c.assign(
+        par=c["modelo_a"] + " vs " + c["modelo_b"],
+        dAUC=[f"{d:+.3f} [{a:+.3f}; {b:+.3f}]".replace(".", ",") for d, a, b in zip(c["delta_auc"], c["ic_boot_inf"], c["ic_boot_sup"])],
+        escala=[F.escala_dauc(d) for d in c["delta_auc"]],
+        DeLong=[f"z = {z:.1f}; p = {p:.1e}".replace(".", ",") for z, p in zip(c["z"], c["p_delong_holm"])],
+        McNemar=[f"χ² = {x:.0f}; p = {p:.1e}".replace(".", ",") for x, p in zip(c["chi2_mcnemar"], c["p_mcnemar"])],
+    )[["par", "dAUC", "escala", "DeLong", "McNemar"]].rename(columns={
+        "par": "Comparación", "dAUC": "ΔAUC [IC 95 % bootstrap]", "escala": "Relevancia (escala del curso)",
+        "DeLong": "DeLong (p Holm)", "McNemar": "McNemar (umbrales elegidos)"})
+    curvas_def = [m for m in ["Regresión logística", "XGBoost", "Random Forest", "Persistencia"] if m in MODELOS + BASES]
     return dbc.Container([
+        dbc.Card(dbc.CardBody([
+            dbc.Row([
+                dbc.Col([
+                    html.H5(f"Comparación de los {len(MODELOS)} modelos", className="card-title"),
+                    dbc.RadioItems(id="mod-comp-metrica", inline=True, value="AUC-ROC",
+                                   options=[{"label": "AUC-ROC", "value": "AUC-ROC"}, {"label": "AUC-PR", "value": "AUC-PR"}]),
+                    grafico("mod-comp"),
+                ], lg=7),
+                dbc.Col([lectura_comparacion(),
+                         html.Div("Todos usan el mismo preprocesamiento, la misma validación por bloques de semanas y se evaluaron una "
+                                  "sola vez en la prueba de 2025. Barras: intervalo de confianza al 95 % por bootstrap de semanas.",
+                                  className="small text-muted")], lg=5),
+            ]),
+        ]), className="mb-3"),
         dbc.Row([
             dbc.Col([
                 dbc.Card(dbc.CardBody([
                     html.Label("Modelo"),
-                    dbc.RadioItems(id="mod-modelo", options=[{"label": m, "value": m} for m in MODELOS_PROB],
-                                   value="Regresión logística", className="mb-3"),
+                    dcc.Dropdown(id="mod-modelo", options=[{"label": m, "value": m} for m in MODELOS],
+                                 value="Regresión logística", clearable=False, className="mb-3"),
                     html.Label(id="mod-umbral-label"),
-                    dcc.Slider(id="mod-umbral", min=0.05, max=0.8, step=0.01, value=lg["umbral"],
+                    dcc.Slider(id="mod-umbral", min=0.05, max=0.8, step=0.01, value=MOD["Regresión logística"]["umbral"],
                                marks={0.1: "0,1", 0.3: "0,3", 0.5: "0,5", 0.7: "0,7"}, tooltip={"placement": "bottom"}),
                     html.Div(id="mod-umbral-nota", className="small text-muted mt-2"),
                     html.Hr(),
-                    html.Div([html.B("Cómo se entrenó. "),
-                              "Pipeline con imputación, log, winsorización, splines para la dinámica reciente, escalado y one-hot; "
-                              f"C elegido por AUC en 5 bloques temporales: logística C = {lg['C']}, SVM C = {sv['C']}. "
-                              "La SVM se calibra con Platt sobre predicciones fuera de pliegue."], className="small"),
+                    html.Div(id="mod-descripcion", className="small"),
                 ])),
             ], lg=3, className="mb-3"),
             dbc.Col([
@@ -393,43 +445,43 @@ def tab_modelos():
             ], lg=9, className="mb-3"),
         ]),
         dbc.Card(dbc.CardBody([
-            dbc.Checklist(id="mod-curvas", inline=True, value=["Regresión logística", "SVM lineal", "Persistencia", "Dummy (estratificado)"],
-                          options=[{"label": m, "value": m} for m in ["Regresión logística", "SVM lineal", "Persistencia", "Dummy (estratificado)"]]),
+            dbc.Checklist(id="mod-curvas", inline=True, value=curvas_def,
+                          options=[{"label": m, "value": m} for m in MODELOS + BASES[:2]]),
             grafico("mod-roc"),
-            lectura(f"En la prueba (todo 2025) la regresión logística alcanza AUC-ROC {num(auc_l['valor'], 3)} "
-                    f"(IC 95 %: {num(auc_l['ic_inf'], 3)} a {num(auc_l['ic_sup'], 3)}) y la SVM lineal {num(auc_s['valor'], 3)} "
-                    f"(IC 95 %: {num(auc_s['ic_inf'], 3)} a {num(auc_s['ic_sup'], 3)}), frente a 0,50 de los Dummy y {num(auc_p['valor'], 3)} de la "
-                    f"persistencia. La diferencia entre los dos modelos lineales es {num(cmp_ls['delta_auc'], 3)} puntos de AUC "
-                    "(ver tabla de comparaciones): ambos ordenan el riesgo casi igual porque comparten predictoras y forma lineal."),
         ]), className="mb-3"),
         dbc.Card(dbc.CardBody([
             html.H5("Métricas en prueba con intervalos de confianza al 95 % (bootstrap por bloques de semana, 500 réplicas)"),
-            html.Div("Cada modelo con su umbral elegido en entrenamiento (F1 fuera de pliegue); la persistencia usa la regla ratio_t < 0,5.",
+            html.Div("Ordenadas por AUC-ROC. Cada modelo usa el umbral elegido en entrenamiento (máximo F1 fuera de pliegue).",
                      className="small text-muted mb-2"),
-            tabla_df(tabla_met.rename(columns={"modelo": "Modelo"})),
+            html.Div(tabla_df(tabla_met.rename(columns={"modelo": "Modelo"})), style={"overflowX": "auto"}),
             html.H6("Comparación entre modelos", className="mt-3"),
-            tabla_df(tabla_cmp),
+            html.Div(tabla_df(tabla_cmp), style={"overflowX": "auto"}),
         ]), className="mb-3"),
         dbc.Row([
-            dbc.Col(dbc.Card(dbc.CardBody([grafico(F.fig_calibracion()),
-                                           lectura("Las probabilidades de la logística siguen la diagonal: si el modelo dice 40 %, cerca de 40 % de "
-                                                   "esos corredores se interrumpe. Eso permite usarlas para priorizar recursos, no solo para clasificar.")])), lg=6, className="mb-3"),
+            dbc.Col(dbc.Card(dbc.CardBody([grafico("mod-calib"), html.Div(id="mod-calib-lectura")])), lg=6, className="mb-3"),
             dbc.Col(dbc.Card(dbc.CardBody([
-                dbc.Row([dbc.Col(html.Label("Coeficientes a mostrar"), width="auto"),
-                         dbc.Col(dcc.Slider(id="mod-top", min=10, max=40, step=5, value=20, marks=None, tooltip={"placement": "bottom"}))]),
+                dbc.Row([
+                    dbc.Col(dbc.RadioItems(id="mod-interp", inline=True, value="perm",
+                                           options=[{"label": "Importancia por permutación", "value": "perm"},
+                                                    {"label": "Coeficientes", "value": "coef"}]), width="auto"),
+                    dbc.Col(dcc.Slider(id="mod-top", min=10, max=30, step=5, value=15, marks=None, tooltip={"placement": "bottom"})),
+                ], align="center"),
                 grafico("mod-coef"),
+                html.Div(id="mod-coef-nota", className="small text-muted"),
             ])), lg=6, className="mb-3"),
         ]),
         dbc.Row([
             dbc.Col(dbc.Card(dbc.CardBody([grafico("mod-cv")])), lg=7, className="mb-3"),
-            dbc.Col(dbc.Card(dbc.CardBody([grafico(F.fig_cv_espacial()),
-                                           lectura("En departamentos que no vio al entrenar, el AUC es casi el mismo que en la validación temporal: "
-                                                   "el modelo generaliza porque usa atributos del corredor y no identificadores ni coordenadas.")])), lg=5, className="mb-3"),
+            dbc.Col(dbc.Card(dbc.CardBody([grafico(F.fig_validaciones()),
+                                           lectura("Para cada modelo se compara el AUC medio de la validación temporal con el de departamentos "
+                                                   "no vistos. Si ambos coinciden, el modelo generaliza a territorios nuevos y no depende de "
+                                                   "memorizar ubicaciones.")])), lg=5, className="mb-3"),
         ]),
         dbc.Row([
             dbc.Col(dbc.Card(dbc.CardBody([grafico(F.fig_curva_aprendizaje()),
-                                           lectura("Las curvas se aplanan hacia las 50 mil filas y la brecha entre entrenamiento y validación casi "
-                                                   "desaparece: no hay sobreajuste y más datos no mejorarían un modelo lineal; el límite es su forma.")])), lg=6, className="mb-3"),
+                                           lectura("Cuando la curva de validación se aplana y se acerca a la de entrenamiento, más datos ya no "
+                                                   "mejoran el modelo; si la brecha sigue abierta, hay sobreajuste. Compare los modelos lineales "
+                                                   "con los ensambles de árboles.")])), lg=6, className="mb-3"),
             dbc.Col(dbc.Card(dbc.CardBody([
                 dbc.Row([dbc.Col(html.Label("Subgrupo"), width="auto"),
                          dbc.Col(dcc.Dropdown(id="mod-sub", clearable=False, value="region_origen",
@@ -464,16 +516,31 @@ def tab_modelos():
     ], fluid="xl", className="pt-3")
 
 
-@app.callback(Output("mod-umbral", "value"), Input("mod-modelo", "value"))
-def cb_umbral_por_modelo(modelo):
-    return MOD[modelo]["umbral"]
+@app.callback(Output("mod-comp", "figure"), Input("mod-comp-metrica", "value"))
+def cb_comp(metrica_sel):
+    return F.fig_comparacion_modelos(metrica_sel)
+
+
+@app.callback(Output("mod-umbral", "value"), Output("mod-descripcion", "children"), Input("mod-modelo", "value"))
+def cb_modelo(modelo):
+    r = MOD[modelo]
+    detalles = [html.B("Cómo funciona. "), DESCRIPCION.get(modelo, ""), html.Br(), html.B("Hiperparámetros elegidos: "),
+                params_texto(modelo), " (máximo AUC en 5 bloques temporales con hueco de 8 semanas)."]
+    n = r.get("n_entrenamiento")
+    if n and n < K["filas_train"]:
+        detalles += [html.Br(), html.B("Entrenamiento: "), f"submuestra de {num(n)} filas por costo computacional."]
+    if r.get("platt"):
+        detalles += [html.Br(), "Probabilidades calibradas con Platt sobre predicciones fuera de pliegue."]
+    if r.get("extra", {}).get("coef_no_nulos"):
+        detalles += [html.Br(), f"Lasso conserva {r['extra']['coef_no_nulos']} de {r['extra']['coef_total']} coeficientes distintos de cero."]
+    return r["umbral"], detalles
 
 
 @app.callback(Output("mod-kpis", "children"), Output("mod-matriz", "figure"), Output("mod-umbral-label", "children"),
               Output("mod-umbral-nota", "children"), Output("mod-lectura-umbral", "children"),
               Input("mod-modelo", "value"), Input("mod-umbral", "value"))
 def cb_umbral(modelo, umbral):
-    y, p = PRED["y"].to_numpy(), PRED[MODELOS_PROB[modelo]].to_numpy()
+    y, p = PRED["y"].to_numpy(), PRED[COLUMNA_MODELO[modelo]].to_numpy()
     m = F.metricas_umbral(y, p, umbral)
     base = 1 - y.mean()
     kpis = [dbc.Col(tarjeta_kpi(num(m[k], 3), n, i, c), xs=6, md=4, xl=2) for k, n, i, c in [
@@ -484,7 +551,7 @@ def cb_umbral(modelo, umbral):
     elegido = MOD[modelo]["umbral"]
     nota = f"Umbral elegido en entrenamiento: {num(elegido, 2)} (máximo F1 fuera de pliegue)."
     txt = lectura(
-        f"Con umbral {num(umbral, 2)} el modelo emite {num(m['alertas'])} alertas en 2025 y detecta {pct(m['recall'])} de las "
+        f"Con umbral {num(umbral, 2)}, {modelo} emite {num(m['alertas'])} alertas en 2025 y detecta {pct(m['recall'])} de las "
         f"{num(m['tp'] + m['fn'])} interrupciones; {pct(m['precision'])} de las alertas son interrupciones reales.",
         f"La exactitud ({pct(m['accuracy'])}) se compara con {pct(base)} de predecir siempre «sin interrupción»: con este "
         "desbalance la exactitud engaña, por eso el umbral se elige por F1 y se reportan AUC y AUC-PR.",
@@ -498,9 +565,26 @@ def cb_roc(modelos):
     return F.fig_roc_pr(modelos or ["Regresión logística"])
 
 
-@app.callback(Output("mod-coef", "figure"), Output("mod-cv", "figure"), Input("mod-modelo", "value"), Input("mod-top", "value"))
-def cb_coef(modelo, top):
-    return F.fig_coeficientes(modelo, top), F.fig_cv(modelo)
+@app.callback(Output("mod-calib", "figure"), Output("mod-calib-lectura", "children"), Input("mod-modelo", "value"))
+def cb_calib(modelo):
+    modelos = [modelo] + ([] if modelo == "Regresión logística" else ["Regresión logística"])
+    brier = MET[MET["metrica"] == "Brier"].set_index("modelo")["valor"]
+    txt = (f"Brier de {modelo}: {num(brier[modelo], 3)}; de la logística: {num(brier['Regresión logística'], 3)}; de la predicción "
+           f"constante: {num(brier['Constante (tasa de train)'], 3)} (menor es mejor). Una curva cercana a la diagonal indica que las "
+           "probabilidades significan lo que dicen y pueden usarse para priorizar recursos.")
+    return F.fig_calibracion(tuple(modelos)), lectura(txt, titulo="Calibración")
+
+
+@app.callback(Output("mod-coef", "figure"), Output("mod-coef-nota", "children"), Output("mod-cv", "figure"),
+              Input("mod-modelo", "value"), Input("mod-top", "value"), Input("mod-interp", "value"))
+def cb_coef(modelo, top, modo):
+    if modo == "coef" and modelo in F.LINEALES:
+        fig, nota = F.fig_coeficientes(modelo, top), "Coeficientes del modelo (variables numéricas escaladas)."
+    else:
+        fig = F.fig_importancia(modelo, top)
+        nota = ("Este modelo no tiene coeficientes; se muestra la importancia por permutación." if modo == "coef" else
+                "Caída del AUC en una muestra de prueba al barajar cada variable: es comparable entre todos los modelos.")
+    return fig, nota, F.fig_cv(modelo)
 
 
 @app.callback(Output("mod-sub-fig", "figure"), Input("mod-sub", "value"), Input("mod-modelo", "value"))

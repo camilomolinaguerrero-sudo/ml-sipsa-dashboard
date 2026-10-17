@@ -1,7 +1,7 @@
 # Entregable 2 · Dashboard de interrupciones en corredores de abastecimiento (SIPSA-A)
 
 Dashboard en **Dash y Plotly** con tres pestañas (contexto del problema, análisis exploratorio y modelos
-base) e informe del desarrollo en **Jupyter Book**.
+base, con diez modelos comparados) e informe del desarrollo en **Jupyter Book**.
 
 **Autores:** Camilo Molina Guerrero y Lina Margarita Buelvas · Doctorado en Ingeniería, curso de Machine Learning
 
@@ -23,7 +23,8 @@ ml-sipsa-dashboard/
 │   └── assets/estilo.css       estilo
 ├── data/                       artefactos (agregados, métricas, predicciones, pipeline logístico)
 ├── scripts/
-│   ├── preparar_artefactos.py  entrena y valida los modelos y precalcula todo lo que se muestra
+│   ├── preparar_artefactos.py  EDA, regresión logística y SVM lineal: precalcula todo lo que se muestra
+│   ├── modelos_adicionales.py  Lasso, k-NN, Naive Bayes, Random Forest, XGBoost, SVM RBF, PCA + logística, segmentos
 │   └── py2nb.py                convierte cuadernos/*.py en .ipynb y los ejecuta
 ├── cuadernos/                  fuente de los capítulos del libro (formato # %%)
 └── book/                       Jupyter Book 1.x (_config.yml, _toc.yml, capítulos)
@@ -42,7 +43,8 @@ Para regenerar los artefactos se necesita el panel del Entregable 1
 
 ```bash
 ~/.venvs/ml-sipsa-jb/bin/python scripts/preparar_artefactos.py --proyecto "../proyecto_sipsa"
-for n in 01_contexto 02_eda 03_modelos_base; do
+~/.venvs/ml-sipsa-jb/bin/python scripts/modelos_adicionales.py --proyecto "../proyecto_sipsa"   # ~2 horas
+for n in 01_contexto 02_eda 03_modelos_base 04_modelos_adicionales; do
   ~/.venvs/ml-sipsa-jb/bin/python scripts/py2nb.py cuadernos/$n.py book/$n.ipynb --ejecutar
 done
 ~/.venvs/ml-sipsa-jb/bin/jupyter-book build book/

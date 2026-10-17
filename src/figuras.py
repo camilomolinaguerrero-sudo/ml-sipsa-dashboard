@@ -5,6 +5,7 @@ mismas funciones en ambos productos, lo que se interpreta en el libro es exactam
 en el dashboard.
 """
 import json
+import os
 import re
 from functools import lru_cache
 from pathlib import Path
@@ -17,14 +18,31 @@ import plotly.io as pio
 from plotly.subplots import make_subplots
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, roc_auc_score
 
-from modelo_utils import ETIQUETAS
+from modelo_utils import COLUMNA_MODELO, ETIQUETAS
 
-DATA = Path(__file__).resolve().parents[1] / "data"
+# SIPSA_DATA permite apuntar a otra carpeta de artefactos (pruebas); por defecto, data/ del repositorio
+DATA = Path(os.environ.get("SIPSA_DATA", Path(__file__).resolve().parents[1] / "data"))
 
 # ---------------------------------------------------------------- estilo
 AZUL, MORADO, NARANJA, GRIS, ROJO, VERDE = "#1c7ed6", "#7048e8", "#f08c00", "#868e96", "#e03131", "#2f9e44"
 COLOR_MODELO = {"Regresión logística": AZUL, "SVM lineal": MORADO, "Persistencia": NARANJA,
-                "Dummy (estratificado)": GRIS, "Dummy (clase mayoritaria)": "#ced4da"}
+                "Dummy (estratificado)": GRIS, "Dummy (clase mayoritaria)": "#ced4da",
+                "Lasso (L1)": "#1098ad", "k-NN": "#e64980", "Naive Bayes": "#a9764b", "Random Forest": "#74b816",
+                "XGBoost": "#2b8a3e", "SVM RBF (Nyström)": "#9c36b5", "PCA + logística": "#4dabf7",
+                "Logística por segmentos": "#0b7285"}
+LINEALES = ("Regresión logística", "SVM lineal", "Lasso (L1)")
+
+
+def modelos_entrenados():
+    """Modelos con resultados, en el orden en que se presentan."""
+    m = resumen()["modelos"]
+    return m.get("orden", ["Regresión logística", "SVM lineal"])
+
+
+def escala_dauc(d):
+    """Escala de relevancia práctica del curso para diferencias de AUC (9.9.1)."""
+    d = abs(d)
+    return "trivial" if d < 0.01 else "pequeña" if d < 0.03 else "moderada" if d < 0.05 else "importante"
 COLOR_CLASE = {0: "#adb5bd", 1: ROJO}
 COLOR_LISA = {"Alto-Alto": "#c92a2a", "Bajo-Bajo": "#1864ab", "Alto-Bajo": "#ff8787",
               "Bajo-Alto": "#74c0fc", "No significativo": "#dee2e6"}
@@ -404,14 +422,16 @@ def fig_matriz(mt, titulo="Matriz de confusión"):
     return fig
 
 
-def fig_calibracion():
+def fig_calibracion(modelos=("Regresión logística", "SVM lineal")):
     c = tabla("curvas")
-    c = c[c["curva"] == "Calibración"]
+    c = c[(c["curva"] == "Calibración") & c["modelo"].isin(modelos)]
     pred = tabla("predicciones_test")
+    base = modelos[0]
     fig = make_subplots(specs=[[{"secondary_y": True}]])
-    fig.add_histogram(x=pred["p_logistica"], nbinsx=40, marker_color="#e9ecef", name="distribución p (logística)",
+    fig.add_histogram(x=pred[COLUMNA_MODELO[base]], nbinsx=40, marker_color="#e9ecef", name=f"distribución p ({base})",
                       secondary_y=True)
-    for nombre, g in c.groupby("modelo"):
+    for nombre in modelos:
+        g = c[c["modelo"] == nombre]
         fig.add_scatter(x=g["x"], y=g["y"], mode="lines+markers", name=nombre, line=dict(color=COLOR_MODELO[nombre]))
     fig.add_scatter(x=[0, 1], y=[0, 1], line=dict(color="black", dash="dot", width=1), name="calibración perfecta")
     fig.update_xaxes(title_text="probabilidad predicha", range=[0, 1])
@@ -422,45 +442,57 @@ def fig_calibracion():
 
 
 def fig_coeficientes(modelo="Regresión logística", top=20):
-    archivo = "coeficientes_logistica" if modelo.startswith("Reg") else "coeficientes_svm"
+    archivo = {"Regresión logística": "coeficientes_logistica", "SVM lineal": "coeficientes_svm",
+               "Lasso (L1)": "coeficientes_lasso"}[modelo]
     c = tabla(archivo)
+    if modelo == "Lasso (L1)":
+        c = c[c["coeficiente"] != 0]
     c = c.reindex(c["coeficiente"].abs().sort_values(ascending=False).index).head(top).iloc[::-1]
     etiquetas = [etiqueta_variable(v) for v in c["variable"]]
     fig = go.Figure(go.Bar(x=c["coeficiente"], y=etiquetas, orientation="h",
                            marker_color=np.where(c["coeficiente"] > 0, ROJO, AZUL),
                            hovertemplate="%{y}<br>coeficiente %{x:.3f}<extra></extra>"))
     fig.add_vline(x=0, line_color="black", line_width=1)
-    unidad = ("log-odds" if modelo.startswith("Reg") else "peso del hiperplano") + \
+    unidad = ("peso del hiperplano" if modelo == "SVM lineal" else "log-odds") + \
         " (numéricas: por desviación estándar; categóricas y binarias: frente a la base)"
     fig.update_layout(title=f"{modelo}: {top} coeficientes de mayor magnitud", xaxis_title=unidad,
                       height=max(380, 24 * top + 120), margin=dict(l=10))
     return fig
 
 
+def _params_elegidos(modelo):
+    r = resumen()["modelos"][modelo]
+    return r.get("params") or f"C={r['C']:g}"
+
+
 def fig_cv(modelo="Regresión logística"):
     cv = tabla("cv_resultados")
-    cv = cv[cv["modelo"] == modelo]
-    g = cv.groupby("C").agg(valid=("auc_valid", "mean"), sd=("auc_valid", "std"), train=("auc_train", "mean")).reset_index()
-    fig = make_subplots(rows=1, cols=2, subplot_titles=("AUC medio según C", "AUC por pliegue (C elegido)"),
-                        horizontal_spacing=0.14)
-    etiquetas_c = [f"{c:g}".replace(".", ",") for c in g["C"]]
-    fig.add_scatter(x=etiquetas_c, y=g["train"], name="entrenamiento", mode="lines+markers", line=dict(color=GRIS), row=1, col=1)
-    fig.add_scatter(x=etiquetas_c, y=g["valid"], name="validación (media ± d.e.)", mode="lines+markers",
+    cv = cv[cv["modelo"] == modelo].copy()
+    if "params" not in cv or cv["params"].isna().any():
+        cv["params"] = [f"C={c:g}" for c in cv["C"]]
+    orden = list(dict.fromkeys(cv["params"]))
+    g = cv.groupby("params").agg(valid=("auc_valid", "mean"), sd=("auc_valid", "std"), train=("auc_train", "mean")).reindex(orden)
+    etiq = [e.replace(".", ",") for e in orden]
+    elegido = _params_elegidos(modelo)
+    fig = make_subplots(rows=1, cols=2, subplot_titles=("AUC medio por hiperparámetros", f"AUC por pliegue ({elegido})".replace(".", ",")),
+                        horizontal_spacing=0.14, column_widths=[0.55, 0.45])
+    fig.add_scatter(x=etiq, y=g["train"], name="entrenamiento", mode="lines+markers", line=dict(color=GRIS), row=1, col=1)
+    fig.add_scatter(x=etiq, y=g["valid"], name="validación (media ± d.e.)", mode="lines+markers",
                     line=dict(color=COLOR_MODELO[modelo]), error_y=dict(type="data", array=g["sd"]), row=1, col=1)
-    C = resumen()["modelos"][modelo]["C"]
-    f = cv[cv["C"] == C]
+    f = cv[cv["params"] == elegido]
     fig.add_bar(x=f["pliegue"].astype(str), y=f["auc_valid"], marker_color=COLOR_MODELO[modelo], showlegend=False,
                 text=f["auc_valid"].round(3), textposition="outside", row=1, col=2)
-    fig.update_xaxes(type="category", title_text="C", row=1, col=1)
+    fig.update_xaxes(type="category", title_text="hiperparámetros", tickangle=-20, row=1, col=1)
     fig.update_xaxes(title_text="pliegue", row=1, col=2)
     fig.update_yaxes(range=[f["auc_valid"].min() - 0.02, f["auc_valid"].max() + 0.015], row=1, col=2)
-    fig.update_layout(title=f"{modelo}: validación por bloques temporales", height=420, legend=LEYENDA_ABAJO,
-                      margin=dict(t=80, b=110))
+    fig.update_layout(title=f"{modelo}: validación por bloques temporales", height=440, legend=LEYENDA_ABAJO,
+                      margin=dict(t=80, b=130))
     return fig
 
 
-def fig_cv_espacial():
+def fig_cv_espacial(modelos=("Regresión logística", "SVM lineal")):
     e = tabla("cv_espacial")
+    e = e[e["modelo"].isin(modelos)]
     fig = px.bar(e, x=e["pliegue"].astype(str), y="auc", color="modelo", barmode="group",
                  color_discrete_map=COLOR_MODELO, hover_data={"departamentos": True, "n": ":,"}, height=360,
                  labels={"x": "pliegue (grupo de departamentos no vistos)", "auc": "AUC-ROC"})
@@ -470,17 +502,41 @@ def fig_cv_espacial():
     return fig
 
 
-def fig_curva_aprendizaje():
-    lc = tabla("curva_aprendizaje")
+def fig_validaciones():
+    """AUC medio en validación temporal y en departamentos no vistos, para todos los modelos."""
+    cv, e = tabla("cv_resultados"), tabla("cv_espacial")
+    filas = []
+    for m in modelos_entrenados():
+        c = cv[cv["modelo"] == m].copy()
+        if "params" not in c or c["params"].isna().any():
+            c["params"] = [f"C={x:g}" for x in c["C"]]
+        t = c[c["params"] == _params_elegidos(m)]["auc_valid"]
+        sp = e[e["modelo"] == m]["auc"]
+        filas.append({"modelo": m, "temporal": t.mean(), "temporal_sd": t.std(), "espacial": sp.mean(), "espacial_sd": sp.std()})
+    d = pd.DataFrame(filas).sort_values("temporal")
     fig = go.Figure()
-    for nombre, g in lc.groupby("modelo"):
+    fig.add_scatter(x=d["temporal"], y=d["modelo"], mode="markers", name="bloques temporales",
+                    marker=dict(size=11, color=AZUL), error_x=dict(type="data", array=d["temporal_sd"]))
+    fig.add_scatter(x=d["espacial"], y=d["modelo"], mode="markers", name="departamentos no vistos",
+                    marker=dict(size=11, color=NARANJA, symbol="diamond"), error_x=dict(type="data", array=d["espacial_sd"]))
+    fig.update_layout(title="Validación cruzada: AUC medio (± d.e. entre pliegues)", xaxis_title="AUC-ROC",
+                      height=max(360, 34 * len(d) + 150), legend=LEYENDA_ABAJO, margin=dict(t=60, b=110))
+    return fig
+
+
+def fig_curva_aprendizaje(modelos=None):
+    lc = tabla("curva_aprendizaje")
+    if modelos:
+        lc = lc[lc["modelo"].isin(modelos)]
+    fig = go.Figure()
+    for nombre, g in lc.groupby("modelo", sort=False):
         fig.add_scatter(x=g["filas"], y=g["auc_train"], name=f"{nombre}: entrenamiento", mode="lines+markers",
                         line=dict(color=COLOR_MODELO[nombre], dash="dot"))
         fig.add_scatter(x=g["filas"], y=g["auc_valid"], name=f"{nombre}: validación", mode="lines+markers",
                         line=dict(color=COLOR_MODELO[nombre]))
     fig.update_xaxes(type="log", title_text="filas de entrenamiento (escala log)")
     fig.update_yaxes(title_text="AUC-ROC")
-    fig.update_layout(title="Curva de aprendizaje (validación: último pliegue)", height=460, legend=LEYENDA_ABAJO, margin=dict(t=60, b=150))
+    fig.update_layout(title="Curva de aprendizaje (validación: último pliegue)", height=480, legend=LEYENDA_ABAJO, margin=dict(t=60, b=170))
     return fig
 
 
@@ -506,7 +562,7 @@ def fig_dependencia():
 
 def fig_subgrupos(dimension="region_origen", modelo="Regresión logística"):
     pred = tabla("predicciones_test")
-    col = "p_logistica" if modelo.startswith("Reg") else "p_svm"
+    col = COLUMNA_MODELO[modelo]
     filas = []
     for v, g in pred.groupby(dimension):
         if len(g) < 300 or g["y"].nunique() < 2:
@@ -520,6 +576,53 @@ def fig_subgrupos(dimension="region_origen", modelo="Regresión logística"):
                  labels={"auc": "AUC-ROC en prueba", "grupo": ""})
     fig.update_xaxes(range=[max(0.5, t["auc"].min() - 0.05), min(1, t["auc"].max() + 0.04)])
     fig.update_layout(title=f"{modelo}: AUC por subgrupo (prueba 2025)", margin=dict(t=60))
+    return fig
+
+
+def fig_comparacion_modelos(metrica="AUC-ROC"):
+    """AUC (o AUC-PR) en prueba con IC 95 % bootstrap por bloques de semana, todos los modelos y líneas base."""
+    m = tabla("metricas_test")
+    d = m[m["metrica"] == metrica].sort_values("valor")
+    lineales = d["modelo"].isin(LINEALES)
+    base = d["modelo"].isin(["Persistencia", "Dummy (estratificado)", "Dummy (clase mayoritaria)"])
+    color = [COLOR_MODELO.get(x, GRIS) for x in d["modelo"]]
+    fig = go.Figure(go.Scatter(
+        x=d["valor"], y=d["modelo"], mode="markers", marker=dict(size=12, color=color, symbol=np.where(base, "x", "circle")),
+        error_x=dict(type="data", symmetric=False, array=(d["ic_sup"] - d["valor"]).fillna(0), arrayminus=(d["valor"] - d["ic_inf"]).fillna(0)),
+        hovertemplate="%{y}<br>" + metrica + " %{x:.3f}<extra></extra>", showlegend=False))
+    ref = d[d["modelo"] == "Regresión logística"]["valor"]
+    if len(ref):
+        fig.add_vline(x=float(ref.iloc[0]), line_dash="dot", line_color=AZUL, annotation_text="logística", annotation_position="top")
+    fig.update_layout(title=f"{metrica} en prueba (2025) con IC 95 %", xaxis_title=metrica,
+                      height=max(380, 30 * len(d) + 140), margin=dict(t=70))
+    return fig
+
+
+def fig_importancia(modelo="Regresión logística", top=15):
+    imp = tabla("importancia_permutacion")
+    imp = imp[imp["modelo"] == modelo].sort_values("importancia", ascending=False).head(top).iloc[::-1]
+    fig = go.Figure(go.Bar(x=imp["importancia"], y=[ETIQUETAS.get(v, v) for v in imp["variable"]], orientation="h",
+                           marker_color=COLOR_MODELO.get(modelo, AZUL), error_x=dict(type="data", array=imp["sd"]),
+                           hovertemplate="%{y}<br>caída del AUC %{x:.4f}<extra></extra>"))
+    fig.update_layout(title=f"{modelo}: importancia por permutación ({top} variables)",
+                      xaxis_title="caída del AUC al barajar la variable (muestra de prueba)",
+                      height=max(380, 26 * top + 130), margin=dict(l=10))
+    return fig
+
+
+def fig_importancia_comparada(top=12):
+    """Importancia por permutación normalizada (suma 1 por modelo) de las variables más relevantes, todos los modelos."""
+    imp = tabla("importancia_permutacion").copy()
+    imp["importancia"] = imp["importancia"].clip(lower=0)
+    imp["rel"] = imp["importancia"] / imp.groupby("modelo")["importancia"].transform("sum")
+    orden_var = imp.groupby("variable")["rel"].mean().sort_values(ascending=False).head(top).index
+    modelos = [m for m in modelos_entrenados() if m in set(imp["modelo"])]
+    z = imp.pivot(index="variable", columns="modelo", values="rel").reindex(index=orden_var, columns=modelos)
+    fig = px.imshow(z, color_continuous_scale="Blues", aspect="auto", text_auto=".2f",
+                    labels=dict(color="importancia relativa"), height=40 * top + 200)
+    fig.update_yaxes(ticktext=[ETIQUETAS.get(v, v) for v in z.index], tickvals=list(range(len(z.index))))
+    fig.update_xaxes(tickangle=-30)
+    fig.update_layout(title="Importancia relativa por permutación (cada columna suma 1)", margin=dict(t=70, b=120))
     return fig
 
 
